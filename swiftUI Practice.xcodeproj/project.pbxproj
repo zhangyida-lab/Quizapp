@@ -10,9 +10,33 @@
 		2D55A31D2F81559A0085DD6A /* swiftUI Practice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swiftUI Practice.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2D55A3382F8409C70085DD6A /* Exceptions for "swiftUI Practice" folder in "swiftUI Practice" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				QuestionImage.swiftbak,
+			);
+			target = 2D55A31C2F81559A0085DD6A /* swiftUI Practice */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		2D55A3392F8409C70085DD6A /* Exceptions for "swiftUI Practice" folder in "Compile Sources" phase from "swiftUI Practice" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 2D55A3192F81559A0085DD6A /* Sources */;
+			membershipExceptions = (
+				QuestionImage.swiftbak,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2D55A31F2F81559A0085DD6A /* swiftUI Practice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2D55A3382F8409C70085DD6A /* Exceptions for "swiftUI Practice" folder in "swiftUI Practice" target */,
+				2D55A3392F8409C70085DD6A /* Exceptions for "swiftUI Practice" folder in "Compile Sources" phase from "swiftUI Practice" target */,
+			);
 			path = "swiftUI Practice";
 			sourceTree = "<group>";
 		};

@@ -95,7 +95,7 @@ let allQuestions: [Question] = [
              options: ["米开朗基罗", "拉斐尔", "达芬奇", "波提切利"], correctIndex: 2),
     Question(category: "艺术", text: "贝多芬的第几号交响曲又称《命运》？", image: nil,
              options: ["第五号", "第六号", "第七号", "第九号"], correctIndex: 0),
-    Question(category: "艺术", text: "中国传统绘画中"文人画"最注重的是？", image: nil,
+    Question(category: "艺术", text: "中国传统绘画中文人画最注重的是？", image: nil,
              options: ["色彩浓烈", "写实造型", "意境与笔墨", "透视准确"], correctIndex: 2),
     Question(category: "艺术", text: "以下哪位是印象派代表画家？", image: nil,
              options: ["毕加索", "莫奈", "达利", "安迪·沃霍尔"], correctIndex: 1),

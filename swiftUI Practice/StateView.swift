@@ -14,31 +14,32 @@
 //
 
 import SwiftUI
-var name = "zhangsan"
 
-struct ContentView: View {
+
+struct StateView: View {
+    @State var value:Int = 0
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            Text(verbatim: "zhangsan de ceshi nizhidao ma \(name) ")
+            
+            Text("\(value)")
+            Text(verbatim: "zhangsan de ceshi nizhidao ma ")
+            HStack{
+                Button("+"){
+                    value += 1
+                }
+                Button("-"){
+                    value -= 1
+                }
+                .padding()
+            }
+            .padding()
+            
           
         }
         .padding()
     }
 }
 
-struct ChildView: View {
-    var body: some View {
-        VStack {
-            Text("zhangsan")
-            
-        }
-    }
-}
-
 #Preview {
-    ChildView()
+    StateView()
 }

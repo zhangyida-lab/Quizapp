@@ -14,31 +14,29 @@
 //
 
 import SwiftUI
-var name = "zhangsan"
+@Observable
+class ViewModel {
+    var counter = 0
+    var text = "hello yida"
+}
 
-struct ContentView: View {
+struct ObserableView: View {
+    @State var viewModel = ViewModel()
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            Text(verbatim: "zhangsan de ceshi nizhidao ma \(name) ")
+            Text(viewModel.text)
+                .font(.title)
+            Text("\(viewModel.counter)")
+            Button("clickMe"){
+                viewModel.counter += 1
+                viewModel.text = "zhangsan"
+            }
           
         }
         .padding()
     }
 }
 
-struct ChildView: View {
-    var body: some View {
-        VStack {
-            Text("zhangsan")
-            
-        }
-    }
-}
-
 #Preview {
-    ChildView()
+    ObserableView()
 }

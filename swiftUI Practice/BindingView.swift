@@ -14,31 +14,28 @@
 //
 
 import SwiftUI
-var name = "zhangsan"
 
-struct ContentView: View {
+
+struct BindingView: View {
+    @State var title: String = "zhangsan"
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            Text(verbatim: "zhangsan de ceshi nizhidao ma \(name) ")
-          
+            Text(title)
+            BindingChildView(title: $title)
         }
         .padding()
     }
 }
 
-struct ChildView: View {
+struct BindingChildView: View {
+    @Binding var title:String
     var body: some View {
-        VStack {
-            Text("zhangsan")
-            
+        Button("click me"){
+            title = "how are you"
         }
     }
 }
 
 #Preview {
-    ChildView()
+    BindingView()
 }
