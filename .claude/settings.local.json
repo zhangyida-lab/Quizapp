@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/**/*.swift \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/*.swift)"
+    ]
+  }
+}

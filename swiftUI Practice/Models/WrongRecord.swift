@@ -1,0 +1,87 @@
+import Foundation
+
+// MARK: - 错题记录（SM-2 间隔重复算法）
+struct WrongRecord: Identifiable, Codable {
+    var id: UUID
+    var questionId: UUID
+
+    var wrongCount: Int       // 累计答错次数
+    var correctStreak: Int    // 当前连续答对次数
+
+    var firstWrongDate: Date
+    var lastAttemptDate: Date
+    var nextReviewDate: Date  // 下次应复习时间（算法计算）
+
+    // SM-2 参数
+    var easeFactor: Double    // 难度系数，初始 2.5，最低 1.3
+    var intervalDays: Int     // 当前复习间隔（天）
+
+    var isMastered: Bool      // 用户标记已掌握
+
+    // MARK: - 初始化
+    init(questionId: UUID, date: Date = Date()) {
+        self.id = UUID()
+        self.questionId = questionId
+        self.wrongCount = 0
+        self.correctStreak = 0
+        self.firstWrongDate = date
+        self.lastAttemptDate = date
+        self.nextReviewDate = date   // 立即复习
+        self.easeFactor = 2.5
+        self.intervalDays = 1
+        self.isMastered = false
+    }
+
+    // MARK: - SM-2 算法更新
+    mutating func update(isCorrect: Bool) {
+        let quality = isCorrect ? 4 : 1
+        lastAttemptDate = Date()
+
+        if isCorrect {
+            correctStreak += 1
+            switch correctStreak {
+            case 1:  intervalDays = 1
+            case 2:  intervalDays = 3
+            default: intervalDays = max(1, Int((Double(intervalDays) * easeFactor).rounded()))
+            }
+            // 更新难度系数（答对越流畅系数越高）
+            easeFactor = max(1.3, easeFactor + 0.1 - Double(5 - quality) * (0.08 + Double(5 - quality) * 0.02))
+        } else {
+            wrongCount += 1
+            correctStreak = 0
+            intervalDays = 1
+            easeFactor = max(1.3, easeFactor - 0.2)
+        }
+
+        nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
+    }
+
+    // MARK: - 工具属性
+    /// 是否到了复习时间
+    var isDue: Bool {
+        !isMastered && Date() >= nextReviewDate
+    }
+
+    /// 推荐优先级（越高越应该优先复习）
+    var priorityScore: Double {
+        guard !isMastered else { return -1 }
+        let overdueDays = max(0.0, -nextReviewDate.timeIntervalSinceNow / 86400)
+        let urgency: Double = correctStreak == 0 ? 3 : 0
+        return Double(wrongCount) * 3 + overdueDays * 2 + urgency
+    }
+
+    /// 掌握程度描述
+    var masteryLevel: String {
+        if isMastered { return "已掌握" }
+        if correctStreak >= 3 { return "较熟练" }
+        if correctStreak >= 1 { return "进步中" }
+        return "待巩固"
+    }
+
+    var masteryColor: String {
+        if isMastered { return "green" }
+        if correctStreak >= 3 { return "blue" }
+        if correctStreak >= 1 { return "yellow" }
+        return "red"
+    }
+}
