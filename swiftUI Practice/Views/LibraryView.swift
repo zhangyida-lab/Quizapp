@@ -127,8 +127,9 @@ struct LibraryView: View {
             .buttonStyle(PlainButtonStyle())
 
             Button {
-                if let data = try? store.exportAllAsBank() {
-                    exportURL = writeTempFile(data, name: "all_questions")
+                if let data = try? store.exportAllAsBank(),
+                   let url = writeTempFile(data, name: "all_questions") {
+                    exportURL = url
                     showExportSheet = true
                 }
             } label: {
@@ -158,8 +159,9 @@ struct LibraryView: View {
                     BankCard(bank: bank,
                              onToggle: { store.toggleBankEnabled(bank) },
                              onExport: {
-                                 if let data = try? store.exportBank(bank) {
-                                     exportURL = writeTempFile(data, name: bank.name)
+                                 if let data = try? store.exportBank(bank),
+                                    let url = writeTempFile(data, name: bank.name) {
+                                     exportURL = url
                                      showExportSheet = true
                                  }
                              },
@@ -332,7 +334,12 @@ struct LibStatCard: View {
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        if let popover = vc.popoverPresentationController {
+            popover.sourceView = UIView()
+            popover.permittedArrowDirections = []
+        }
+        return vc
     }
     func updateUIViewController(_ uvc: UIActivityViewController, context: Context) {}
 }
