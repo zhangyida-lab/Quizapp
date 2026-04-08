@@ -1,4 +1,5 @@
 import SwiftUI
+import QuickLook
 
 // MARK: - 试卷配置页
 
@@ -18,6 +19,11 @@ struct ExamConfigView: View {
     @State private var navigateToExam = false
     @State private var generatedQuestions: [Question] = []
     @State private var generatedScores: [Int] = []
+
+    // 空白试卷 PDF
+    @State private var isGenBlankPDF  = false
+    @State private var blankPDFURL: URL? = nil
+    @State private var showBlankPDF   = false
 
     // MARK: 计算属性
     var config: ExamConfig {
@@ -78,6 +84,9 @@ struct ExamConfigView: View {
                 questions: generatedQuestions,
                 questionScores: generatedScores
             )
+        }
+        .sheet(isPresented: $showBlankPDF) {
+            if let url = blankPDFURL { PDFPreviewView(url: url) }
         }
         .onAppear {
             // 默认全选科目
@@ -368,33 +377,67 @@ struct ExamConfigView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - 开始按钮
+    // MARK: - 操作按钮组
     var startButton: some View {
-        Button {
-            let qs = config.selectQuestions(from: store.allQuestions)
-            guard !qs.isEmpty else { return }
-            generatedQuestions = qs
-            generatedScores    = config.scores(for: qs)
-            navigateToExam     = true
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "doc.text.magnifyingglass").font(.system(size: 16))
-                Text("生成并开始答题").font(.system(size: 17, weight: .semibold))
-            }
-            .foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 16)
-            .background(canGenerate ? Color.quizPurple : Color.quizCard).cornerRadius(14)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(!canGenerate)
-        .overlay(
-            Group {
-                if !canGenerate {
-                    Text(selectedSubjects.isEmpty ? "请先选择科目" : "所选条件下无可用题目")
-                        .font(.system(size: 12)).foregroundColor(.secondary)
-                        .padding(.top, 52)
+        VStack(spacing: 10) {
+            // 生成并开始答题
+            Button {
+                let qs = config.selectQuestions(from: store.allQuestions)
+                guard !qs.isEmpty else { return }
+                generatedQuestions = qs
+                generatedScores    = config.scores(for: qs)
+                navigateToExam     = true
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "doc.text.magnifyingglass").font(.system(size: 16))
+                    Text("生成并开始答题").font(.system(size: 17, weight: .semibold))
                 }
-            }, alignment: .top
-        )
+                .foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 16)
+                .background(canGenerate ? Color.quizPurple : Color.quizCard).cornerRadius(14)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(!canGenerate)
+
+            // 导出空白试卷（线下打印）
+            Button {
+                guard canGenerate else { return }
+                isGenBlankPDF = true
+                let qs = config.selectQuestions(from: store.allQuestions)
+                let scores = config.scores(for: qs)
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let url = BlankExamPDFGenerator.generate(
+                        config: config, questions: qs, questionScores: scores
+                    )
+                    DispatchQueue.main.async {
+                        isGenBlankPDF = false
+                        blankPDFURL   = url
+                        showBlankPDF  = true
+                    }
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    if isGenBlankPDF {
+                        ProgressView().tint(Color.quizPurpleLight).scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "printer.fill").font(.system(size: 15))
+                    }
+                    Text(isGenBlankPDF ? "生成中…" : "导出空白试卷（供打印）")
+                        .font(.system(size: 15, weight: .semibold))
+                }
+                .foregroundColor(canGenerate ? Color.quizPurpleLight : .secondary)
+                .frame(maxWidth: .infinity).padding(.vertical, 14)
+                .background(Color.quizPurple.opacity(0.15)).cornerRadius(14)
+                .overlay(RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.quizPurple.opacity(canGenerate ? 0.5 : 0.2), lineWidth: 1))
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(!canGenerate || isGenBlankPDF)
+
+            if !canGenerate {
+                Text(selectedSubjects.isEmpty ? "请先选择科目" : "所选条件下无可用题目")
+                    .font(.system(size: 12)).foregroundColor(.secondary)
+            }
+        }
     }
 
     // MARK: - 辅助组件

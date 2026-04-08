@@ -454,6 +454,209 @@ enum ExamPDFGenerator {
     }
 }
 
+// MARK: - 空白试卷 PDF 生成器（白底，适合打印）
+
+enum BlankExamPDFGenerator {
+    static let pageW: CGFloat  = 595.28
+    static let pageH: CGFloat  = 841.89
+    static let margin: CGFloat = 48.0
+    static var bodyW: CGFloat  { pageW - margin * 2 }
+
+    static let colPrimary   = UIColor(white: 0.08, alpha: 1)
+    static let colSecondary = UIColor(white: 0.42, alpha: 1)
+    static let colAccent    = UIColor(red: 0.28, green: 0.24, blue: 0.68, alpha: 1)
+    static let colBorder    = UIColor(white: 0.80, alpha: 1)
+    static let colLightBg   = UIColor(white: 0.96, alpha: 1)
+
+    static func generate(config: ExamConfig, questions: [Question], questionScores: [Int]) -> URL {
+        var y: CGFloat = margin
+        var pageNum    = 1
+        var ctx: UIGraphicsPDFRendererContext!
+
+        func newPage() {
+            ctx.beginPage()
+            UIColor.white.setFill()
+            UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: pageH))
+            // 顶部色条
+            colAccent.setFill()
+            UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: 4))
+            // 页脚
+            let footer = "第 \(pageNum) 页 / 共 \(estimatePageCount(questions: questions)) 页"
+            drawTxt(footer, x: margin, y: pageH - 28, w: bodyW,
+                    font: .systemFont(ofSize: 9), color: colSecondary, align: .center)
+            pageNum += 1
+            y = margin + 10
+        }
+
+        func need(_ h: CGFloat) { if y + h > pageH - 40 { newPage() } }
+
+        let data = UIGraphicsPDFRenderer(
+            bounds: CGRect(x: 0, y: 0, width: pageW, height: pageH)
+        ).pdfData { c in
+            ctx = c; newPage()
+
+            // ── 标题区 ──
+            let title = config.autoTitle(actualCount: questions.count)
+            drawTxt(title, x: margin, y: y, w: bodyW,
+                    font: .boldSystemFont(ofSize: 22), color: colPrimary, align: .center)
+            y += 32
+
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "zh_CN")
+            df.dateFormat = "yyyy年M月d日"
+            let meta = "科目：\(config.subjects.sorted().joined(separator: "、"))    " +
+                       "总分：\(config.totalScore) 分    " +
+                       "日期：\(df.string(from: Date()))"
+            drawTxt(meta, x: margin, y: y, w: bodyW,
+                    font: .systemFont(ofSize: 11), color: colSecondary, align: .center)
+            y += 18
+
+            drawLine(y: y, color: colAccent, width: 1.2); y += 8
+
+            let instr = "注意事项：每题只有一个正确答案，请在对应选项上画圈。答题时间请合理分配。"
+            drawTxt(instr, x: margin, y: y, w: bodyW,
+                    font: .italicSystemFont(ofSize: 10), color: colSecondary)
+            y += 22
+
+            drawLine(y: y, color: colBorder, width: 0.5); y += 16
+
+            // ── 题目列表 ──
+            let labels = ["A", "B", "C", "D"]
+            for (i, q) in questions.enumerated() {
+                let score = questionScores[safe: i] ?? 0
+
+                // 题号行高度估算
+                let qTextH = estimateH(q.text, w: bodyW - 28, font: .systemFont(ofSize: 12))
+                let optionsH = q.options.enumerated().reduce(CGFloat(0)) { sum, pair in
+                    sum + max(18, estimateH(pair.element, w: bodyW - 60,
+                                           font: .systemFont(ofSize: 11)) + 4)
+                }
+                let blockH = 24 + qTextH + 10 + optionsH + 28
+                need(blockH)
+
+                // 题号 + 分值标签
+                let numStr = "\(i + 1)."
+                drawTxt(numStr, x: margin, y: y, w: 22,
+                        font: .boldSystemFont(ofSize: 12), color: colPrimary)
+                let scoreTag = "(\(score)分)"
+                drawTxt(scoreTag, x: pageW - margin - 36, y: y, w: 36,
+                        font: .systemFont(ofSize: 10), color: colSecondary, align: .right)
+
+                // 题目文字
+                drawTxt(q.text, x: margin + 24, y: y, w: bodyW - 60,
+                        font: .systemFont(ofSize: 12), color: colPrimary, multi: true)
+                y += qTextH + 10
+
+                // 选项
+                for (j, opt) in q.options.enumerated() {
+                    let label = labels[safe: j] ?? ""
+                    let optH = max(18, estimateH(opt, w: bodyW - 60,
+                                                 font: .systemFont(ofSize: 11)) + 4)
+                    // 选项字母圆圈
+                    drawCircle(x: margin + 24, y: y, d: 15,
+                               fill: UIColor.white, stroke: colBorder)
+                    drawTxt(label, x: margin + 24, y: y + 1, w: 15,
+                            font: .boldSystemFont(ofSize: 9), color: colSecondary, align: .center)
+                    drawTxt("\(label). \(opt)", x: margin + 46, y: y, w: bodyW - 70,
+                            font: .systemFont(ofSize: 11), color: colPrimary, multi: true)
+                    y += optH
+                }
+
+                // 答题框
+                y += 6
+                drawLine(y: y, color: colBorder, width: 0.5); y += 5
+                drawTxt("我的答案：___", x: margin + 24, y: y, w: 120,
+                        font: .systemFont(ofSize: 10), color: colSecondary)
+                y += 20
+                drawLine(y: y, color: colLightBg, width: 0.5)
+                y += 14
+            }
+
+            // ── 答案汇总页 ──
+            newPage()
+            drawTxt("参考答案", x: margin, y: y, w: bodyW,
+                    font: .boldSystemFont(ofSize: 16), color: colPrimary)
+            y += 8
+            drawLine(y: y, color: colAccent, width: 1); y += 14
+
+            let cols = 5
+            let cellW = bodyW / CGFloat(cols)
+            let cellH: CGFloat = 28
+
+            for (i, q) in questions.enumerated() {
+                let col = i % cols
+                let row = i / cols
+                let cx  = margin + CGFloat(col) * cellW
+                let cy  = y + CGFloat(row) * cellH
+
+                need(cellH)
+
+                let answerLabel = ["A", "B", "C", "D"][safe: q.correctIndex] ?? "?"
+                let cell = "\(i + 1). \(answerLabel)"
+                let bgColor = i % 2 == 0 ? colLightBg : UIColor.white
+                bgColor.setFill()
+                UIRectFill(CGRect(x: cx, y: cy, width: cellW, height: cellH - 2))
+                drawTxt(cell, x: cx + 4, y: cy + 6, w: cellW - 8,
+                        font: .systemFont(ofSize: 12), color: colPrimary)
+            }
+            y += CGFloat((questions.count + cols - 1) / cols) * cellH + 16
+
+            drawLine(y: y, color: colBorder, width: 0.5); y += 10
+            drawTxt("由 QuizApp 生成 · \(df.string(from: Date()))",
+                    x: margin, y: y, w: bodyW,
+                    font: .italicSystemFont(ofSize: 9), color: colSecondary, align: .center)
+        }
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("blank_exam_\(Int(Date().timeIntervalSince1970)).pdf")
+        try? data.write(to: url)
+        return url
+    }
+
+    // 粗略估算总页数（用于页脚显示）
+    private static func estimatePageCount(questions: [Question]) -> Int {
+        max(2, questions.count / 5 + 2)
+    }
+
+    static func drawTxt(_ text: String, x: CGFloat, y: CGFloat, w: CGFloat,
+                        font: UIFont, color: UIColor,
+                        align: NSTextAlignment = .left, multi: Bool = false) {
+        let style = NSMutableParagraphStyle()
+        style.alignment = align
+        style.lineBreakMode = multi ? .byWordWrapping : .byTruncatingTail
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: font, .foregroundColor: color, .paragraphStyle: style
+        ]
+        let rect = CGRect(x: x, y: y, width: w,
+                          height: multi ? 10000 : font.lineHeight + 4)
+        (text as NSString).draw(with: rect,
+                                options: multi ? .usesLineFragmentOrigin : [],
+                                attributes: attrs, context: nil)
+    }
+
+    static func estimateH(_ text: String, w: CGFloat, font: UIFont) -> CGFloat {
+        let style = NSMutableParagraphStyle(); style.lineBreakMode = .byWordWrapping
+        let attrs: [NSAttributedString.Key: Any] = [.font: font, .paragraphStyle: style]
+        let r = (text as NSString).boundingRect(
+            with: CGSize(width: w, height: 10000),
+            options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
+        return ceil(r.height)
+    }
+
+    static func drawLine(y: CGFloat, color: UIColor, width: CGFloat) {
+        let p = UIBezierPath()
+        p.move(to: CGPoint(x: margin, y: y))
+        p.addLine(to: CGPoint(x: pageW - margin, y: y))
+        color.setStroke(); p.lineWidth = width; p.stroke()
+    }
+
+    static func drawCircle(x: CGFloat, y: CGFloat, d: CGFloat,
+                           fill: UIColor, stroke: UIColor) {
+        let p = UIBezierPath(ovalIn: CGRect(x: x, y: y, width: d, height: d))
+        fill.setFill(); p.fill(); stroke.setStroke(); p.lineWidth = 0.8; p.stroke()
+    }
+}
+
 // MARK: - 辅助组件
 struct ExamStatCard: View {
     let value: String; let label: String; let color: Color
