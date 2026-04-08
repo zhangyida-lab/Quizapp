@@ -1,0 +1,662 @@
+{
+  "version": "1.0",
+  "name": "综合测试题库",
+  "questions": [
+    {
+      "category": "地理",
+      "text": "中国的首都是哪个城市？",
+      "options": ["北京", "上海", "广州", "深圳"],
+      "correctIndex": 0,
+      "difficulty": 1,
+      "explanation": "北京是中华人民共和国的首都和政治中心。"
+    },
+    {
+      "category": "地理",
+      "text": "世界上最长的河流是？",
+      "options": ["亚马逊河", "尼罗河", "长江", "密西西比河"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "尼罗河长约6650公里，是世界上最长的河流。"
+    },
+    {
+      "category": "地理",
+      "text": "喜马拉雅山脉位于哪两个国家之间？",
+      "options": ["中国和巴基斯坦", "中国和尼泊尔", "中国和印度", "印度和尼泊尔"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "喜马拉雅山脉是中国和印度的天然分界线。"
+    },
+    {
+      "category": "地理",
+      "text": "撒哈拉沙漠位于哪个洲？",
+      "options": ["亚洲", "非洲", "南美洲", "大洋洲"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "撒哈拉沙漠是世界上最大的沙漠，位于非洲。"
+    },
+    {
+      "category": "地理",
+      "text": "巴西的首都是？",
+      "options": ["里约热内卢", "圣保罗", "巴西利亚", "萨尔瓦多"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "巴西利亚是巴西的首都，建于1960年。"
+    },
+    {
+      "category": "地理",
+      "text": "澳大利亚的最大城市是？",
+      "options": ["悉尼", "墨尔本", "布里斯班", "珀斯"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "悉尼是澳大利亚最大的城市和经济中心。"
+    },
+    {
+      "category": "地理",
+      "text": "非洲的最高山峰是？",
+      "options": ["乞力马扎罗山", "肯尼亚山", "斯坦利山", "鲁文佐里山"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "乞力马扎罗山高5895米，是非洲最高的山峰。"
+    },
+    {
+      "category": "地理",
+      "text": "泰国的首都是？",
+      "options": ["清迈", "普吉岛", "曼谷", "芭提雅"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "曼谷是泰国的首都和最大城市。"
+    },
+    {
+      "category": "地理",
+      "text": "埃及最著名的建筑奇迹是？",
+      "options": ["狮身人面像", "卡尔纳克神庙", "吉萨金字塔", "卢克索神庙"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "吉萨金字塔是埃及最著名的建筑，建于公元前2560年。"
+    },
+    {
+      "category": "地理",
+      "text": "瑞士的首都是？",
+      "options": ["苏黎世", "日内瓦", "伯尔尼", "巴塞尔"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "伯尔尼是瑞士的首都，位于瑞士中部。"
+    },
+    {
+      "category": "地理",
+      "text": "加拿大最大的城市是？",
+      "options": ["温哥华", "多伦多", "蒙特利尔", "卡尔加里"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "多伦多是加拿大最大的城市和经济中心。"
+    },
+    {
+      "category": "地理",
+      "text": "阿尔卑斯山脉主要位于哪个洲？",
+      "options": ["亚洲", "欧洲", "非洲", "北美洲"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "阿尔卑斯山脉位于欧洲中部，是欧洲最高的山脉。"
+    },
+    {
+      "category": "科学",
+      "text": "水的化学式是什么？",
+      "options": ["H2O", "O2", "H2O2", "H2O3"],
+      "correctIndex": 0,
+      "difficulty": 1,
+      "explanation": "水由两个氢原子和一个氧原子组成。"
+    },
+    {
+      "category": "科学",
+      "text": "光的速度大约是多少？",
+      "options": ["3万公里/秒", "30万公里/秒", "300万公里/秒", "3000万公里/秒"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "光在真空中的速度约为299,792,458米/秒，即约30万公里/秒。"
+    },
+    {
+      "category": "科学",
+      "text": "人体有多少块骨头？",
+      "options": ["206块", "256块", "206块", "286块"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "成年人的骨骼系统由206块骨头组成。"
+    },
+    {
+      "category": "科学",
+      "text": "DNA的全称是什么？",
+      "options": ["核糖核酸", "脱氧核糖核酸", "蛋白质", "多糖"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "DNA是脱氧核糖核酸（deoxyribonucleic acid）的简称。"
+    },
+    {
+      "category": "科学",
+      "text": "元素周期表的第一个元素是什么？",
+      "options": ["碳", "氦", "氢", "氮"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "氢是元素周期表的第一个元素。"
+    },
+    {
+      "category": "科学",
+      "text": "物质三态包括哪三种？",
+      "options": ["固态、液态、气态", "固态、液态、等离子态", "固态、气态、等离子态", "液态、气态、等离子态"],
+      "correctIndex": 0,
+      "difficulty": 1,
+      "explanation": "物质的三态是固态、液态和气态。"
+    },
+    {
+      "category": "科学",
+      "text": "重力加速度在地球表面的值大约是？",
+      "options": ["5米/秒²", "9.8米/秒²", "15米/秒²", "20米/秒²"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "地球表面的重力加速度约为9.8米/秒²。"
+    },
+    {
+      "category": "科学",
+      "text": "生物呼吸作用的产物是什么？",
+      "options": ["氧气和水", "二氧化碳和水", "氮气和甲烷", "硫化氢和水"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "有氧呼吸的产物是二氧化碳和水。"
+    },
+    {
+      "category": "科学",
+      "text": "太阳系中最大的行星是？",
+      "options": ["土星", "木星", "海王星", "天王星"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "木星是太阳系中最大的行星。"
+    },
+    {
+      "category": "科学",
+      "text": "声音在空气中的速度约为？",
+      "options": ["100米/秒", "200米/秒", "340米/秒", "500米/秒"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "声音在常温空气中的速度约为340米/秒。"
+    },
+    {
+      "category": "科学",
+      "text": "植物进行光合作用的主要场所是？",
+      "options": ["细胞核", "线粒体", "叶绿体", "细胞膜"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "光合作用主要在植物的叶绿体中进行。"
+    },
+    {
+      "category": "历史",
+      "text": "中国古代最早的朝代是？",
+      "options": ["商朝", "周朝", "夏朝", "秦朝"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "夏朝（约公元前2070-1600年）是中国历史上最早的朝代。"
+    },
+    {
+      "category": "历史",
+      "text": "秦始皇统一中国是在哪一年？",
+      "options": ["公元前200年", "公元前221年", "公元前300年", "公元前100年"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "秦始皇于公元前221年统一中国，建立秦朝。"
+    },
+    {
+      "category": "历史",
+      "text": "长城主要建于哪个朝代？",
+      "options": ["秦朝", "汉朝", "明朝", "清朝"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "现存的长城大多建于明朝时期。"
+    },
+    {
+      "category": "历史",
+      "text": "文艺复兴运动起源于哪个国家？",
+      "options": ["法国", "意大利", "西班牙", "英国"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "文艺复兴运动起源于意大利，约在14-16世纪。"
+    },
+    {
+      "category": "历史",
+      "text": "美国独立战争发生在哪一年？",
+      "options": ["1776年", "1789年", "1804年", "1865年"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "美国独立战争于1776年开始。"
+    },
+    {
+      "category": "历史",
+      "text": "法国大革命发生在哪一年？",
+      "options": ["1776年", "1789年", "1804年", "1850年"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "法国大革命开始于1789年。"
+    },
+    {
+      "category": "历史",
+      "text": "工业革命首先发生在哪个国家？",
+      "options": ["法国", "德国", "英国", "美国"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "工业革命首先发生在18世纪的英国。"
+    },
+    {
+      "category": "历史",
+      "text": "罗马帝国灭亡于哪一年？",
+      "options": ["公元330年", "公元476年", "公元800年", "公元1000年"],
+      "correctIndex": 1,
+      "difficulty": 3,
+      "explanation": "西罗马帝国于公元476年灭亡。"
+    },
+    {
+      "category": "历史",
+      "text": "中国古代最长的朝代是哪个？",
+      "options": ["汉朝", "唐朝", "明朝", "周朝"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "周朝延续了800多年，是中国历史上最长的朝代。"
+    },
+    {
+      "category": "历史",
+      "text": "第一次世界大战发生在哪一年？",
+      "options": ["1910-1918年", "1914-1918年", "1920-1928年", "1939-1945年"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "第一次世界大战发生于1914-1918年。"
+    },
+    {
+      "category": "历史",
+      "text": "拿破仑是哪个国家的皇帝？",
+      "options": ["德国", "意大利", "法国", "西班牙"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "拿破仑·波拿巴是法国的皇帝。"
+    },
+    {
+      "category": "数学",
+      "text": "圆周率π的值约为多少？",
+      "options": ["3", "3.14", "3.14159", "3.5"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "圆周率π的值约为3.14159。"
+    },
+    {
+      "category": "数学",
+      "text": "勾股定理是什么？",
+      "options": ["a+b=c", "a²+b²=c²", "a×b=c²", "a/b=c"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "勾股定理表述为：在直角三角形中，两条直角边的平方和等于斜边的平方。"
+    },
+    {
+      "category": "数学",
+      "text": "一个正方体有几个面？",
+      "options": ["4个", "6个", "8个", "12个"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "正方体有6个面。"
+    },
+    {
+      "category": "数学",
+      "text": "对数的反函数是什么？",
+      "options": ["正弦函数", "指数函数", "幂函数", "多项式函数"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "对数函数和指数函数互为反函数。"
+    },
+    {
+      "category": "数学",
+      "text": "质数是指什么？",
+      "options": ["能被2整除的数", "只能被1和自己整除的数", "能被3整除的数", "大于1的所有数"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "质数是只能被1和自己整除的大于1的自然数。"
+    },
+    {
+      "category": "数学",
+      "text": "25的平方根是多少？",
+      "options": ["3", "4", "5", "6"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "25的平方根是5。"
+    },
+    {
+      "category": "数学",
+      "text": "等腰三角形的两个底角相等吗？",
+      "options": ["不相等", "相等", "可能相等", "无法判断"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "等腰三角形的两个底角相等。"
+    },
+    {
+      "category": "数学",
+      "text": "二次方程的判别式是什么？",
+      "options": ["b-4ac", "b²-4ac", "b+4ac", "4ac-b²"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "二次方程ax²+bx+c=0的判别式是Δ=b²-4ac。"
+    },
+    {
+      "category": "数学",
+      "text": "正方形的对角线长度与边长的关系是？",
+      "options": ["相等", "对角线是边长的√2倍", "对角线是边长的2倍", "对角线是边长的√3倍"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "正方形的对角线长度等于边长乘以√2。"
+    },
+    {
+      "category": "数学",
+      "text": "集合的补集是什么概念？",
+      "options": ["两个集合的并集", "全集中去除该集合的元素", "两个集合的交集", "两个集合的差集"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "一个集合的补集是全集中所有不属于该集合的元素组成的集合。"
+    },
+    {
+      "category": "艺术",
+      "text": "蒙娜丽莎是哪位艺术家的作品？",
+      "options": ["米开朗琪罗", "达·芬奇", "拉斐尔", "多纳特罗"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "蒙娜丽莎是意大利文艺复兴时期艺术家达·芬奇的名作。"
+    },
+    {
+      "category": "艺术",
+      "text": "《星月夜》是哪位艺术家的作品？",
+      "options": ["毕加索", "梵高", "莫奈", "克劳德"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "《星月夜》是荷兰后印象派画家梵高的代表作。"
+    },
+    {
+      "category": "艺术",
+      "text": "古代中国最著名的长城是在哪个朝代完成的？",
+      "options": ["秦朝", "汉朝", "明朝", "清朝"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "现存的长城大多是明朝时期修建的。"
+    },
+    {
+      "category": "艺术",
+      "text": "米开朗琪罗的代表作《大卫》是什么类型的艺术作品？",
+      "options": ["油画", "壁画", "雕塑", "版画"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "《大卫》是米开朗琪罗著名的大理石雕塑。"
+    },
+    {
+      "category": "艺术",
+      "text": "毕加索的立体主义风格代表作是什么？",
+      "options": ["格尔尼卡", "亚维农的少女", "两个毕加索", "哭泣的妇女"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "《亚维农的少女》是毕加索立体主义的代表作。"
+    },
+    {
+      "category": "艺术",
+      "text": "文艺复兴时期的三大巨匠不包括？",
+      "options": ["达·芬奇", "米开朗琪罗", "拉斐尔", "波提切利"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "文艺复兴三大巨匠是达·芬奇、米开朗琪罗和拉斐尔。"
+    },
+    {
+      "category": "艺术",
+      "text": "梵高是哪个国家的画家？",
+      "options": ["比利时", "法国", "荷兰", "德国"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "梵高是荷兰后印象派画家。"
+    },
+    {
+      "category": "艺术",
+      "text": "中国古代四大名画之一《清明上河图》的作者是？",
+      "options": ["张择端", "顾恺之", "王希孟", "李唐"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "《清明上河图》是北宋画家张择端的杰作。"
+    },
+    {
+      "category": "艺术",
+      "text": "印象派绘画最初在哪个国家兴起？",
+      "options": ["意大利", "西班牙", "法国", "荷兰"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "印象派绘画在19世纪的法国兴起。"
+    },
+    {
+      "category": "艺术",
+      "text": "莫奈的睡莲系列作品最初创作的地点在？",
+      "options": ["巴黎", "吉维尼", "南法", "威尼斯"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "莫奈的睡莲系列作品创作于他在吉维尼的住所。"
+    },
+    {
+      "category": "体育",
+      "text": "奥运会多少年举办一次？",
+      "options": ["2年", "3年", "4年", "5年"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "奥运会每4年举办一次。"
+    },
+    {
+      "category": "体育",
+      "text": "篮球队一队有多少名球员上场？",
+      "options": ["3人", "4人", "5人", "6人"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "篮球一队有5名球员上场比赛。"
+    },
+    {
+      "category": "体育",
+      "text": "足球比赛每队有多少名球员上场？",
+      "options": ["9人", "10人", "11人", "12人"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "足球比赛每队有11名球员上场。"
+    },
+    {
+      "category": "体育",
+      "text": "网球比赛中，得分顺序是什么？",
+      "options": ["0, 10, 20, 30, 40", "0, 15, 30, 45, 60", "0, 15, 30, 40, 胜利", "1, 2, 3, 4, 5"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "网球的计分是0（love）、15、30、40和胜利。"
+    },
+    {
+      "category": "体育",
+      "text": "乒乓球一局比赛多少分获胜？",
+      "options": ["15分", "18分", "21分", "25分"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "乒乓球一局比赛先得11分（过去是21分）获胜，现在是11分。实际上现代规则是11分。"
+    },
+    {
+      "category": "体育",
+      "text": "羽毛球的标准球速有多快？",
+      "options": ["100公里/小时", "200公里/小时", "300公里/小时", "400公里/小时"],
+      "correctIndex": 2,
+      "difficulty": 2,
+      "explanation": "羽毛球是世界上最快的球类运动，速度可达300公里/小时以上。"
+    },
+    {
+      "category": "体育",
+      "text": "马拉松的标准距离是多少公里？",
+      "options": ["40公里", "42.195公里", "50公里", "100公里"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "马拉松的标准距离是42.195公里。"
+    },
+    {
+      "category": "体育",
+      "text": "2024年奥运会在哪个城市举行？",
+      "options": ["东京", "巴黎", "洛杉矶", "伦敦"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "2024年奥运会在法国巴黎举行。"
+    },
+    {
+      "category": "体育",
+      "text": "排球比赛中，赛点是多少分？",
+      "options": ["20分", "23分", "24分", "25分"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "排球比赛中，先得25分的队伍获胜该局。"
+    },
+    {
+      "category": "体育",
+      "text": "高尔夫球标准球场有多少个洞？",
+      "options": ["9个", "12个", "18个", "36个"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "标准高尔夫球场有18个洞。"
+    },
+    {
+      "category": "文学",
+      "text": "《西游记》是由谁创作的？",
+      "options": ["罗贯中", "吴承恩", "施耐庵", "曹雪芹"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "《西游记》是明代作家吴承恩创作的长篇小说。"
+    },
+    {
+      "category": "文学",
+      "text": "《红楼梦》的作者是谁？",
+      "options": ["吴承恩", "曹雪芹", "施耐庵", "罗贯中"],
+      "correctIndex": 1,
+      "difficulty": 1,
+      "explanation": "《红楼梦》是清代作家曹雪芹创作的长篇小说。"
+    },
+    {
+      "category": "文学",
+      "text": "莎士比亚最著名的作品是什么？",
+      "options": ["哈姆雷特", "仲夏夜之梦", "第十二夜", "威尼斯商人"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "《哈姆雷特》是莎士比亚最著名的悲剧作品。"
+    },
+    {
+      "category": "文学",
+      "text": "简·奥斯汀写的《傲慢与偏见》是什么类型的小说？",
+      "options": ["冒险小说", "浪漫爱情小说", "恐怖小说", "科幻小说"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "《傲慢与偏见》是一部社交爱情小说。"
+    },
+    {
+      "category": "文学",
+      "text": "《三体》是哪位作家的科幻小说？",
+      "options": ["阿西莫夫", "刘慈欣", "克拉克", "海因莱因"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "《三体》是中国作家刘慈欣创作的科幻小说。"
+    },
+    {
+      "category": "文学",
+      "text": "《1984》的作者是谁？",
+      "options": ["乔治·奥威尔", "赫胥黎", "勒古恩", "克拉克"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "《1984》是英国作家乔治·奥威尔创作的反乌托邦小说。"
+    },
+    {
+      "category": "文学",
+      "text": "《呼啸山庄》的作者是谁？",
+      "options": ["艾米莉·勃朗特", "夏洛蒂·勃朗特", "安妮·勃朗特", "简·奥斯汀"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "《呼啸山庄》是英国作家艾米莉·勃朗特创作的小说。"
+    },
+    {
+      "category": "文学",
+      "text": "儒勒·凡尔纳创作的《20000里海底旅行》是什么类型的小说？",
+      "options": ["冒险小说", "科幻小说", "爱情小说", "悬疑小说"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "《20000里海底旅行》是法国作家儒勒·凡尔纳创作的科幻小说。"
+    },
+    {
+      "category": "文学",
+      "text": "《傲慢与偏见》的女主人公是谁？",
+      "options": ["伊丽莎白", "简", "莉迪亚", "凯瑟琳"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "伊丽莎白·班奈特是《傲慢与偏见》的女主人公。"
+    },
+    {
+      "category": "文学",
+      "text": "托尔斯泰的著作《战争与和平》反映的历史时期是？",
+      "options": ["法国大革命", "拿破仑战争时期", "俄国革命", "一战时期"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "《战争与和平》以拿破仑战争时期为背景。"
+    },
+    {
+      "category": "哲学",
+      "text": "古代哲学家苏格拉底是哪个国家的人？",
+      "options": ["古埃及", "古罗马", "古希腊", "古波斯"],
+      "correctIndex": 2,
+      "difficulty": 1,
+      "explanation": "苏格拉底是古希腊的著名哲学家。"
+    },
+    {
+      "category": "哲学",
+      "text": "柏拉图创办的学校叫什么？",
+      "options": ["学园", "哲学院", "逍遥学派", "斯多葛学派"],
+      "correctIndex": 0,
+      "difficulty": 2,
+      "explanation": "柏拉图创办的哲学学校叫'学园'（Academy）。"
+    },
+    {
+      "category": "哲学",
+      "text": "启蒙运动的三大哲学家不包括？",
+      "options": ["卢梭", "伏尔泰", "孟德斯鸠", "黑格尔"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "启蒙运动的三大哲学家是伏尔泰、卢梭和孟德斯鸠。"
+    },
+    {
+      "category": "哲学",
+      "text": "亚里士多德创办的学派叫什么？",
+      "options": ["学园", "逍遥学派", "循环学派", "实证学派"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "亚里士多德创办的哲学学派叫'逍遥学派'（Peripatetic School）。"
+    },
+    {
+      "category": "哲学",
+      "text": "笛卡尔的名言'我思故我在'是什么意思？",
+      "options": ["我会思考", "通过思考确认自我存在", "思考是生命的全部", "人的思想很重要"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "笛卡尔通过'我思故我在'（Cogito ergo sum）来确证自我的存在。"
+    },
+    {
+      "category": "哲学",
+      "text": "康德的批判哲学主要研究什么？",
+      "options": ["人的本质", "知识的可能性和限度", "伦理道德", "社会历史"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "康德的批判哲学探讨人类知识的可能性、基础和限度。"
+    },
+    {
+      "category": "哲学",
+      "text": "黑格尔著名的概念'正反合'指的是什么？",
+      "options": ["三角形的三个角", "论证的三个步骤", "论文的三个部分", "辩证法的发展过程"],
+      "correctIndex": 3,
+      "difficulty": 2,
+      "explanation": "正反合是黑格尔辩证法的核心，表示事物发展的三个阶段。"
+    },
+    {
+      "category": "哲学",
+      "text": "功利主义的创始人是谁？",
+      "options": ["密尔", "边沁", "卢梭", "康德"],
+      "correctIndex": 1,
+      "difficulty": 2,
+      "explanation": "杰里米·边沁是功利主义伦理学的创始人。"
+    }
+  ]
+}
