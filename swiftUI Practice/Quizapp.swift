@@ -1,4 +1,6 @@
 import SwiftUI
+import QuickLook
+import UIKit
 
 // MARK: - 颜色主题
 
@@ -364,7 +366,10 @@ struct ResultView: View {
     @ObservedObject var vm: QuizViewModel
     let categoryName: String
     let categoryColor: Color
-    @State private var showAnswerSheet = false
+    @State private var showAnswerSheet  = false
+    @State private var showPDFPreview   = false
+    @State private var pdfURL: URL?     = nil
+    @State private var isGeneratingPDF  = false
     @Environment(\.dismiss) private var dismiss
 
     var percentage: Int { Int(Double(vm.score) / Double(vm.questions.count) * 100) }
@@ -412,6 +417,7 @@ struct ResultView: View {
             Spacer()
 
             VStack(spacing: 12) {
+                // 答题卡
                 Button { showAnswerSheet = true } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "list.bullet.rectangle").font(.system(size: 16))
@@ -422,6 +428,37 @@ struct ResultView: View {
                     .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.quizPurple.opacity(0.5), lineWidth: 1))
                 }
 
+                // 导出 PDF
+                Button {
+                    isGeneratingPDF = true
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        let url = QuizPDFGenerator.generate(
+                            vm: vm,
+                            categoryName: categoryName,
+                            percentage: percentage
+                        )
+                        DispatchQueue.main.async {
+                            isGeneratingPDF = false
+                            pdfURL = url
+                            showPDFPreview = true
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        if isGeneratingPDF {
+                            ProgressView().tint(.white).scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "doc.richtext.fill").font(.system(size: 16))
+                        }
+                        Text(isGeneratingPDF ? "生成中…" : "导出 PDF")
+                            .font(.system(size: 17, weight: .semibold))
+                    }
+                    .foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 16)
+                    .background(Color(red: 0.20, green: 0.55, blue: 0.80)).cornerRadius(14)
+                }
+                .disabled(isGeneratingPDF)
+
+                // 再来一次
                 Button { dismiss() } label: {
                     Text("再来一次")
                         .font(.system(size: 17, weight: .semibold)).foregroundColor(.white)
@@ -432,6 +469,11 @@ struct ResultView: View {
             .padding(.horizontal, 20).padding(.bottom, 32)
         }
         .sheet(isPresented: $showAnswerSheet) { AnswerSheetView(vm: vm) }
+        .sheet(isPresented: $showPDFPreview) {
+            if let url = pdfURL {
+                PDFPreviewView(url: url)
+            }
+        }
     }
 }
 
@@ -624,4 +666,374 @@ struct StatCard: View {
     )
     .environmentObject(QuizStore())
     .preferredColorScheme(.dark)
+}
+
+// MARK: - PDF 生成器
+
+enum QuizPDFGenerator {
+
+    // MARK: 页面常量
+    static let pageW: CGFloat  = 595.28
+    static let pageH: CGFloat  = 841.89
+    static let margin: CGFloat = 44.0
+    static var bodyW: CGFloat  { pageW - margin * 2 }
+
+    // MARK: 颜色
+    static let colPrimary   = UIColor(white: 0.10, alpha: 1)
+    static let colSecondary = UIColor(white: 0.45, alpha: 1)
+    static let colAccent    = UIColor(red: 0.33, green: 0.29, blue: 0.72, alpha: 1)
+    static let colGreen     = UIColor(red: 0.20, green: 0.78, blue: 0.35, alpha: 1)
+    static let colRed       = UIColor(red: 0.95, green: 0.30, blue: 0.30, alpha: 1)
+    static let colBg        = UIColor(red: 0.96, green: 0.96, blue: 0.98, alpha: 1)
+    static let colCard      = UIColor.white
+    static let colBorder    = UIColor(white: 0.85, alpha: 1)
+
+    // MARK: 生成入口
+    static func generate(vm: QuizViewModel, categoryName: String, percentage: Int) -> URL {
+        let renderer = UIGraphicsPDFRenderer(
+            bounds: CGRect(x: 0, y: 0, width: pageW, height: pageH)
+        )
+
+        var currentY: CGFloat = margin
+        var pageCtx: UIGraphicsPDFRendererContext!
+
+        func beginPage() {
+            pageCtx.beginPage()
+            // 填充背景色
+            colBg.setFill()
+            UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: pageH))
+            currentY = margin
+        }
+
+        func checkBreak(neededH: CGFloat) {
+            if currentY + neededH > pageH - margin {
+                beginPage()
+            }
+        }
+
+        let data = renderer.pdfData { ctx in
+            pageCtx = ctx
+
+            // ── 第1页：汇总 ──────────────────────────────
+            beginPage()
+
+            // 顶部装饰条
+            colAccent.setFill()
+            UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: 6))
+
+            currentY = 30
+
+            // 主标题
+            drawText("答题结果报告",
+                     x: margin, y: currentY, width: bodyW,
+                     font: .boldSystemFont(ofSize: 26),
+                     color: colPrimary, alignment: .left)
+            currentY += 36
+
+            // 日期
+            let dateF = DateFormatter()
+            dateF.locale = Locale(identifier: "zh_CN")
+            dateF.dateFormat = "yyyy年M月d日 HH:mm"
+            drawText(dateF.string(from: Date()),
+                     x: margin, y: currentY, width: bodyW,
+                     font: .systemFont(ofSize: 12),
+                     color: colSecondary, alignment: .left)
+            currentY += 20
+
+            // 分隔线
+            drawLine(y: currentY, color: colBorder)
+            currentY += 16
+
+            // 分类标签
+            drawBadge(text: categoryName, x: margin, y: currentY,
+                      bgColor: colAccent, textColor: .white)
+            currentY += 32
+
+            // 分数大字
+            let scoreText = "\(vm.score) / \(vm.questions.count)"
+            drawText(scoreText,
+                     x: margin, y: currentY, width: bodyW,
+                     font: .boldSystemFont(ofSize: 52),
+                     color: colAccent, alignment: .left)
+            currentY += 64
+
+            // 正确率
+            drawText("\(percentage)% 正确率",
+                     x: margin, y: currentY, width: bodyW,
+                     font: .systemFont(ofSize: 18),
+                     color: colSecondary, alignment: .left)
+            currentY += 28
+
+            // 评级
+            let grade: String
+            switch percentage {
+            case 90...100: grade = "优秀 ✦ 太棒了！"
+            case 60..<90:  grade = "良好 ✦ 不错哦～"
+            default:       grade = "加油 ✦ 继续努力"
+            }
+            let gradeColor = percentage >= 90 ? colGreen : (percentage >= 60 ? colAccent : colRed)
+            drawText(grade,
+                     x: margin, y: currentY, width: bodyW,
+                     font: .boldSystemFont(ofSize: 16),
+                     color: gradeColor, alignment: .left)
+            currentY += 32
+
+            // 三格统计卡片
+            let cardW = (bodyW - 16) / 3
+            let cardH: CGFloat = 68
+            let cardY = currentY
+            let stats: [(String, String, UIColor)] = [
+                ("\(vm.score)",                     "答对题数", colGreen),
+                ("\(vm.questions.count - vm.score)", "答错题数", colRed),
+                ("\(percentage)%",                   "正确率",   colAccent),
+            ]
+            for (i, (val, lbl, col)) in stats.enumerated() {
+                let x = margin + CGFloat(i) * (cardW + 8)
+                drawCard(x: x, y: cardY, w: cardW, h: cardH)
+                drawText(val, x: x, y: cardY + 10, width: cardW,
+                         font: .boldSystemFont(ofSize: 22), color: col, alignment: .center)
+                drawText(lbl, x: x, y: cardY + 38, width: cardW,
+                         font: .systemFont(ofSize: 11), color: colSecondary, alignment: .center)
+            }
+            currentY = cardY + cardH + 32
+
+            // 分隔线 + 题目列表标题
+            drawLine(y: currentY, color: colBorder)
+            currentY += 16
+            drawText("题目详情", x: margin, y: currentY, width: bodyW,
+                     font: .boldSystemFont(ofSize: 18), color: colPrimary, alignment: .left)
+            currentY += 28
+
+            // ── 逐题输出 ──────────────────────────────────
+            for (qi, question) in vm.questions.enumerated() {
+                let isCorrect = vm.isCorrect(at: qi)
+                let userAnswer = vm.userAnswers[qi]
+
+                // 估算此题所需高度
+                let qTextH = estimateTextHeight(question.text,
+                                                width: bodyW - 20,
+                                                font: .systemFont(ofSize: 13))
+                let optH = CGFloat(question.options.count) * 28
+                let blockH = 28 + qTextH + 8 + optH + 16
+                checkBreak(neededH: blockH)
+
+                let blockX = margin
+                let blockW = bodyW
+                let blockY = currentY
+
+                // 题目卡底色
+                drawCard(x: blockX, y: blockY, w: blockW, h: blockH)
+
+                // 题号 + 对错标记
+                let indexLabel = "\(qi + 1)"
+                let circleColor = isCorrect ? colGreen : colRed
+                drawCircle(x: blockX + 10, y: blockY + 8, diameter: 22,
+                           fillColor: circleColor.withAlphaComponent(0.15),
+                           strokeColor: circleColor)
+                drawText(indexLabel,
+                         x: blockX + 10, y: blockY + 10, width: 22,
+                         font: .boldSystemFont(ofSize: 11),
+                         color: circleColor, alignment: .center)
+
+                // 结果图标
+                let resultIcon = isCorrect ? "✓" : "✗"
+                drawText(resultIcon,
+                         x: blockX + blockW - 30, y: blockY + 10, width: 20,
+                         font: .boldSystemFont(ofSize: 14),
+                         color: circleColor, alignment: .center)
+
+                // 题目文本
+                let qX = blockX + 38
+                let qW = blockW - 50
+                drawText(question.text,
+                         x: qX, y: blockY + 8, width: qW,
+                         font: .systemFont(ofSize: 13),
+                         color: colPrimary, alignment: .left,
+                         multiline: true)
+                currentY = blockY + 8 + qTextH + 8
+
+                // 选项
+                for (oi, opt) in question.options.enumerated() {
+                    let label = ["A", "B", "C", "D"][safe: oi] ?? ""
+                    let isCorrectOpt = oi == question.correctIndex
+                    let isUserOpt    = oi == userAnswer
+
+                    let optColor: UIColor
+                    if isCorrectOpt       { optColor = colGreen }
+                    else if isUserOpt     { optColor = colRed }
+                    else                  { optColor = colSecondary }
+
+                    let optY = currentY
+                    let optX = blockX + 14
+
+                    // 字母标签
+                    drawText("\(label).",
+                             x: optX, y: optY, width: 20,
+                             font: .boldSystemFont(ofSize: 11),
+                             color: optColor, alignment: .left)
+
+                    // 选项文字
+                    var optText = opt
+                    if isCorrectOpt { optText += "  ✓" }
+                    else if isUserOpt && !isCorrect { optText += "  ✗" }
+
+                    drawText(optText,
+                             x: optX + 22, y: optY, width: qW - 22,
+                             font: .systemFont(ofSize: 11),
+                             color: optColor, alignment: .left)
+
+                    currentY += 26
+                }
+
+                // 若答错，加提示
+                if !isCorrect {
+                    let correctLabel = ["A","B","C","D"][safe: question.correctIndex] ?? ""
+                    let hintText = "正确答案：\(correctLabel). \(question.options[safe: question.correctIndex] ?? "")"
+                    drawText(hintText,
+                             x: blockX + 14, y: currentY, width: blockW - 20,
+                             font: .italicSystemFont(ofSize: 10),
+                             color: colGreen, alignment: .left)
+                    currentY += 16
+                }
+
+                currentY = blockY + blockH + 10
+            }
+
+            // 底部签名
+            checkBreak(neededH: 40)
+            drawLine(y: currentY, color: colBorder)
+            currentY += 10
+            drawText("由 QuizApp 生成 · \(dateF.string(from: Date()))",
+                     x: margin, y: currentY, width: bodyW,
+                     font: .italicSystemFont(ofSize: 10),
+                     color: colSecondary, alignment: .center)
+        }
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("quiz_result_\(Int(Date().timeIntervalSince1970)).pdf")
+        try? data.write(to: url)
+        return url
+    }
+
+    // MARK: 绘制工具
+
+    static func drawText(
+        _ text: String, x: CGFloat, y: CGFloat, width: CGFloat,
+        font: UIFont, color: UIColor, alignment: NSTextAlignment = .left,
+        multiline: Bool = false
+    ) {
+        let style = NSMutableParagraphStyle()
+        style.alignment = alignment
+        style.lineBreakMode = multiline ? .byWordWrapping : .byTruncatingTail
+
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: color,
+            .paragraphStyle: style
+        ]
+        let rect = CGRect(x: x, y: y, width: width,
+                          height: multiline ? 10000 : font.lineHeight + 4)
+        (text as NSString).draw(with: rect, options: multiline ? .usesLineFragmentOrigin : [],
+                                attributes: attrs, context: nil)
+    }
+
+    static func estimateTextHeight(_ text: String, width: CGFloat, font: UIFont) -> CGFloat {
+        let style = NSMutableParagraphStyle()
+        style.lineBreakMode = .byWordWrapping
+        let attrs: [NSAttributedString.Key: Any] = [.font: font, .paragraphStyle: style]
+        let rect = (text as NSString).boundingRect(
+            with: CGSize(width: width, height: 10000),
+            options: .usesLineFragmentOrigin,
+            attributes: attrs, context: nil
+        )
+        return ceil(rect.height) + 4
+    }
+
+    static func drawLine(y: CGFloat, color: UIColor) {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: margin, y: y))
+        path.addLine(to: CGPoint(x: pageW - margin, y: y))
+        color.setStroke()
+        path.lineWidth = 0.5
+        path.stroke()
+    }
+
+    static func drawCard(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
+        let rect = CGRect(x: x, y: y, width: w, height: h)
+        let path = UIBezierPath(roundedRect: rect, cornerRadius: 8)
+        colCard.setFill()
+        path.fill()
+        colBorder.setStroke()
+        path.lineWidth = 0.5
+        path.stroke()
+    }
+
+    static func drawCircle(x: CGFloat, y: CGFloat, diameter: CGFloat,
+                            fillColor: UIColor, strokeColor: UIColor) {
+        let rect = CGRect(x: x, y: y, width: diameter, height: diameter)
+        let path = UIBezierPath(ovalIn: rect)
+        fillColor.setFill(); path.fill()
+        strokeColor.setStroke(); path.lineWidth = 1; path.stroke()
+    }
+
+    static func drawBadge(text: String, x: CGFloat, y: CGFloat,
+                           bgColor: UIColor, textColor: UIColor) {
+        let font = UIFont.boldSystemFont(ofSize: 12)
+        let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: textColor]
+        let size = (text as NSString).size(withAttributes: attrs)
+        let padH: CGFloat = 12, padV: CGFloat = 5
+        let rect = CGRect(x: x, y: y, width: size.width + padH * 2, height: size.height + padV * 2)
+        let path = UIBezierPath(roundedRect: rect, cornerRadius: rect.height / 2)
+        bgColor.setFill(); path.fill()
+        (text as NSString).draw(at: CGPoint(x: x + padH, y: y + padV), withAttributes: attrs)
+    }
+}
+
+// MARK: - Array safe subscript（内部用）
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}
+
+// MARK: - PDF 预览视图
+
+struct PDFPreviewView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Coordinator { Coordinator(url: url) }
+
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let ql = QLPreviewController()
+        ql.dataSource = context.coordinator
+        ql.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .action,
+            target: context.coordinator,
+            action: #selector(Coordinator.share)
+        )
+        let nav = UINavigationController(rootViewController: ql)
+        nav.navigationBar.tintColor = UIColor(Color.quizPurpleLight)
+        return nav
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
+
+    class Coordinator: NSObject, QLPreviewControllerDataSource {
+        let url: URL
+        weak var qlVC: QLPreviewController?
+
+        init(url: URL) { self.url = url }
+
+        func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
+        func previewController(_ controller: QLPreviewController,
+                               previewItemAt index: Int) -> any QLPreviewItem {
+            self.qlVC = controller
+            return url as NSURL
+        }
+
+        @objc func share() {
+            let ac = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            qlVC?.present(ac, animated: true)
+        }
+    }
 }
