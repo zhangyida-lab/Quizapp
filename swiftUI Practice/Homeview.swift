@@ -113,7 +113,7 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
 
             if store.categories.isEmpty {
-                Text("暂无题目，请前往"题库"导入")
+                Text("暂无题目，请前往题库导入")
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)

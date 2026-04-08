@@ -170,7 +170,7 @@ struct PhotoCaptureView: View {
             VStack(alignment: .leading, spacing: 4) {
                 tipRow("拍摄题目时保持图片清晰、光线充足")
                 tipRow("OCR 识别完成后请仔细检查选项和正确答案")
-                tipRow("也可直接点击"编辑并保存"手动录入")
+                tipRow("也可直接点击编辑并保存手动录入")
             }
         }
         .padding(14).background(Color(red: 0.18, green: 0.18, blue: 0.10)).cornerRadius(12)

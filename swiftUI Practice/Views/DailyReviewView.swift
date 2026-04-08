@@ -128,7 +128,7 @@ struct DailyReviewView: View {
             if store.dailyQuestions.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray").font(.system(size: 40)).foregroundColor(.secondary)
-                    Text("暂无题目\n请先在"题库"中导入题目").font(.system(size: 14))
+                    Text("暂无题目\n请先在题库中导入题目").font(.system(size: 14))
                         .foregroundColor(.secondary).multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 40)
