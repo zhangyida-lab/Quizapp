@@ -77,7 +77,7 @@ class QuizViewModel: ObservableObject {
     }
 }
 
-enum OptionState { case normal, correct, wrong, dimmed }
+enum OptionState { case normal, correct, wrong, dimmed, selected }
 
 // MARK: - 答题容器
 
@@ -318,6 +318,8 @@ struct OptionButton: View {
                     Image(systemName: "checkmark.circle.fill").foregroundColor(Color.quizGreen).font(.system(size: 20))
                 } else if state == .wrong {
                     Image(systemName: "xmark.circle.fill").foregroundColor(Color.quizRed).font(.system(size: 20))
+                } else if state == .selected {
+                    Image(systemName: "circle.fill").foregroundColor(Color.quizPurpleLight).font(.system(size: 20))
                 }
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
@@ -330,32 +332,36 @@ struct OptionButton: View {
 
     var bgColor: Color {
         switch state {
-        case .correct: Color(red: 0.13, green: 0.26, blue: 0.17)
-        case .wrong:   Color(red: 0.26, green: 0.13, blue: 0.13)
-        case .dimmed:  Color.quizCard.opacity(0.6)
-        case .normal:  Color.quizCard
+        case .correct:  Color(red: 0.13, green: 0.26, blue: 0.17)
+        case .wrong:    Color(red: 0.26, green: 0.13, blue: 0.13)
+        case .selected: Color(red: 0.18, green: 0.22, blue: 0.38)
+        case .dimmed:   Color.quizCard.opacity(0.6)
+        case .normal:   Color.quizCard
         }
     }
     var borderColor: Color {
         switch state {
-        case .correct: Color.quizGreen
-        case .wrong:   Color.quizRed
-        default:       Color.quizBorder
+        case .correct:  Color.quizGreen
+        case .wrong:    Color.quizRed
+        case .selected: Color.quizPurpleLight
+        default:        Color.quizBorder
         }
     }
     var textColor: Color { state == .dimmed ? .secondary : .white }
     var badgeBg: Color {
         switch state {
-        case .correct: Color.quizGreen.opacity(0.3)
-        case .wrong:   Color.quizRed.opacity(0.3)
-        default:       Color.quizBorder
+        case .correct:  Color.quizGreen.opacity(0.3)
+        case .wrong:    Color.quizRed.opacity(0.3)
+        case .selected: Color.quizPurpleLight.opacity(0.3)
+        default:        Color.quizBorder
         }
     }
     var badgeFg: Color {
         switch state {
-        case .correct: Color.quizGreen
-        case .wrong:   Color.quizRed
-        default:       .secondary
+        case .correct:  Color.quizGreen
+        case .wrong:    Color.quizRed
+        case .selected: Color.quizPurpleLight
+        default:        .secondary
         }
     }
 }

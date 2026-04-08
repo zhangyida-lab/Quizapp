@@ -70,7 +70,50 @@ struct LibraryView: View {
 
     // MARK: 操作按钮
     var actionButtons: some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 10) {
+            // 生成试卷（主要入口）
+            NavigationLink(destination: ExamConfigView()) {
+                HStack(spacing: 8) {
+                    Image(systemName: "doc.text.magnifyingglass").font(.system(size: 16))
+                    Text("生成试卷").font(.system(size: 16, weight: .semibold))
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.system(size: 13)).foregroundColor(.white.opacity(0.6))
+                }
+                .foregroundColor(.white).padding(.horizontal, 16).padding(.vertical, 14)
+                .background(LinearGradient(
+                    colors: [Color.quizPurple, Color(red: 0.20, green: 0.55, blue: 0.80)],
+                    startPoint: .leading, endPoint: .trailing
+                ))
+                .cornerRadius(12)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(store.allQuestions.isEmpty)
+
+            // 历史试卷
+            NavigationLink(destination: ExamHistoryView()) {
+                HStack(spacing: 8) {
+                    Image(systemName: "clock.arrow.circlepath").font(.system(size: 16))
+                    Text("历史试卷").font(.system(size: 16, weight: .semibold))
+                    Spacer()
+                    if !store.examPapers.isEmpty {
+                        Text("\(store.examPapers.count)")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(Color.quizPurpleLight)
+                            .padding(.horizontal, 8).padding(.vertical, 3)
+                            .background(Color.quizPurple.opacity(0.25))
+                            .clipShape(Capsule())
+                    }
+                    Image(systemName: "chevron.right").font(.system(size: 13)).foregroundColor(Color.quizPurpleLight.opacity(0.6))
+                }
+                .foregroundColor(Color.quizPurpleLight)
+                .padding(.horizontal, 16).padding(.vertical, 14)
+                .background(Color.quizPurple.opacity(0.15))
+                .cornerRadius(12)
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.quizPurple.opacity(0.4), lineWidth: 1))
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            HStack(spacing: 12) {
             Button {
                 showImportPicker = true
             } label: {
@@ -99,7 +142,8 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .disabled(store.allQuestions.isEmpty)
-        }
+            } // end HStack（导入/导出）
+        } // end VStack
         .padding(.horizontal, 16)
     }
 

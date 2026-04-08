@@ -52,6 +52,7 @@ class QuizStore: ObservableObject {
     @Published var questionBanks: [QuestionBank] = []
     @Published var wrongRecords:  [WrongRecord]  = []
     @Published var dailyQuestions: [Question]    = []
+    @Published var examPapers:    [ExamPaper]    = []
 
     private var lastDailyDate: Date?
 
@@ -163,6 +164,31 @@ class QuizStore: ObservableObject {
         saveDailyCache()
     }
 
+    // MARK: 试卷管理
+    /// 创建并保存一份新试卷，返回其 id
+    @discardableResult
+    func saveExamPaper(config: ExamConfig, questions: [Question],
+                       scores: [Int]) -> UUID {
+        let title = config.autoTitle(actualCount: questions.count)
+        let paper = ExamPaper(title: title, config: config,
+                              questions: questions, questionScores: scores)
+        examPapers.insert(paper, at: 0)   // 最新在前
+        save()
+        return paper.id
+    }
+
+    /// 向已有试卷追加一次作答记录
+    func addAttempt(_ attempt: ExamAttempt, toPaperId id: UUID) {
+        guard let idx = examPapers.firstIndex(where: { $0.id == id }) else { return }
+        examPapers[idx].attempts.append(attempt)
+        save()
+    }
+
+    func deleteExamPaper(_ paper: ExamPaper) {
+        examPapers.removeAll { $0.id == paper.id }
+        save()
+    }
+
     // MARK: 题库管理
     func importBank(from data: Data) throws {
         let decoder = JSONDecoder()
@@ -227,12 +253,14 @@ class QuizStore: ObservableObject {
     private let recordsKey = "quiz_wrong_records_v2"
     private let dailyQKey  = "quiz_daily_questions_v2"
     private let dailyDKey  = "quiz_daily_date_v2"
+    private let papersKey  = "quiz_exam_papers_v1"
 
     func save() {
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .iso8601
         if let d = try? enc.encode(questionBanks)  { UserDefaults.standard.set(d, forKey: banksKey) }
         if let d = try? enc.encode(wrongRecords)   { UserDefaults.standard.set(d, forKey: recordsKey) }
+        if let d = try? enc.encode(examPapers)     { UserDefaults.standard.set(d, forKey: papersKey) }
     }
 
     func load() {
@@ -240,6 +268,8 @@ class QuizStore: ObservableObject {
         dec.dateDecodingStrategy = .iso8601
         if let d = UserDefaults.standard.data(forKey: banksKey),
            let b = try? dec.decode([QuestionBank].self, from: d) { questionBanks = b }
+        if let d = UserDefaults.standard.data(forKey: papersKey),
+           let p = try? dec.decode([ExamPaper].self, from: d)    { examPapers = p }
         if let d = UserDefaults.standard.data(forKey: recordsKey),
            let r = try? dec.decode([WrongRecord].self, from: d)  { wrongRecords = r }
         if let d = UserDefaults.standard.data(forKey: dailyQKey),
