@@ -815,12 +815,13 @@ enum QuizPDFGenerator {
                 let isCorrect = vm.isCorrect(at: qi)
                 let userAnswer = vm.userAnswers[qi]
 
-                // 估算此题所需高度
+                // 估算此题所需高度（宽度与实际渲染 qW = blockW-50 保持一致）
                 let qTextH = estimateTextHeight(question.text,
-                                                width: bodyW - 20,
+                                                width: bodyW - 50,
                                                 font: .systemFont(ofSize: 13))
-                let optH = CGFloat(question.options.count) * 28
-                let blockH = 28 + qTextH + 8 + optH + 16
+                let optH = CGFloat(question.options.count) * 26   // 与 currentY += 26 对齐
+                let hintH: CGFloat = isCorrect ? 0 : 16           // 错误提示行
+                let blockH = 24 + qTextH + 8 + optH + hintH
                 checkBreak(neededH: blockH)
 
                 let blockX = margin

@@ -557,7 +557,7 @@ enum BlankExamPDFGenerator {
                                fill: UIColor.white, stroke: colBorder)
                     drawTxt(label, x: margin + 24, y: y + 1, w: 15,
                             font: .boldSystemFont(ofSize: 9), color: colSecondary, align: .center)
-                    drawTxt("\(label). \(opt)", x: margin + 46, y: y, w: bodyW - 70,
+                    drawTxt(opt, x: margin + 46, y: y, w: bodyW - 70,
                             font: .systemFont(ofSize: 11), color: colPrimary, multi: true)
                     y += optH
                 }
