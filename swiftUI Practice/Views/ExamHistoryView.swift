@@ -382,6 +382,8 @@ private struct HistoryStatPill: View {
 
 #Preview {
     NavigationStack { ExamHistoryView() }
-        .environmentObject(QuizStore())
+        .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
         .preferredColorScheme(.dark)
 }

@@ -670,7 +670,9 @@ struct StatCard: View {
         categoryColor: Color(red: 0.20, green: 0.60, blue: 0.86),
         questions: BuiltInQuestions.geography
     )
-    .environmentObject(QuizStore())
+    .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
     .preferredColorScheme(.dark)
 }
 

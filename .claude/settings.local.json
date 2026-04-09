@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc -l \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/**/*.swift \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/*.swift)"
+      "Bash(wc -l \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/**/*.swift \"C:/Users/admin/Desktop/quizapp/Quizapp/swiftUI Practice\"/*.swift)",
+      "Bash(find \"C:/Users/admin/Desktop/quizapp/Quizapp\" -name \"*.swiftbak\" -type f -delete)"
     ]
   }
 }

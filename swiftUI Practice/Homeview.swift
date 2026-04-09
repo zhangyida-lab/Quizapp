@@ -350,6 +350,8 @@ struct FlowLayout: Layout {
     NavigationStack {
         HomeView()
     }
-    .environmentObject(QuizStore())
+    .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
     .preferredColorScheme(.dark)
 }
