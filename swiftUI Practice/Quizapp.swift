@@ -1039,6 +1039,15 @@ struct PDFPreviewView: UIViewControllerRepresentable {
 
         @objc func share() {
             let ac = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            if let popover = ac.popoverPresentationController {
+                popover.sourceView = qlVC?.view
+                popover.sourceRect = CGRect(
+                    x: (qlVC?.view.bounds.midX ?? 0),
+                    y: (qlVC?.view.bounds.midY ?? 0),
+                    width: 0, height: 0
+                )
+                popover.permittedArrowDirections = []
+            }
             qlVC?.present(ac, animated: true)
         }
     }
