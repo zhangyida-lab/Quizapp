@@ -231,7 +231,7 @@ struct QuestionImageView: View {
                 .frame(maxWidth: .infinity).frame(height: 180).clipped().cornerRadius(10)
 
         case .url, .file:
-            AsyncImage(url: URL(string: image.value)) { phase in
+            AsyncImage(url: image.resolvedURL) { phase in
                 switch phase {
                 case .empty:
                     ZStack {
@@ -271,7 +271,7 @@ struct ImageExpandedView: View {
                 case .asset:
                     Image(image.value).resizable().scaledToFit()
                 case .url, .file:
-                    AsyncImage(url: URL(string: image.value)) { phase in
+                    AsyncImage(url: image.resolvedURL) { phase in
                         if let img = phase.image { img.resizable().scaledToFit() }
                         else { ProgressView().tint(.white) }
                     }

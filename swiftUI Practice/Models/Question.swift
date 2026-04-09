@@ -9,6 +9,15 @@ struct QuestionImageData: Codable, Equatable, Hashable {
     }
     let type: ImageType
     let value: String
+
+    /// 适配 url / file 两种类型，返回正确构建的 URL
+    var resolvedURL: URL? {
+        switch type {
+        case .file:  return URL(fileURLWithPath: value)
+        case .url:   return URL(string: value)
+        case .asset: return nil
+        }
+    }
 }
 
 // MARK: - 题目模型
