@@ -246,14 +246,18 @@ final class QuizStoreTests: XCTestCase {
     func test_exportBank_decodableBack() throws {
         let bank = store.questionBanks.first!
         let data = try store.exportBank(bank)
-        let decoded = try JSONDecoder().decode(QuestionBank.self, from: data)
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .iso8601
+        let decoded = try dec.decode(QuestionBank.self, from: data)
         XCTAssertEqual(decoded.name, bank.name)
         XCTAssertEqual(decoded.questions.count, bank.questions.count)
     }
 
     func test_exportAllAsBank_includesAllEnabledQuestions() throws {
         let data = try store.exportAllAsBank()
-        let decoded = try JSONDecoder().decode(QuestionBank.self, from: data)
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .iso8601
+        let decoded = try dec.decode(QuestionBank.self, from: data)
         XCTAssertEqual(decoded.questions.count, store.allQuestions.count)
     }
 
