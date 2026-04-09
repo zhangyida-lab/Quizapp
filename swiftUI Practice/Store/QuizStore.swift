@@ -181,11 +181,11 @@ class QuizStore: ObservableObject {
             }
         result.append(contentsOf: visibleDue.prefix(15))
 
-        // 2. 随机新题补充到 20 题
+        // 2. 随机新题补充到 20 题（排除所有 due 错题，确保 due 题不超过 15 道）
         if result.count < 20 {
             let existingIds = Set(result.map { $0.id })
             let fillQs = visibleQuestions
-                .filter { !existingIds.contains($0.id) }
+                .filter { !existingIds.contains($0.id) && !dueIds.contains($0.id) }
                 .shuffled()
                 .prefix(20 - result.count)
             result.append(contentsOf: fillQs)
