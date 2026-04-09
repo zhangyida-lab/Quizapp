@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import SwiftData 
 
 // MARK: - 题库管理
 

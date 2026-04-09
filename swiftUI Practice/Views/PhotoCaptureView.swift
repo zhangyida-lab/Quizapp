@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import Vision
+import SwiftData 
 
 // MARK: - 拍照录题视图
 

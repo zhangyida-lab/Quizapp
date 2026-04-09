@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData 
 
 // MARK: - 历史试卷列表
 

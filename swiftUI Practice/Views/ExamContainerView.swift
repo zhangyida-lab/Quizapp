@@ -1,6 +1,7 @@
 import SwiftUI
 import QuickLook
 import UIKit
+import SwiftData 
 
 // MARK: - 考试容器
 

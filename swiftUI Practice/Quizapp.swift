@@ -1,6 +1,7 @@
 import SwiftUI
 import QuickLook
 import UIKit
+import SwiftData 
 
 // MARK: - 颜色主题
 

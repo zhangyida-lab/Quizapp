@@ -1,5 +1,6 @@
 import SwiftUI
 import QuickLook
+import SwiftData 
 
 // MARK: - 试卷配置页
 

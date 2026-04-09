@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData 
 
 // MARK: - 今日推荐视图
 
