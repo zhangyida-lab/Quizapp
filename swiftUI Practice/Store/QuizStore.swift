@@ -290,6 +290,23 @@ class QuizStore: ObservableObject {
         save()
     }
 
+    func renameCategory(from oldName: String, to newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != oldName else { return }
+        for bi in questionBanks.indices {
+            for qi in questionBanks[bi].questions.indices
+                where questionBanks[bi].questions[qi].category == oldName {
+                questionBanks[bi].questions[qi].category = trimmed
+            }
+        }
+        if hiddenCategories.contains(oldName) {
+            hiddenCategories.remove(oldName)
+            hiddenCategories.insert(trimmed)
+        }
+        generateDailyRecommendations()
+        save()
+    }
+
     func addQuestion(_ question: Question) {
         if let idx = questionBanks.firstIndex(where: { !$0.isBuiltIn }) {
             questionBanks[idx].questions.append(question)

@@ -20,6 +20,9 @@ struct LibraryView: View {
     @State private var qrBankName: String  = ""
     @State private var showQRSheet         = false
     @State private var showQRScanner       = false
+    @State private var renamingCategory: CategoryInfo? = nil
+    @State private var renameText: String  = ""
+    @State private var showRenameAlert     = false
 
     var body: some View {
         ZStack {
@@ -79,6 +82,20 @@ struct LibraryView: View {
                 bankToDelete = nil
             }
             Button("取消", role: .cancel) { bankToDelete = nil }
+        }
+        .alert("重命名分类", isPresented: $showRenameAlert) {
+            TextField("新分类名称", text: $renameText)
+            Button("确定") {
+                if let cat = renamingCategory {
+                    store.renameCategory(from: cat.name, to: renameText)
+                }
+                renamingCategory = nil
+            }
+            Button("取消", role: .cancel) { renamingCategory = nil }
+        } message: {
+            if let cat = renamingCategory {
+                Text("将把「\(cat.name)」下 \(cat.questionCount) 道题的分类名一并修改")
+            }
         }
     }
 
@@ -250,6 +267,18 @@ struct LibraryView: View {
                                 .background(Color.quizBorder)
                                 .cornerRadius(6)
                         }
+
+                        Button {
+                            renamingCategory = cat
+                            renameText = cat.name
+                            showRenameAlert = true
+                        } label: {
+                            Image(systemName: "pencil")
+                                .font(.system(size: 13))
+                                .foregroundColor(.secondary)
+                                .padding(6)
+                        }
+                        .buttonStyle(PlainButtonStyle())
 
                         Toggle("", isOn: Binding(
                             get: { !store.isCategoryHidden(cat.name) },
