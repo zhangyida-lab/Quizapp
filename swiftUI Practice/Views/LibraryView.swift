@@ -12,6 +12,9 @@ struct LibraryView: View {
     @State private var showImportError   = false
     @State private var bankToDelete: QuestionBank? = nil
     @State private var showDeleteConfirm = false
+    @State private var isExporting       = false
+    @State private var exportError: String? = nil
+    @State private var showExportError   = false
 
     var body: some View {
         ZStack {
@@ -51,6 +54,11 @@ struct LibraryView: View {
             Button("好的") {}
         } message: {
             Text(importError ?? "JSON 格式不正确，请检查文件内容")
+        }
+        .alert("导出失败", isPresented: $showExportError) {
+            Button("好的") {}
+        } message: {
+            Text(exportError ?? "图片上传失败，请检查网络连接")
         }
         .confirmationDialog("确定删除这个题库？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("删除", role: .destructive) {
@@ -130,22 +138,22 @@ struct LibraryView: View {
             .buttonStyle(PlainButtonStyle())
 
             Button {
-                if let data = try? store.exportAllAsBank(),
-                   let url = writeTempFile(data, name: "all_questions") {
-                    exportURL = url
-                    showExportSheet = true
-                }
+                Task { await exportAll() }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "square.and.arrow.up.fill").font(.system(size: 15))
-                    Text("导出全部").font(.system(size: 15, weight: .semibold))
+                    if isExporting {
+                        ProgressView().tint(Color.quizPurpleLight).scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "square.and.arrow.up.fill").font(.system(size: 15))
+                    }
+                    Text(isExporting ? "上传图片中…" : "导出全部").font(.system(size: 15, weight: .semibold))
                 }
                 .foregroundColor(Color.quizPurpleLight).frame(maxWidth: .infinity).padding(.vertical, 14)
                 .background(Color.quizPurple.opacity(0.2)).cornerRadius(12)
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.quizPurple.opacity(0.5), lineWidth: 1))
             }
             .buttonStyle(PlainButtonStyle())
-            .disabled(store.allQuestions.isEmpty)
+            .disabled(store.allQuestions.isEmpty || isExporting)
             } // end HStack（导入/导出）
         } // end VStack
         .padding(.horizontal, 16)
@@ -231,11 +239,7 @@ struct LibraryView: View {
                     BankCard(bank: bank,
                              onToggle: { store.toggleBankEnabled(bank) },
                              onExport: {
-                                 if let data = try? store.exportBank(bank),
-                                    let url = writeTempFile(data, name: bank.name) {
-                                     exportURL = url
-                                     showExportSheet = true
-                                 }
+                                 Task { await exportBank(bank) }
                              },
                              onDelete: {
                                  if !bank.isBuiltIn {
@@ -292,6 +296,37 @@ struct LibraryView: View {
             .appendingPathComponent("\(safeName).json")
         try? data.write(to: url)
         return url
+    }
+
+    // MARK: 导出处理（async，自动上传本地图片）
+    func exportAll() async {
+        isExporting = true
+        defer { isExporting = false }
+        do {
+            let data = try await store.exportAllAsBankForSharing()
+            if let url = writeTempFile(data, name: "all_questions") {
+                exportURL = url
+                showExportSheet = true
+            }
+        } catch {
+            exportError = error.localizedDescription
+            showExportError = true
+        }
+    }
+
+    func exportBank(_ bank: QuestionBank) async {
+        isExporting = true
+        defer { isExporting = false }
+        do {
+            let data = try await store.exportBankForSharing(bank)
+            if let url = writeTempFile(data, name: bank.name) {
+                exportURL = url
+                showExportSheet = true
+            }
+        } catch {
+            exportError = error.localizedDescription
+            showExportError = true
+        }
     }
 
     // MARK: 导入处理

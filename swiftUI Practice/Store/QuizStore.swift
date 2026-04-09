@@ -249,6 +249,30 @@ class QuizStore: ObservableObject {
         return try exportBank(combined)
     }
 
+    // MARK: 带图片上传的导出（用于分享）
+    /// 将本地 .file 图片上传到 Cloudinary，替换为公开 URL 后导出
+    func exportBankForSharing(_ bank: QuestionBank) async throws -> Data {
+        var uploadedBank = bank
+        for i in uploadedBank.questions.indices {
+            guard let img = uploadedBank.questions[i].image,
+                  img.type == .file else { continue }
+            let fileURL  = URL(fileURLWithPath: img.value)
+            let remoteURL = try await CloudinaryUploader.upload(fileURL: fileURL)
+            uploadedBank.questions[i].image = QuestionImageData(type: .url, value: remoteURL)
+        }
+        return try exportBank(uploadedBank)
+    }
+
+    func exportAllAsBankForSharing() async throws -> Data {
+        let combined = QuestionBank(
+            name: "全部题库导出",
+            version: "1.0",
+            description: "包含所有已启用题库的题目",
+            questions: allQuestions
+        )
+        return try await exportBankForSharing(combined)
+    }
+
     func deleteBank(_ bank: QuestionBank) {
         questionBanks.removeAll { $0.id == bank.id }
         save()
