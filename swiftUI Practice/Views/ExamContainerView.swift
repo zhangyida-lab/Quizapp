@@ -552,9 +552,9 @@ enum BlankExamPDFGenerator {
                     let label = labels[safe: j] ?? ""
                     let optH = max(18, estimateH(opt, w: bodyW - 60,
                                                  font: .systemFont(ofSize: 11)) + 4)
-                    // 选项：字母 + 文字同基线对齐，无圆圈
+                    // 选项：字母 + 文字均使用 multi:true，确保 y 均为文字顶部，水平对齐
                     drawTxt("\(label).", x: margin + 24, y: y, w: 18,
-                            font: .boldSystemFont(ofSize: 11), color: colSecondary)
+                            font: .boldSystemFont(ofSize: 11), color: colSecondary, multi: true)
                     drawTxt(opt, x: margin + 44, y: y, w: bodyW - 68,
                             font: .systemFont(ofSize: 11), color: colPrimary, multi: true)
                     y += optH
