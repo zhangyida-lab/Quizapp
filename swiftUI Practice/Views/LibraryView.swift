@@ -12,9 +12,12 @@ struct LibraryView: View {
     @State private var showImportError   = false
     @State private var bankToDelete: QuestionBank? = nil
     @State private var showDeleteConfirm = false
-    @State private var isExporting       = false
+    @State private var isExporting        = false
     @State private var exportError: String? = nil
-    @State private var showExportError   = false
+    @State private var showExportError    = false
+    @State private var qrShareURL: String? = nil
+    @State private var qrBankName: String  = ""
+    @State private var showQRSheet         = false
 
     var body: some View {
         ZStack {
@@ -59,6 +62,11 @@ struct LibraryView: View {
             Button("好的") {}
         } message: {
             Text(exportError ?? "图片上传失败，请检查网络连接")
+        }
+        .sheet(isPresented: $showQRSheet) {
+            if let url = qrShareURL {
+                QRCodeShareView(bankName: qrBankName, shareURL: url)
+            }
         }
         .confirmationDialog("确定删除这个题库？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("删除", role: .destructive) {
@@ -137,6 +145,7 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainButtonStyle())
 
+            // 导出全部（JSON 文件）
             Button {
                 Task { await exportAll() }
             } label: {
@@ -146,7 +155,7 @@ struct LibraryView: View {
                     } else {
                         Image(systemName: "square.and.arrow.up.fill").font(.system(size: 15))
                     }
-                    Text(isExporting ? "上传图片中…" : "导出全部").font(.system(size: 15, weight: .semibold))
+                    Text(isExporting ? "上传中…" : "导出全部").font(.system(size: 15, weight: .semibold))
                 }
                 .foregroundColor(Color.quizPurpleLight).frame(maxWidth: .infinity).padding(.vertical, 14)
                 .background(Color.quizPurple.opacity(0.2)).cornerRadius(12)
@@ -155,6 +164,25 @@ struct LibraryView: View {
             .buttonStyle(PlainButtonStyle())
             .disabled(store.allQuestions.isEmpty || isExporting)
             } // end HStack（导入/导出）
+
+            // 生成全部题库二维码
+            Button {
+                Task { await generateQRForAll() }
+            } label: {
+                HStack(spacing: 8) {
+                    if isExporting {
+                        ProgressView().tint(.white).scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "qrcode").font(.system(size: 15))
+                    }
+                    Text(isExporting ? "生成中…" : "生成分享二维码").font(.system(size: 15, weight: .semibold))
+                }
+                .foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 14)
+                .background(isExporting ? Color.quizPurple.opacity(0.5) : Color.quizPurple)
+                .cornerRadius(12)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(store.allQuestions.isEmpty || isExporting)
         } // end VStack
         .padding(.horizontal, 16)
     }
@@ -240,6 +268,9 @@ struct LibraryView: View {
                              onToggle: { store.toggleBankEnabled(bank) },
                              onExport: {
                                  Task { await exportBank(bank) }
+                             },
+                             onQRShare: {
+                                 Task { await generateQR(for: bank) }
                              },
                              onDelete: {
                                  if !bank.isBuiltIn {
@@ -329,6 +360,34 @@ struct LibraryView: View {
         }
     }
 
+    func generateQRForAll() async {
+        isExporting = true
+        defer { isExporting = false }
+        do {
+            let url = try await store.shareAllBanksAsURL()
+            qrShareURL = url
+            qrBankName = "全部题库"
+            showQRSheet = true
+        } catch {
+            exportError = error.localizedDescription
+            showExportError = true
+        }
+    }
+
+    func generateQR(for bank: QuestionBank) async {
+        isExporting = true
+        defer { isExporting = false }
+        do {
+            let url = try await store.shareBankAsURL(bank)
+            qrShareURL = url
+            qrBankName = bank.name
+            showQRSheet = true
+        } catch {
+            exportError = error.localizedDescription
+            showExportError = true
+        }
+    }
+
     // MARK: 导入处理
     func handleImport(_ result: Result<[URL], Error>) {
         switch result {
@@ -356,6 +415,7 @@ struct BankCard: View {
     let bank: QuestionBank
     let onToggle: () -> Void
     let onExport: () -> Void
+    let onQRShare: () -> Void
     let onDelete: () -> Void
 
     var body: some View {
@@ -395,6 +455,8 @@ struct BankCard: View {
 
             HStack(spacing: 0) {
                 bankActionButton(icon: "square.and.arrow.up", label: "导出", action: onExport)
+                Divider().background(Color.quizBorder).frame(height: 30)
+                bankActionButton(icon: "qrcode", label: "二维码", action: onQRShare)
                 if !bank.isBuiltIn {
                     Divider().background(Color.quizBorder).frame(height: 30)
                     bankActionButton(icon: "trash", label: "删除", color: Color.quizRed, action: onDelete)

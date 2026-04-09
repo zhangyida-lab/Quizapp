@@ -273,6 +273,17 @@ class QuizStore: ObservableObject {
         return try await exportBankForSharing(combined)
     }
 
+    /// 上传图片 + 上传 JSON → 返回可扫码的公开 URL
+    func shareBankAsURL(_ bank: QuestionBank) async throws -> String {
+        let jsonData = try await exportBankForSharing(bank)
+        return try await CloudinaryUploader.uploadJSON(jsonData, name: bank.name)
+    }
+
+    func shareAllBanksAsURL() async throws -> String {
+        let jsonData = try await exportAllAsBankForSharing()
+        return try await CloudinaryUploader.uploadJSON(jsonData, name: "全部题库")
+    }
+
     func deleteBank(_ bank: QuestionBank) {
         questionBanks.removeAll { $0.id == bank.id }
         save()
