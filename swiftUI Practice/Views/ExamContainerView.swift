@@ -552,16 +552,10 @@ enum BlankExamPDFGenerator {
                     let label = labels[safe: j] ?? ""
                     let optH = max(18, estimateH(opt, w: bodyW - 60,
                                                  font: .systemFont(ofSize: 11)) + 4)
-                    // 选项字母圆圈
-                    let circleD: CGFloat = 15
-                    let labelFont = UIFont.boldSystemFont(ofSize: 9)
-                    drawCircle(x: margin + 24, y: y, d: circleD,
-                               fill: UIColor.white, stroke: colBorder)
-                    // 垂直居中：将文字行高在圆圈内居中
-                    let labelY = y + (circleD - labelFont.lineHeight) / 2
-                    drawTxt(label, x: margin + 24, y: labelY, w: circleD,
-                            font: labelFont, color: colSecondary, align: .center)
-                    drawTxt(opt, x: margin + 46, y: y, w: bodyW - 70,
+                    // 选项：字母 + 文字同基线对齐，无圆圈
+                    drawTxt("\(label).", x: margin + 24, y: y, w: 18,
+                            font: .boldSystemFont(ofSize: 11), color: colSecondary)
+                    drawTxt(opt, x: margin + 44, y: y, w: bodyW - 68,
                             font: .systemFont(ofSize: 11), color: colPrimary, multi: true)
                     y += optH
                 }
