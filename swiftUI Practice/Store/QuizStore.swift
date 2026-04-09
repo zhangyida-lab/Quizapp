@@ -53,6 +53,7 @@ class QuizStore: ObservableObject {
     @Published var wrongRecords:  [WrongRecord]  = []
     @Published var dailyQuestions: [Question]    = []
     @Published var examPapers:    [ExamPaper]    = []
+    @Published var hiddenCategories: Set<String> = []
 
     private var lastDailyDate: Date?
 
@@ -61,11 +62,31 @@ class QuizStore: ObservableObject {
         questionBanks.filter { $0.isEnabled }.flatMap { $0.questions }
     }
 
-    var categories: [CategoryInfo] {
+    /// 所有分类（含隐藏），用于管理界面
+    var allCategories: [CategoryInfo] {
         let grouped = Dictionary(grouping: allQuestions, by: { $0.category })
         return grouped
             .map { CategoryInfo(id: $0.key, name: $0.key, questionCount: $0.value.count) }
             .sorted { $0.name < $1.name }
+    }
+
+    /// 可见分类（已过滤隐藏），用于首页展示
+    var categories: [CategoryInfo] {
+        allCategories.filter { !hiddenCategories.contains($0.name) }
+    }
+
+    func isCategoryHidden(_ name: String) -> Bool {
+        hiddenCategories.contains(name)
+    }
+
+    func toggleCategoryHidden(_ name: String) {
+        if hiddenCategories.contains(name) {
+            hiddenCategories.remove(name)
+        } else {
+            hiddenCategories.insert(name)
+        }
+        generateDailyRecommendations()
+        save()
     }
 
     func questions(for categoryName: String) -> [Question] {
@@ -140,19 +161,30 @@ class QuizStore: ObservableObject {
     }
 
     func generateDailyRecommendations() {
-        guard !allQuestions.isEmpty else {
+        let visibleQuestions = allQuestions.filter { !hiddenCategories.contains($0.category) }
+        guard !visibleQuestions.isEmpty else {
             dailyQuestions = []
+            lastDailyDate = Date()
+            saveDailyCache()
             return
         }
         var result: [Question] = []
 
-        // 1. 到期错题优先（最多 15 题）
-        result.append(contentsOf: dueQuestions.prefix(15))
+        // 1. 到期错题优先（最多 15 题，只取可见分类）
+        let dueIds = Set(wrongRecords.filter { $0.isDue }.map { $0.questionId })
+        let visibleDue = visibleQuestions
+            .filter { dueIds.contains($0.id) }
+            .sorted { q1, q2 in
+                let p1 = wrongRecords.first { $0.questionId == q1.id }?.priorityScore ?? 0
+                let p2 = wrongRecords.first { $0.questionId == q2.id }?.priorityScore ?? 0
+                return p1 > p2
+            }
+        result.append(contentsOf: visibleDue.prefix(15))
 
         // 2. 随机新题补充到 20 题
         if result.count < 20 {
             let existingIds = Set(result.map { $0.id })
-            let fillQs = allQuestions
+            let fillQs = visibleQuestions
                 .filter { !existingIds.contains($0.id) }
                 .shuffled()
                 .prefix(20 - result.count)
@@ -249,31 +281,35 @@ class QuizStore: ObservableObject {
     }
 
     // MARK: 持久化
-    private let banksKey   = "quiz_banks_v2"
-    private let recordsKey = "quiz_wrong_records_v2"
-    private let dailyQKey  = "quiz_daily_questions_v2"
-    private let dailyDKey  = "quiz_daily_date_v2"
-    private let papersKey  = "quiz_exam_papers_v1"
+    private let banksKey      = "quiz_banks_v2"
+    private let recordsKey    = "quiz_wrong_records_v2"
+    private let dailyQKey     = "quiz_daily_questions_v2"
+    private let dailyDKey     = "quiz_daily_date_v2"
+    private let papersKey     = "quiz_exam_papers_v1"
+    private let hiddenCatKey  = "quiz_hidden_categories_v1"
 
     func save() {
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .iso8601
-        if let d = try? enc.encode(questionBanks)  { UserDefaults.standard.set(d, forKey: banksKey) }
-        if let d = try? enc.encode(wrongRecords)   { UserDefaults.standard.set(d, forKey: recordsKey) }
-        if let d = try? enc.encode(examPapers)     { UserDefaults.standard.set(d, forKey: papersKey) }
+        if let d = try? enc.encode(questionBanks)           { UserDefaults.standard.set(d, forKey: banksKey) }
+        if let d = try? enc.encode(wrongRecords)            { UserDefaults.standard.set(d, forKey: recordsKey) }
+        if let d = try? enc.encode(examPapers)              { UserDefaults.standard.set(d, forKey: papersKey) }
+        if let d = try? enc.encode(Array(hiddenCategories)) { UserDefaults.standard.set(d, forKey: hiddenCatKey) }
     }
 
     func load() {
         let dec = JSONDecoder()
         dec.dateDecodingStrategy = .iso8601
         if let d = UserDefaults.standard.data(forKey: banksKey),
-           let b = try? dec.decode([QuestionBank].self, from: d) { questionBanks = b }
+           let b = try? dec.decode([QuestionBank].self, from: d)  { questionBanks = b }
         if let d = UserDefaults.standard.data(forKey: papersKey),
-           let p = try? dec.decode([ExamPaper].self, from: d)    { examPapers = p }
+           let p = try? dec.decode([ExamPaper].self, from: d)     { examPapers = p }
         if let d = UserDefaults.standard.data(forKey: recordsKey),
-           let r = try? dec.decode([WrongRecord].self, from: d)  { wrongRecords = r }
+           let r = try? dec.decode([WrongRecord].self, from: d)   { wrongRecords = r }
         if let d = UserDefaults.standard.data(forKey: dailyQKey),
-           let q = try? dec.decode([Question].self, from: d)     { dailyQuestions = q }
+           let q = try? dec.decode([Question].self, from: d)      { dailyQuestions = q }
+        if let d = UserDefaults.standard.data(forKey: hiddenCatKey),
+           let c = try? dec.decode([String].self, from: d)        { hiddenCategories = Set(c) }
         lastDailyDate = UserDefaults.standard.object(forKey: dailyDKey) as? Date
     }
 

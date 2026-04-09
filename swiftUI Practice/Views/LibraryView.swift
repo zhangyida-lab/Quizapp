@@ -21,6 +21,9 @@ struct LibraryView: View {
                 VStack(spacing: 20) {
                     summarySection
                     actionButtons
+                    if !store.allCategories.isEmpty {
+                        categoryManageSection
+                    }
                     bankListSection
                     Spacer(minLength: 40)
                 }
@@ -146,6 +149,75 @@ struct LibraryView: View {
             } // end HStack（导入/导出）
         } // end VStack
         .padding(.horizontal, 16)
+    }
+
+    // MARK: 分类管理
+    var categoryManageSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("分类管理").font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
+                Spacer()
+                let hiddenCount = store.allCategories.filter { store.isCategoryHidden($0.name) }.count
+                if hiddenCount > 0 {
+                    Text("已隐藏 \(hiddenCount) 个")
+                        .font(.system(size: 12)).foregroundColor(.secondary)
+                }
+            }
+            .padding(.horizontal, 16)
+
+            VStack(spacing: 0) {
+                ForEach(store.allCategories) { cat in
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(cat.color.opacity(store.isCategoryHidden(cat.name) ? 0.06 : 0.15))
+                                .frame(width: 34, height: 34)
+                            Image(systemName: cat.icon)
+                                .font(.system(size: 15))
+                                .foregroundColor(store.isCategoryHidden(cat.name) ? cat.color.opacity(0.35) : cat.color)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(cat.name)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(store.isCategoryHidden(cat.name) ? .secondary : .white)
+                            Text("\(cat.questionCount) 题")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        if store.isCategoryHidden(cat.name) {
+                            Text("已隐藏")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(Color.quizBorder)
+                                .cornerRadius(6)
+                        }
+
+                        Toggle("", isOn: Binding(
+                            get: { !store.isCategoryHidden(cat.name) },
+                            set: { _ in store.toggleCategoryHidden(cat.name) }
+                        ))
+                        .tint(cat.color)
+                        .labelsHidden()
+                        .scaleEffect(0.85)
+                    }
+                    .padding(.horizontal, 14).padding(.vertical, 10)
+                    .opacity(store.isCategoryHidden(cat.name) ? 0.6 : 1.0)
+
+                    if cat.id != store.allCategories.last?.id {
+                        Divider().background(Color.quizBorder).padding(.leading, 60)
+                    }
+                }
+            }
+            .background(Color.quizCard)
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.quizBorder, lineWidth: 0.5))
+            .padding(.horizontal, 16)
+        }
     }
 
     // MARK: 题库列表
