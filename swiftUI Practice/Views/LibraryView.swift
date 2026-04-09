@@ -18,6 +18,7 @@ struct LibraryView: View {
     @State private var qrShareURL: String? = nil
     @State private var qrBankName: String  = ""
     @State private var showQRSheet         = false
+    @State private var showQRScanner       = false
 
     var body: some View {
         ZStack {
@@ -67,6 +68,9 @@ struct LibraryView: View {
             if let url = qrShareURL {
                 QRCodeShareView(bankName: qrBankName, shareURL: url)
             }
+        }
+        .sheet(isPresented: $showQRScanner) {
+            QRImportView()
         }
         .confirmationDialog("确定删除这个题库？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("删除", role: .destructive) {
@@ -145,6 +149,20 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainButtonStyle())
 
+            Button {
+                showQRScanner = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "qrcode.viewfinder").font(.system(size: 15))
+                    Text("扫码导入").font(.system(size: 15, weight: .semibold))
+                }
+                .foregroundColor(Color.quizPurpleLight).frame(maxWidth: .infinity).padding(.vertical, 14)
+                .background(Color.quizPurple.opacity(0.2)).cornerRadius(12)
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.quizPurple.opacity(0.5), lineWidth: 1))
+            }
+            .buttonStyle(PlainButtonStyle())
+            } // end HStack（导入 / 扫码）
+
             // 导出全部（JSON 文件）
             Button {
                 Task { await exportAll() }
@@ -163,7 +181,6 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .disabled(store.allQuestions.isEmpty || isExporting)
-            } // end HStack（导入/导出）
 
             // 生成全部题库二维码
             Button {
