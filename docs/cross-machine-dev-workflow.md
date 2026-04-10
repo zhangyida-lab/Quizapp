@@ -97,7 +97,105 @@ Claude Code 的对话记忆（`~/.claude/`）存储在**本地机器**，不随 
 
 ---
 
-## 三、完整的切换机器流程
+## 三、本项目当前需要在 Xcode 完成的配置（一次性）
+
+> 以下配置在 Windows 端已完成代码编写，需要在 Mac 上用 Xcode 操作一次。
+> **配置完成后务必 commit `project.pbxproj` 和 `.entitlements` 文件，之后所有机器 pull 即可，无需重复配置。**
+
+### 3.1 注册 URL Scheme（Widget 点击跳转 App）
+
+1. Xcode 左侧选择项目根节点 → 选中 **swiftUI Practice** target
+2. 切换到 **Info** 标签页
+3. 找到 **URL Types** 一栏，点击 `+`
+4. 填写：
+   - **Identifier**：`com.acspace.swiftUI-Practice`
+   - **URL Schemes**：`quizapp`
+
+作用：Widget 点击后通过 `quizapp://vocabulary` 唤起 App 并跳转到词汇 Tab。
+
+---
+
+### 3.2 为主 App 开启 App Groups
+
+1. 选中 **swiftUI Practice** target → **Signing & Capabilities**
+2. 点击左上角 `+ Capability`，选择 **App Groups**
+3. 点击 `+` 添加：`group.com.acspace.swiftUI-Practice`
+
+作用：让主 App 和 Widget Extension 共享同一个 `UserDefaults`，Widget 才能读取词汇学习数据。
+
+---
+
+### 3.3 创建 Widget Extension Target
+
+1. 菜单栏 **File → New → Target**
+2. 选择 **Widget Extension**，点击 Next
+3. 填写：
+   - **Product Name**：`VocabWidget`
+   - **Include Configuration App Intent**：**不要勾选**
+4. 点击 Finish，弹出提示选 **Activate**
+5. Xcode 会自动生成一些模板文件（`VocabWidget.swift` 等），**全部删除**，因为我们已经写好了 `VocabWidget/VocabWidget.swift`
+
+---
+
+### 3.4 配置 VocabWidget Target
+
+#### 开启 App Groups
+1. 选中 **VocabWidget** target → **Signing & Capabilities**
+2. 点击 `+ Capability` → **App Groups**
+3. 添加：`group.com.acspace.swiftUI-Practice`（与主 App 相同）
+
+#### 添加共享文件到 Target Membership
+Widget Extension 需要用到主 App 里的两个文件，要在 File Inspector 里勾选它们属于 VocabWidget target：
+
+| 文件 | 路径 |
+|------|------|
+| `Word.swift` | `swiftUI Practice/Models/Word.swift` |
+| `VocabSharedHelper.swift` | `swiftUI Practice/Store/VocabSharedHelper.swift` |
+
+操作方式：在 Xcode 左侧点击对应文件 → 右侧面板 **File Inspector** → **Target Membership** → 勾选 `VocabWidget`
+
+> ⚠️ `VocabWidget.swift` 本身已在 `VocabWidget/` 文件夹内，Xcode 创建 target 时会自动归属，无需手动勾选。
+
+---
+
+### 3.5 把 WordBooks 文件夹加入 App Bundle
+
+内置词库的 JSON 文件需要打包进 App，否则运行时无法读取：
+
+1. 在 Xcode 左侧 Project Navigator 中，将 `WordBooks/` 文件夹拖入项目
+2. 弹窗选项中选择 **"Create folder references"**（图标为蓝色文件夹，不是黄色 Group）
+3. **Destination**：勾选 **Copy items if needed**
+4. **Add to targets**：勾选 **swiftUI Practice**（主 App），VocabWidget 不需要
+5. 拖入后，在 **Build Phases → Copy Bundle Resources** 里确认 11 个 JSON 文件都在列表中
+
+---
+
+### 3.6 配置完成后 commit（关键步骤）
+
+```bash
+git add "swiftUI Practice.xcodeproj/project.pbxproj"
+git add "swiftUI Practice/swiftUI_Practice.entitlements"
+git add "VocabWidget/VocabWidget.entitlements"
+git commit -m "chore: configure VocabWidget target, App Groups, URL scheme, and bundle resources"
+git push
+```
+
+**commit 之后，下次任意机器 pull，以上所有配置自动生效，无需重做。**
+
+---
+
+### 3.7 验证配置是否成功
+
+| 验证项 | 方法 |
+|--------|------|
+| App Groups | 真机运行，词汇数据能正常保存和读取 |
+| Widget 显示 | 在主屏幕长按 → 添加小组件 → 找到"词汇学习" |
+| Widget 点击跳转 | 点击 Widget 能打开 App 并跳转到词汇 Tab |
+| Siri 快捷指令 | Siri 说"添加生词 hello"能响应 |
+
+---
+
+## 四、完整的日常切换机器流程
 
 ### 离开当前机器（Windows 或 Mac）
 
