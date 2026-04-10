@@ -66,6 +66,11 @@ struct MainTabView: View {
             .tag(5)
         }
         .tint(Color.quizPurpleLight)
+        .onOpenURL { url in
+            if url.scheme == "quizapp" && url.host == "vocabulary" {
+                selectedTab = 3
+            }
+        }
     }
 }
 

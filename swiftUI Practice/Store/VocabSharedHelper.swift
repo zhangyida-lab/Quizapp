@@ -1,5 +1,11 @@
 import Foundation
 
+// MARK: - App Groups 共享 UserDefaults
+// 定义在此处，供主 App 和所有 Extension 共用
+extension UserDefaults {
+    static let shared = UserDefaults(suiteName: "group.com.acspace.swiftUI-Practice") ?? .standard
+}
+
 // MARK: - 轻量级共享数据访问层
 // 供 Siri App Intent / Widget Extension 使用
 // 不依赖 SwiftUI / ObservableObject，可在 Extension 中安全调用

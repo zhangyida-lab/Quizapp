@@ -2,11 +2,6 @@ import Foundation
 import SwiftUI
 import AVFoundation
 
-// MARK: - App Groups 共享 UserDefaults（主 App + Widget + Siri 共用）
-extension UserDefaults {
-    static let shared = UserDefaults(suiteName: "group.com.acspace.swiftUI-Practice") ?? .standard
-}
-
 // MARK: - 词汇中央数据仓库
 class VocabularyStore: ObservableObject {
     @Published var wordBooks: [WordBook] = []
