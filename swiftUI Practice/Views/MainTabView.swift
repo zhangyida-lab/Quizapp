@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject private var store: QuizStore
+    @EnvironmentObject private var vocabStore: VocabularyStore
     @State private var selectedTab = 0
 
     var body: some View {
@@ -35,23 +36,33 @@ struct MainTabView: View {
             .badge(store.dueQuestions.count > 0 ? store.dueQuestions.count : 0)
             .tag(2)
 
-            // Tab 4: 题库
+            // Tab 4: 词汇学习
+            NavigationStack {
+                VocabularyHomeView()
+            }
+            .tabItem {
+                Label("词汇", systemImage: "text.book.closed.fill")
+            }
+            .badge(vocabStore.dueCount > 0 ? vocabStore.dueCount : 0)
+            .tag(3)
+
+            // Tab 5: 题库
             NavigationStack {
                 LibraryView()
             }
             .tabItem {
                 Label("题库", systemImage: "tray.full.fill")
             }
-            .tag(3)
+            .tag(4)
 
-            // Tab 5: 拍照录题
+            // Tab 6: 拍照录题
             NavigationStack {
                 PhotoCaptureView()
             }
             .tabItem {
                 Label("录题", systemImage: "camera.fill")
             }
-            .tag(4)
+            .tag(5)
         }
         .tint(Color.quizPurpleLight)
     }
@@ -60,5 +71,6 @@ struct MainTabView: View {
 #Preview {
     MainTabView()
         .environmentObject(QuizStore())
+        .environmentObject(VocabularyStore())
         .preferredColorScheme(.dark)
 }
