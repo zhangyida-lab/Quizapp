@@ -286,5 +286,45 @@ git push
 
 ---
 
+---
+
+### Q14：feature 分支开发完成后，如何合并到 main？
+
+有两种方式，各有适用场景：
+
+**方式 A：本地合并再推送**
+
+```bash
+git checkout main
+git pull origin1 main                      # 拉取最新 main
+git merge feature/vocabulary-learning      # 本地合并
+git push origin1 main                      # 推送到远端
+```
+
+适合：个人项目、小团队、对合并结果有把握时。
+
+---
+
+**方式 B：push 分支到 GitHub，创建 PR 在网页合并（推荐）**
+
+```bash
+# 分支已推过则跳过第一步
+git push origin1 feature/vocabulary-learning
+# 去 GitHub 网页 → Compare & pull request → 创建并合并 PR
+git checkout main
+git pull origin1 main                      # 合并后同步到本地
+```
+
+适合：想保留完整 PR 记录、需要 Code Review、多人协作。
+
+**推荐使用方式 B 的原因：**
+- 一直用 feature 分支开发，PR 是配套的最佳实践
+- GitHub 保留合并记录，方便日后追溯功能是何时合入的
+- 合并冲突在网页上处理比命令行更直观
+
+**经验：** 个人项目也值得养成 PR 习惯。PR 记录本质上是一份"这个功能做了什么、为什么这样做"的文档，比 commit message 更完整。
+
+---
+
 *文档创建于 2026-04-11，基于 Lexora（原 swiftUI Practice）项目开发过程整理。*
 *持续更新：每遇到新问题解决后追加记录。*
