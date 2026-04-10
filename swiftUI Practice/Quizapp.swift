@@ -1011,11 +1011,6 @@ struct PDFPreviewView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UINavigationController {
         let ql = QLPreviewController()
         ql.dataSource = context.coordinator
-        ql.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .action,
-            target: context.coordinator,
-            action: #selector(Coordinator.share)
-        )
         let nav = UINavigationController(rootViewController: ql)
         nav.navigationBar.tintColor = UIColor(Color.quizPurpleLight)
         return nav
@@ -1025,29 +1020,11 @@ struct PDFPreviewView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, QLPreviewControllerDataSource {
         let url: URL
-        weak var qlVC: QLPreviewController?
-
         init(url: URL) { self.url = url }
-
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
         func previewController(_ controller: QLPreviewController,
                                previewItemAt index: Int) -> any QLPreviewItem {
-            self.qlVC = controller
-            return url as NSURL
-        }
-
-        @objc func share() {
-            let ac = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            if let popover = ac.popoverPresentationController {
-                popover.sourceView = qlVC?.view
-                popover.sourceRect = CGRect(
-                    x: (qlVC?.view.bounds.midX ?? 0),
-                    y: (qlVC?.view.bounds.midY ?? 0),
-                    width: 0, height: 0
-                )
-                popover.permittedArrowDirections = []
-            }
-            qlVC?.present(ac, animated: true)
+            url as NSURL
         }
     }
 }
