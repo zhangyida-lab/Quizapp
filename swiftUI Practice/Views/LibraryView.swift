@@ -273,10 +273,9 @@ struct LibraryView: View {
                             renameText = cat.name
                             showRenameAlert = true
                         } label: {
-                            Image(systemName: "pencil")
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
-                                .padding(6)
+                            Image(systemName: "pencil.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundColor(Color.quizPurpleLight.opacity(0.7))
                         }
                         .buttonStyle(PlainButtonStyle())
 
