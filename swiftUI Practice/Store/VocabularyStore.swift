@@ -45,6 +45,11 @@ class VocabularyStore: ObservableObject {
         return allWords.filter { masteredIds.contains($0.id) }
     }
 
+    var studiedWords: [Word] {
+        let studiedIds = Set(wordRecords.map { $0.wordId })
+        return allWords.filter { studiedIds.contains($0.id) }
+    }
+
     var dueCount: Int { dueWords.count }
     var masteredCount: Int { masteredWords.count }
 
