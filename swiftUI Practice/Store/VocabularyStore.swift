@@ -7,15 +7,18 @@ class VocabularyStore: ObservableObject {
     @Published var wordBooks: [WordBook] = []
     @Published var wordRecords: [WordRecord] = []
     @Published var dailyWords: [Word] = []
+    @Published var loadingBookId: UUID? = nil   // 启用内置词库时的加载状态
 
     private var lastDailyDate: Date?
 
     // UserDefaults 存储键（与 VocabSharedHelper 保持一致）
     enum Keys {
-        static let books      = "vocab_books_v1"
-        static let records    = "vocab_records_v1"
-        static let daily      = "vocab_daily_v1"
-        static let dailyDate  = "vocab_daily_date_v1"
+        static let books           = "vocab_books_v1"        // 用户自建/导入词库
+        static let records         = "vocab_records_v1"
+        static let daily           = "vocab_daily_v1"
+        static let dailyDate       = "vocab_daily_date_v1"
+        static let builtInEnabled  = "vocab_builtin_enabled_v1"  // 已启用内置词库 ID 列表
+        static let totalCount      = "vocab_total_count_v1"      // 缓存总词数（供 Widget 读取）
     }
 
     // MARK: 计算属性
@@ -42,18 +45,16 @@ class VocabularyStore: ObservableObject {
         return allWords.filter { masteredIds.contains($0.id) }
     }
 
-    var studiedWords: [Word] {
-        let studiedIds = Set(wordRecords.map { $0.wordId })
-        return allWords.filter { studiedIds.contains($0.id) }
-    }
-
     var dueCount: Int { dueWords.count }
     var masteredCount: Int { masteredWords.count }
+
+    // 便于视图区分内置 / 用户词库
+    var builtInWordBooks: [WordBook] { wordBooks.filter { $0.isBuiltIn } }
+    var userWordBooks: [WordBook]    { wordBooks.filter { !$0.isBuiltIn } }
 
     // MARK: 初始化
     init() {
         load()
-        ensureBuiltInWordBook()
         refreshDailyIfNeeded()
     }
 
@@ -101,7 +102,36 @@ class VocabularyStore: ObservableObject {
         save()
     }
 
-    // MARK: 词库管理
+    // MARK: 内置词库启用 / 禁用（异步加载）
+    func toggleBuiltInBook(_ bookId: UUID) {
+        guard let idx = wordBooks.firstIndex(where: { $0.id == bookId && $0.isBuiltIn }) else { return }
+        let willEnable = !wordBooks[idx].isEnabled
+
+        if willEnable {
+            guard let meta = BuiltInWordBooks.catalog.first(where: { $0.id == bookId }) else { return }
+            loadingBookId = bookId
+            Task {
+                let words = await Task.detached(priority: .userInitiated) {
+                    BuiltInWordBooks.loadWords(for: meta)
+                }.value
+                await MainActor.run {
+                    if let i = self.wordBooks.firstIndex(where: { $0.id == bookId }) {
+                        self.wordBooks[i].words = words
+                        self.wordBooks[i].isEnabled = true
+                    }
+                    self.loadingBookId = nil
+                    self.refreshDailyIfNeeded()
+                    self.save()
+                }
+            }
+        } else {
+            wordBooks[idx].words = []       // 释放内存
+            wordBooks[idx].isEnabled = false
+            save()
+        }
+    }
+
+    // MARK: 用户词库管理
     func addWordBook(_ book: WordBook) {
         wordBooks.append(book)
         save()
@@ -152,7 +182,6 @@ class VocabularyStore: ObservableObject {
         let lower = wordString.lowercased().trimmingCharacters(in: .whitespaces)
         guard !lower.isEmpty else { return false }
 
-        // 已存在于任意词库则不重复添加
         if allWords.contains(where: { $0.word.lowercased() == lower }) { return false }
 
         let word = Word(
@@ -163,7 +192,6 @@ class VocabularyStore: ObservableObject {
             source: .manual
         )
 
-        // 存入「我的生词本」，没有则自动创建
         if let idx = wordBooks.firstIndex(where: { $0.name == "我的生词本" && !$0.isBuiltIn }) {
             wordBooks[idx].words.append(word)
         } else {
@@ -175,13 +203,26 @@ class VocabularyStore: ObservableObject {
         return true
     }
 
-    // MARK: 持久化（使用 App Groups 共享 UserDefaults）
+    // MARK: 持久化
     func save() {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        if let data = try? encoder.encode(wordBooks) {
+
+        // 只保存用户词库，内置词库从 Bundle 读取，不存入 UserDefaults
+        let userBooks = wordBooks.filter { !BuiltInWordBooks.isBuiltIn($0.id) }
+        if let data = try? encoder.encode(userBooks) {
             UserDefaults.shared.set(data, forKey: Keys.books)
         }
+
+        // 保存已启用的内置词库 ID（仅存 ID，不存单词）
+        let enabledIds = wordBooks
+            .filter { BuiltInWordBooks.isBuiltIn($0.id) && $0.isEnabled }
+            .map { $0.id.uuidString }
+        UserDefaults.shared.set(enabledIds, forKey: Keys.builtInEnabled)
+
+        // 缓存总词数供 Widget 读取
+        UserDefaults.shared.set(allWords.count, forKey: Keys.totalCount)
+
         if let data = try? encoder.encode(wordRecords) {
             UserDefaults.shared.set(data, forKey: Keys.records)
         }
@@ -202,10 +243,36 @@ class VocabularyStore: ObservableObject {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
+        // 加载用户词库
+        var userBooks: [WordBook] = []
         if let data = UserDefaults.shared.data(forKey: Keys.books),
            let books = try? decoder.decode([WordBook].self, from: data) {
-            wordBooks = books
+            // 过滤掉旧版可能误存的内置词库数据
+            userBooks = books.filter { !BuiltInWordBooks.isBuiltIn($0.id) }
         }
+
+        // 加载内置词库（已启用的从 Bundle 读取单词，未启用的只建立存根）
+        let enabledIds = Set(
+            (UserDefaults.shared.array(forKey: Keys.builtInEnabled) as? [String] ?? [])
+                .compactMap { UUID(uuidString: $0) }
+        )
+        let builtInBooks = BuiltInWordBooks.catalog.map { meta -> WordBook in
+            let isEnabled = enabledIds.contains(meta.id)
+            let words: [Word] = isEnabled ? BuiltInWordBooks.loadWords(for: meta) : []
+            return WordBook(
+                id: meta.id,
+                name: meta.name,
+                level: meta.level,
+                description: meta.description,
+                words: words,
+                isBuiltIn: true,
+                isEnabled: isEnabled
+            )
+        }
+
+        wordBooks = builtInBooks + userBooks
+
+        // 加载记录和每日缓存
         if let data = UserDefaults.shared.data(forKey: Keys.records),
            let records = try? decoder.decode([WordRecord].self, from: data) {
             wordRecords = records
@@ -215,12 +282,5 @@ class VocabularyStore: ObservableObject {
             dailyWords = words
         }
         lastDailyDate = UserDefaults.shared.object(forKey: Keys.dailyDate) as? Date
-    }
-
-    private func ensureBuiltInWordBook() {
-        if !wordBooks.contains(where: { $0.id == BuiltInWords.bookId }) {
-            wordBooks.insert(BuiltInWords.wordBook, at: 0)
-            save()
-        }
     }
 }

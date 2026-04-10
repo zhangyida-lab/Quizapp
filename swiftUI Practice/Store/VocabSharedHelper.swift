@@ -53,10 +53,19 @@ enum VocabSharedHelper {
 
     // MARK: 读取统计信息（供 Widget 展示）
     static func stats() -> VocabStats {
-        let books   = loadBooks()
         let records = loadRecords()
-        let total   = books.filter { $0.isEnabled }.flatMap { $0.words }.count
-        let due     = records.filter { $0.isDue }.count
+        // 优先使用主 App 缓存的总词数（包含内置词库）
+        // 内置词库单词不存入 UserDefaults，由主 App 在 save() 时写入缓存 key
+        let cachedTotal = UserDefaults.shared.integer(forKey: "vocab_total_count_v1")
+        let total: Int
+        if cachedTotal > 0 {
+            total = cachedTotal
+        } else {
+            // 降级：仅统计用户词库（首次启动前 Widget 可能读到 0）
+            let books = loadBooks()
+            total = books.filter { $0.isEnabled }.flatMap { $0.words }.count
+        }
+        let due      = records.filter { $0.isDue }.count
         let mastered = records.filter { $0.isMastered }.count
         return VocabStats(totalWords: total, dueCount: due, masteredCount: mastered)
     }

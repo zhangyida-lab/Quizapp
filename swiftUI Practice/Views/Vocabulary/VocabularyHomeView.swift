@@ -25,7 +25,8 @@ struct VocabularyHomeView: View {
                     statsHeader
                     dailyBanner
                     studyModesSection
-                    wordBooksSection
+                    builtInBooksSection
+                    userBooksSection
                 }
                 .padding(.top, 16)
                 .padding(.bottom, 40)
@@ -203,18 +204,24 @@ struct VocabularyHomeView: View {
         }
     }
 
-    // MARK: 词库列表
-    private var wordBooksSection: some View {
+    // MARK: 内置词库（按级别分组展示，可启用/禁用）
+    private var builtInBooksSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("我的词库")
+            Text("内置词库")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20)
 
             VStack(spacing: 10) {
-                ForEach(vocabStore.wordBooks) { book in
-                    WordBookRow(book: book) {
-                        selectedBook = book
+                ForEach(vocabStore.builtInWordBooks) { book in
+                    BuiltInBookRow(
+                        book: book,
+                        isLoading: vocabStore.loadingBookId == book.id
+                    ) {
+                        // 启用后才可进入详情
+                        if book.isEnabled { selectedBook = book }
+                    } onToggle: {
+                        vocabStore.toggleBuiltInBook(book.id)
                     } onFlash: {
                         flashWords = book.words.shuffled()
                         showFlashCard = true
@@ -227,6 +234,121 @@ struct VocabularyHomeView: View {
             }
             .padding(.horizontal, 20)
         }
+    }
+
+    // MARK: 用户词库
+    private var userBooksSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if !vocabStore.userWordBooks.isEmpty {
+                Text("我的词库")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+
+                VStack(spacing: 10) {
+                    ForEach(vocabStore.userWordBooks) { book in
+                        WordBookRow(book: book) {
+                            selectedBook = book
+                        } onFlash: {
+                            flashWords = book.words.shuffled()
+                            showFlashCard = true
+                        } onQuiz: {
+                            guard book.words.count >= 4 else { return }
+                            choiceWords = book.words.shuffled()
+                            showChoice = true
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+    }
+}
+
+// MARK: - 内置词库行
+private struct BuiltInBookRow: View {
+    let book: WordBook
+    let isLoading: Bool
+    let onTap: () -> Void
+    let onToggle: () -> Void
+    let onFlash: () -> Void
+    let onQuiz: () -> Void
+
+    var levelColor: Color { WordBookRow.color(for: book.level) }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                // 级别图标
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(levelColor.opacity(book.isEnabled ? 0.22 : 0.09))
+                        .frame(width: 44, height: 44)
+                    Text(book.level.prefix(1))
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(book.isEnabled ? levelColor : levelColor.opacity(0.45))
+                }
+
+                // 名称 + 词数
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text(book.name)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(book.isEnabled ? .white : .secondary)
+                        Text(book.level)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(levelColor)
+                            .padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(levelColor.opacity(0.15))
+                            .cornerRadius(4)
+                    }
+                    // 未启用时显示 catalog 中的总词数，启用后显示已加载词数
+                    let count = book.isEnabled ? book.totalCount
+                        : (BuiltInWordBooks.catalog.first { $0.id == book.id }?.wordCount ?? 0)
+                    Text("\(count) 个单词")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                // 启用 / 禁用按钮
+                if isLoading {
+                    ProgressView()
+                        .tint(levelColor)
+                        .frame(width: 60)
+                } else {
+                    Button(action: onToggle) {
+                        Text(book.isEnabled ? "已启用" : "启用")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(book.isEnabled ? .secondary : levelColor)
+                            .padding(.horizontal, 12).padding(.vertical, 6)
+                            .background(book.isEnabled
+                                        ? Color.secondary.opacity(0.12)
+                                        : levelColor.opacity(0.15))
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(14)
+            .contentShape(Rectangle())
+            .onTapGesture { if book.isEnabled { onTap() } }
+
+            // 学习按钮（仅启用后显示）
+            if book.isEnabled {
+                Divider().background(Color.quizBorder).padding(.leading, 72)
+                HStack(spacing: 0) {
+                    ActionChip(icon: "rectangle.on.rectangle.angled", label: "闪卡", action: onFlash)
+                    Divider().frame(height: 20).background(Color.quizBorder)
+                    ActionChip(icon: "checklist", label: "选词", action: onQuiz)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+            }
+        }
+        .background(Color.quizCard)
+        .cornerRadius(16)
     }
 }
 
@@ -273,11 +395,20 @@ private struct WordBookRow: View {
     let onFlash: () -> Void
     let onQuiz: () -> Void
 
-    var levelColor: Color {
-        switch book.level {
+    var levelColor: Color { WordBookRow.color(for: book.level) }
+
+    static func color(for level: String) -> Color {
+        switch level {
         case "CET-4":  return Color(red: 0.33, green: 0.62, blue: 0.93)
         case "CET-6":  return Color(red: 0.53, green: 0.40, blue: 0.88)
         case "IELTS":  return Color(red: 0.88, green: 0.55, blue: 0.25)
+        case "考研":   return Color(red: 0.93, green: 0.48, blue: 0.25)
+        case "TOEFL":  return Color(red: 0.25, green: 0.75, blue: 0.65)
+        case "SAT":    return Color(red: 0.85, green: 0.30, blue: 0.55)
+        case "初中":   return Color(red: 0.40, green: 0.80, blue: 0.45)
+        case "高中":   return Color(red: 0.30, green: 0.65, blue: 0.40)
+        case "商务":   return Color(red: 0.75, green: 0.60, blue: 0.25)
+        case "技术":   return Color(red: 0.45, green: 0.55, blue: 0.90)
         default:       return Color(red: 0.33, green: 0.78, blue: 0.62)
         }
     }
