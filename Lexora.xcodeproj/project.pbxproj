@@ -41,7 +41,7 @@
 		2D1183392F89433500D0A794 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2D11833B2F89433500D0A794 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		2D1183532F89469200D0A794 /* VocabWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VocabWidgetExtension.entitlements; sourceTree = "<group>"; };
-		2D55A31D2F81559A0085DD6A /* swiftUI Practice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swiftUI Practice.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D55A31D2F81559A0085DD6A /* Lexora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lexora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -130,7 +130,7 @@
 		2D55A31E2F81559A0085DD6A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2D55A31D2F81559A0085DD6A /* swiftUI Practice.app */,
+				2D55A31D2F81559A0085DD6A /* Lexora.app */,
 				2D1183372F89433500D0A794 /* VocabWidgetExtension.appex */,
 			);
 			name = Products;
@@ -161,9 +161,9 @@
 			productReference = 2D1183372F89433500D0A794 /* VocabWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		2D55A31C2F81559A0085DD6A /* swiftUI Practice */ = {
+		2D55A31C2F81559A0085DD6A /* Lexora */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D55A32B2F81559D0085DD6A /* Build configuration list for PBXNativeTarget "swiftUI Practice" */;
+			buildConfigurationList = 2D55A32B2F81559D0085DD6A /* Build configuration list for PBXNativeTarget "Lexora" */;
 			buildPhases = (
 				2D55A3192F81559A0085DD6A /* Sources */,
 				2D55A31A2F81559A0085DD6A /* Frameworks */,
@@ -179,11 +179,11 @@
 				2D1183622F89547C00D0A794 /* WordBooks */,
 				2D55A31F2F81559A0085DD6A /* swiftUI Practice */,
 			);
-			name = "swiftUI Practice";
+			name = Lexora;
 			packageProductDependencies = (
 			);
 			productName = "swiftUI Practice";
-			productReference = 2D55A31D2F81559A0085DD6A /* swiftUI Practice.app */;
+			productReference = 2D55A31D2F81559A0085DD6A /* Lexora.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -204,7 +204,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2D55A3182F81559A0085DD6A /* Build configuration list for PBXProject "swiftUI Practice" */;
+			buildConfigurationList = 2D55A3182F81559A0085DD6A /* Build configuration list for PBXProject "Lexora" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -218,7 +218,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2D55A31C2F81559A0085DD6A /* swiftUI Practice */,
+				2D55A31C2F81559A0085DD6A /* Lexora */,
 				2D1183362F89433500D0A794 /* VocabWidgetExtension */,
 			);
 		};
@@ -286,7 +286,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.acspace.swiftUI-Practice.VocabWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.acspace.Lexora.VocabWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -314,7 +314,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.acspace.swiftUI-Practice.VocabWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.acspace.Lexora.VocabWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -465,7 +465,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.acspace.swiftUI-Practice";
+				PRODUCT_BUNDLE_IDENTIFIER = com.acspace.Lexora;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -496,7 +496,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.acspace.swiftUI-Practice";
+				PRODUCT_BUNDLE_IDENTIFIER = com.acspace.Lexora;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -516,7 +516,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D55A3182F81559A0085DD6A /* Build configuration list for PBXProject "swiftUI Practice" */ = {
+		2D55A3182F81559A0085DD6A /* Build configuration list for PBXProject "Lexora" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D55A3292F81559D0085DD6A /* Debug */,
@@ -525,7 +525,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D55A32B2F81559D0085DD6A /* Build configuration list for PBXNativeTarget "swiftUI Practice" */ = {
+		2D55A32B2F81559D0085DD6A /* Build configuration list for PBXNativeTarget "Lexora" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D55A32C2F81559D0085DD6A /* Debug */,
