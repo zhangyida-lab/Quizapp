@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData 
 
 // MARK: - 今日推荐视图
 
@@ -220,6 +221,8 @@ struct DailyQuestionRow: View {
 
 #Preview {
     NavigationStack { DailyReviewView() }
-        .environmentObject(QuizStore())
+        .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
         .preferredColorScheme(.dark)
 }

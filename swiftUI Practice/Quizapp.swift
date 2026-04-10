@@ -1,6 +1,7 @@
 import SwiftUI
 import QuickLook
 import UIKit
+import SwiftData 
 
 // MARK: - 颜色主题
 
@@ -670,7 +671,9 @@ struct StatCard: View {
         categoryColor: Color(red: 0.20, green: 0.60, blue: 0.86),
         questions: BuiltInQuestions.geography
     )
-    .environmentObject(QuizStore())
+    .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
     .preferredColorScheme(.dark)
 }
 
@@ -743,32 +746,35 @@ enum QuizPDFGenerator {
             drawText(dateF.string(from: Date()),
                      x: margin, y: currentY, width: bodyW,
                      font: .systemFont(ofSize: 12),
-                     color: colSecondary, alignment: .left)
+                     color: colSecondary, alignment: .right)
             currentY += 20
 
-            // 分隔线
-            drawLine(y: currentY, color: colBorder)
-            currentY += 16
+         
 
-            // 分类标签
-            drawBadge(text: categoryName, x: margin, y: currentY,
-                      bgColor: colAccent, textColor: .white)
-            currentY += 32
-
-            // 分数大字
+            // 分数大字（左）+ 分类标签（右对齐）
             let scoreText = "\(vm.score) / \(vm.questions.count)"
             drawText(scoreText,
-                     x: margin, y: currentY, width: bodyW,
-                     font: .boldSystemFont(ofSize: 52),
+                     x: margin, y: currentY, width: bodyW - 120,
+                     font: .boldSystemFont(ofSize: 40),
                      color: colAccent, alignment: .left)
-            currentY += 64
+
+            // 分类标签右对齐，与分数垂直居中
+            let badgeFont = UIFont.boldSystemFont(ofSize: 12)
+            let badgeTxtSz = (categoryName as NSString).size(withAttributes:
+                [.font: badgeFont, .foregroundColor: UIColor.white])
+            let bW = badgeTxtSz.width + 24
+            let bH = badgeTxtSz.height + 12
+            drawBadge(text: categoryName,
+                      x: pageW - margin - bW, y: currentY + (62 - bH) / 2,
+                      bgColor: colAccent, textColor: .white)
+            currentY += 68
 
             // 正确率
             drawText("\(percentage)% 正确率",
                      x: margin, y: currentY, width: bodyW,
-                     font: .systemFont(ofSize: 18),
+                     font: .systemFont(ofSize: 16),
                      color: colSecondary, alignment: .left)
-            currentY += 28
+            currentY += 26
 
             // 评级
             let grade: String
@@ -780,32 +786,30 @@ enum QuizPDFGenerator {
             let gradeColor = percentage >= 90 ? colGreen : (percentage >= 60 ? colAccent : colRed)
             drawText(grade,
                      x: margin, y: currentY, width: bodyW,
-                     font: .boldSystemFont(ofSize: 16),
+                     font: .boldSystemFont(ofSize: 14),
                      color: gradeColor, alignment: .left)
-            currentY += 32
+            currentY += 38
 
-            // 三格统计卡片
+            // 三格统计卡片（增大高度，调整文字位置）
             let cardW = (bodyW - 16) / 3
-            let cardH: CGFloat = 68
+            let cardH: CGFloat = 100
             let cardY = currentY
             let stats: [(String, String, UIColor)] = [
-                ("\(vm.score)",                     "答对题数", colGreen),
+                ("\(vm.score)",                      "答对题数", colGreen),
                 ("\(vm.questions.count - vm.score)", "答错题数", colRed),
                 ("\(percentage)%",                   "正确率",   colAccent),
             ]
             for (i, (val, lbl, col)) in stats.enumerated() {
-                let x = margin + CGFloat(i) * (cardW + 8)
-                drawCard(x: x, y: cardY, w: cardW, h: cardH)
-                drawText(val, x: x, y: cardY + 10, width: cardW,
+                let cx = margin + CGFloat(i) * (cardW + 8)
+                drawCard(x: cx, y: cardY, w: cardW, h: cardH)
+                drawText(val, x: cx, y: cardY + 14, width: cardW,
                          font: .boldSystemFont(ofSize: 22), color: col, alignment: .center)
-                drawText(lbl, x: x, y: cardY + 38, width: cardW,
+                drawText(lbl, x: cx, y: cardY + 50, width: cardW,
                          font: .systemFont(ofSize: 11), color: colSecondary, alignment: .center)
             }
-            currentY = cardY + cardH + 32
+            currentY = cardY + cardH + 28
 
-            // 分隔线 + 题目列表标题
-            drawLine(y: currentY, color: colBorder)
-            currentY += 16
+            
             drawText("题目详情", x: margin, y: currentY, width: bodyW,
                      font: .boldSystemFont(ofSize: 18), color: colPrimary, alignment: .left)
             currentY += 28
@@ -815,11 +819,11 @@ enum QuizPDFGenerator {
                 let isCorrect = vm.isCorrect(at: qi)
                 let userAnswer = vm.userAnswers[qi]
 
-                // 估算此题所需高度（宽度与实际渲染 qW = blockW-50 保持一致）
+                // 估算此题所需高度（qW = blockW-54，选项行高 22）
                 let qTextH = estimateTextHeight(question.text,
-                                                width: bodyW - 50,
+                                                width: bodyW - 54,
                                                 font: .systemFont(ofSize: 13))
-                let optH = CGFloat(question.options.count) * 26   // 与 currentY += 26 对齐
+                let optH = CGFloat(question.options.count) * 22
                 let hintH: CGFloat = isCorrect ? 0 : 16           // 错误提示行
                 let blockH = 24 + qTextH + 8 + optH + hintH
                 checkBreak(neededH: blockH)
@@ -831,35 +835,30 @@ enum QuizPDFGenerator {
                 // 题目卡底色
                 drawCard(x: blockX, y: blockY, w: blockW, h: blockH)
 
-                // 题号 + 对错标记
-                let indexLabel = "\(qi + 1)"
+                // 题号（无圆圈，纯文字序号）+ 对错图标
                 let circleColor = isCorrect ? colGreen : colRed
-                drawCircle(x: blockX + 10, y: blockY + 8, diameter: 22,
-                           fillColor: circleColor.withAlphaComponent(0.15),
-                           strokeColor: circleColor)
-                drawText(indexLabel,
-                         x: blockX + 10, y: blockY + 10, width: 22,
-                         font: .boldSystemFont(ofSize: 11),
-                         color: circleColor, alignment: .center)
+                drawText("\(qi + 1).",
+                         x: blockX + 10, y: blockY + 10, width: 24,
+                         font: .boldSystemFont(ofSize: 12),
+                         color: circleColor, alignment: .left)
 
-                // 结果图标
                 let resultIcon = isCorrect ? "✓" : "✗"
                 drawText(resultIcon,
-                         x: blockX + blockW - 30, y: blockY + 10, width: 20,
-                         font: .boldSystemFont(ofSize: 14),
+                         x: blockX + blockW - 26, y: blockY + 10, width: 18,
+                         font: .boldSystemFont(ofSize: 13),
                          color: circleColor, alignment: .center)
 
-                // 题目文本
-                let qX = blockX + 38
-                let qW = blockW - 50
+                // 题目文本（与选项统一缩进：blockX + 36）
+                let qX = blockX + 36
+                let qW = blockW - 54   // 左 36 + 右 18
                 drawText(question.text,
-                         x: qX, y: blockY + 8, width: qW,
+                         x: qX, y: blockY + 10, width: qW,
                          font: .systemFont(ofSize: 13),
                          color: colPrimary, alignment: .left,
                          multiline: true)
-                currentY = blockY + 8 + qTextH + 8
+                currentY = blockY + 10 + qTextH + 8
 
-                // 选项
+                // 选项（与题目文本同 x 起始，保持视觉对齐）
                 for (oi, opt) in question.options.enumerated() {
                     let label = ["A", "B", "C", "D"][safe: oi] ?? ""
                     let isCorrectOpt = oi == question.correctIndex
@@ -871,11 +870,10 @@ enum QuizPDFGenerator {
                     else                  { optColor = colSecondary }
 
                     let optY = currentY
-                    let optX = blockX + 14
 
                     // 字母标签
                     drawText("\(label).",
-                             x: optX, y: optY, width: 20,
+                             x: qX, y: optY, width: 18,
                              font: .boldSystemFont(ofSize: 11),
                              color: optColor, alignment: .left)
 
@@ -885,19 +883,19 @@ enum QuizPDFGenerator {
                     else if isUserOpt && !isCorrect { optText += "  ✗" }
 
                     drawText(optText,
-                             x: optX + 22, y: optY, width: qW - 22,
+                             x: qX + 20, y: optY, width: qW - 20,
                              font: .systemFont(ofSize: 11),
                              color: optColor, alignment: .left)
 
-                    currentY += 26
+                    currentY += 22
                 }
 
-                // 若答错，加提示
+                // 若答错，加提示行
                 if !isCorrect {
                     let correctLabel = ["A","B","C","D"][safe: question.correctIndex] ?? ""
                     let hintText = "正确答案：\(correctLabel). \(question.options[safe: question.correctIndex] ?? "")"
                     drawText(hintText,
-                             x: blockX + 14, y: currentY, width: blockW - 20,
+                             x: qX, y: currentY, width: qW,
                              font: .italicSystemFont(ofSize: 10),
                              color: colGreen, alignment: .left)
                     currentY += 16
@@ -1013,11 +1011,6 @@ struct PDFPreviewView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UINavigationController {
         let ql = QLPreviewController()
         ql.dataSource = context.coordinator
-        ql.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .action,
-            target: context.coordinator,
-            action: #selector(Coordinator.share)
-        )
         let nav = UINavigationController(rootViewController: ql)
         nav.navigationBar.tintColor = UIColor(Color.quizPurpleLight)
         return nav
@@ -1027,29 +1020,11 @@ struct PDFPreviewView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, QLPreviewControllerDataSource {
         let url: URL
-        weak var qlVC: QLPreviewController?
-
         init(url: URL) { self.url = url }
-
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
         func previewController(_ controller: QLPreviewController,
                                previewItemAt index: Int) -> any QLPreviewItem {
-            self.qlVC = controller
-            return url as NSURL
-        }
-
-        @objc func share() {
-            let ac = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            if let popover = ac.popoverPresentationController {
-                popover.sourceView = qlVC?.view
-                popover.sourceRect = CGRect(
-                    x: (qlVC?.view.bounds.midX ?? 0),
-                    y: (qlVC?.view.bounds.midY ?? 0),
-                    width: 0, height: 0
-                )
-                popover.permittedArrowDirections = []
-            }
-            qlVC?.present(ac, animated: true)
+            url as NSURL
         }
     }
 }
