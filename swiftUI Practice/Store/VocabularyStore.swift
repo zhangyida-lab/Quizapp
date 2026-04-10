@@ -119,6 +119,15 @@ class VocabularyStore: ObservableObject {
         save()
     }
 
+    func importWordBook(from data: Data) throws {
+        let decoder = JSONDecoder()
+        let bookImport = try decoder.decode(WordBookImport.self, from: data)
+        let book = bookImport.toWordBook()
+        wordBooks.append(book)
+        refreshDailyIfNeeded()
+        save()
+    }
+
     func deleteWord(_ wordId: UUID, from bookId: UUID) {
         guard let bi = wordBooks.firstIndex(where: { $0.id == bookId }) else { return }
         wordBooks[bi].words.removeAll { $0.id == wordId }

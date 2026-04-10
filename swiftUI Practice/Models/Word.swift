@@ -135,3 +135,66 @@ struct WordRecord: Identifiable, Codable {
         return "red"
     }
 }
+
+// MARK: - JSON 导入格式（宽松解析）
+struct WordBookImport: Codable {
+    let version: String?
+    let name: String
+    let level: String?
+    let description: String?
+    let words: [WordImport]
+
+    struct WordImport: Codable {
+        let id: String?
+        let word: String
+        let phonetic: String?
+        let partOfSpeech: String?
+        // 完整格式：definitions 数组
+        let definitions: [DefinitionImport]?
+        // 简短格式：直接写 meaning / exampleEn / exampleZh
+        let meaning: String?
+        let exampleEn: String?
+        let exampleZh: String?
+        let tags: [String]?
+        let difficulty: Int?
+
+        struct DefinitionImport: Codable {
+            let meaning: String
+            let exampleEn: String?
+            let exampleZh: String?
+        }
+    }
+
+    func toWordBook() -> WordBook {
+        let parsed = words.map { w -> Word in
+            var defs: [Word.Definition]
+            if let defImports = w.definitions, !defImports.isEmpty {
+                defs = defImports.map {
+                    Word.Definition(meaning: $0.meaning, exampleEn: $0.exampleEn, exampleZh: $0.exampleZh)
+                }
+            } else if let meaning = w.meaning {
+                defs = [Word.Definition(meaning: meaning, exampleEn: w.exampleEn, exampleZh: w.exampleZh)]
+            } else {
+                defs = []
+            }
+            return Word(
+                id: w.id.flatMap { UUID(uuidString: $0) } ?? UUID(),
+                word: w.word,
+                phonetic: w.phonetic ?? "",
+                partOfSpeech: w.partOfSpeech ?? "n.",
+                definitions: defs,
+                tags: w.tags ?? [],
+                difficulty: w.difficulty ?? 3,
+                source: .imported
+            )
+        }
+        return WordBook(
+            name: name,
+            level: level ?? "自定义",
+            description: description ?? "",
+            words: parsed,
+            isBuiltIn: false,
+            isEnabled: true
+        )
+    }
+}

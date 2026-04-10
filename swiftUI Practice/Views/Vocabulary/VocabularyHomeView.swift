@@ -1,14 +1,21 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 // MARK: - 词汇学习主页
 struct VocabularyHomeView: View {
     @EnvironmentObject private var vocabStore: VocabularyStore
 
-    @State private var showFlashCard = false
-    @State private var showChoice    = false
+    @State private var showFlashCard    = false
+    @State private var showChoice       = false
     @State private var flashWords: [Word] = []
     @State private var choiceWords: [Word] = []
     @State private var selectedBook: WordBook? = nil
+
+    // 导入相关
+    @State private var showImportPicker = false
+    @State private var showQRImport     = false
+    @State private var importError: String? = nil
+    @State private var showImportError  = false
 
     var body: some View {
         ZStack {
@@ -27,6 +34,45 @@ struct VocabularyHomeView: View {
         .navigationTitle("词汇学习")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button {
+                        showImportPicker = true
+                    } label: {
+                        Label("从文件导入", systemImage: "doc.badge.plus")
+                    }
+                    Button {
+                        showQRImport = true
+                    } label: {
+                        Label("扫码导入", systemImage: "qrcode.viewfinder")
+                    }
+                } label: {
+                    Image(systemName: "plus.circle")
+                        .foregroundColor(Color.quizPurpleLight)
+                        .font(.system(size: 18))
+                }
+            }
+        }
+        // 文件导入
+        .fileImporter(
+            isPresented: $showImportPicker,
+            allowedContentTypes: [UTType.json],
+            allowsMultipleSelection: false
+        ) { result in
+            handleFileImport(result)
+        }
+        // 扫码导入
+        .sheet(isPresented: $showQRImport) {
+            VocabQRImportView()
+                .environmentObject(vocabStore)
+        }
+        // 导入错误提示
+        .alert("导入失败", isPresented: $showImportError) {
+            Button("好的") {}
+        } message: {
+            Text(importError ?? "JSON 格式不正确，请检查文件内容")
+        }
         // 闪卡
         .navigationDestination(isPresented: $showFlashCard) {
             FlashCardView(words: flashWords)
@@ -38,6 +84,20 @@ struct VocabularyHomeView: View {
         // 词库详情
         .navigationDestination(item: $selectedBook) { book in
             WordBookDetailView(book: book)
+        }
+    }
+
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        do {
+            let urls = try result.get()
+            guard let url = urls.first else { return }
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+            let data = try Data(contentsOf: url)
+            try vocabStore.importWordBook(from: data)
+        } catch {
+            importError = error.localizedDescription
+            showImportError = true
         }
     }
 
