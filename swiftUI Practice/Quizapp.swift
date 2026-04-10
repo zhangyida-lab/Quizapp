@@ -746,7 +746,7 @@ enum QuizPDFGenerator {
             drawText(dateF.string(from: Date()),
                      x: margin, y: currentY, width: bodyW,
                      font: .systemFont(ofSize: 12),
-                     color: colSecondary, alignment: .left)
+                     color: colSecondary, alignment: .right)
             currentY += 20
 
          
@@ -792,7 +792,7 @@ enum QuizPDFGenerator {
 
             // 三格统计卡片（增大高度，调整文字位置）
             let cardW = (bodyW - 16) / 3
-            let cardH: CGFloat = 90
+            let cardH: CGFloat = 100
             let cardY = currentY
             let stats: [(String, String, UIColor)] = [
                 ("\(vm.score)",                      "答对题数", colGreen),
@@ -852,11 +852,11 @@ enum QuizPDFGenerator {
                 let qX = blockX + 36
                 let qW = blockW - 54   // 左 36 + 右 18
                 drawText(question.text,
-                         x: qX, y: blockY + 8, width: qW,
+                         x: qX, y: blockY + 10, width: qW,
                          font: .systemFont(ofSize: 13),
                          color: colPrimary, alignment: .left,
                          multiline: true)
-                currentY = blockY + 8 + qTextH + 8
+                currentY = blockY + 10 + qTextH + 8
 
                 // 选项（与题目文本同 x 起始，保持视觉对齐）
                 for (oi, opt) in question.options.enumerated() {
