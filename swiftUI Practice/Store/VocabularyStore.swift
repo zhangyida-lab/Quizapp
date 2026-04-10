@@ -2,6 +2,11 @@ import Foundation
 import SwiftUI
 import AVFoundation
 
+// MARK: - App Groups 共享 UserDefaults（主 App + Widget + Siri 共用）
+extension UserDefaults {
+    static let shared = UserDefaults(suiteName: "group.com.acspace.swiftUI-Practice") ?? .standard
+}
+
 // MARK: - 词汇中央数据仓库
 class VocabularyStore: ObservableObject {
     @Published var wordBooks: [WordBook] = []
@@ -10,8 +15,8 @@ class VocabularyStore: ObservableObject {
 
     private var lastDailyDate: Date?
 
-    // UserDefaults 存储键
-    private enum Keys {
+    // UserDefaults 存储键（与 VocabSharedHelper 保持一致）
+    enum Keys {
         static let books      = "vocab_books_v1"
         static let records    = "vocab_records_v1"
         static let daily      = "vocab_daily_v1"
@@ -146,15 +151,44 @@ class VocabularyStore: ObservableObject {
         synthesizer.speak(utterance)
     }
 
-    // MARK: 持久化
+    // MARK: 快速添加生词（供 Siri / Widget 调用）
+    @discardableResult
+    func quickAddWord(_ wordString: String) -> Bool {
+        let lower = wordString.lowercased().trimmingCharacters(in: .whitespaces)
+        guard !lower.isEmpty else { return false }
+
+        // 已存在于任意词库则不重复添加
+        if allWords.contains(where: { $0.word.lowercased() == lower }) { return false }
+
+        let word = Word(
+            word: wordString.trimmingCharacters(in: .whitespaces),
+            phonetic: "",
+            partOfSpeech: "n.",
+            definitions: [Word.Definition(meaning: "（待补充释义）", exampleEn: nil, exampleZh: nil)],
+            source: .manual
+        )
+
+        // 存入「我的生词本」，没有则自动创建
+        if let idx = wordBooks.firstIndex(where: { $0.name == "我的生词本" && !$0.isBuiltIn }) {
+            wordBooks[idx].words.append(word)
+        } else {
+            var myBook = WordBook(name: "我的生词本", level: "自定义", description: "通过 Siri / Widget 快速添加的生词")
+            myBook.words.append(word)
+            wordBooks.append(myBook)
+        }
+        save()
+        return true
+    }
+
+    // MARK: 持久化（使用 App Groups 共享 UserDefaults）
     func save() {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         if let data = try? encoder.encode(wordBooks) {
-            UserDefaults.standard.set(data, forKey: Keys.books)
+            UserDefaults.shared.set(data, forKey: Keys.books)
         }
         if let data = try? encoder.encode(wordRecords) {
-            UserDefaults.standard.set(data, forKey: Keys.records)
+            UserDefaults.shared.set(data, forKey: Keys.records)
         }
     }
 
@@ -162,10 +196,10 @@ class VocabularyStore: ObservableObject {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         if let data = try? encoder.encode(dailyWords) {
-            UserDefaults.standard.set(data, forKey: Keys.daily)
+            UserDefaults.shared.set(data, forKey: Keys.daily)
         }
         if let date = lastDailyDate {
-            UserDefaults.standard.set(date, forKey: Keys.dailyDate)
+            UserDefaults.shared.set(date, forKey: Keys.dailyDate)
         }
     }
 
@@ -173,19 +207,19 @@ class VocabularyStore: ObservableObject {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
-        if let data = UserDefaults.standard.data(forKey: Keys.books),
+        if let data = UserDefaults.shared.data(forKey: Keys.books),
            let books = try? decoder.decode([WordBook].self, from: data) {
             wordBooks = books
         }
-        if let data = UserDefaults.standard.data(forKey: Keys.records),
+        if let data = UserDefaults.shared.data(forKey: Keys.records),
            let records = try? decoder.decode([WordRecord].self, from: data) {
             wordRecords = records
         }
-        if let data = UserDefaults.standard.data(forKey: Keys.daily),
+        if let data = UserDefaults.shared.data(forKey: Keys.daily),
            let words = try? decoder.decode([Word].self, from: data) {
             dailyWords = words
         }
-        lastDailyDate = UserDefaults.standard.object(forKey: Keys.dailyDate) as? Date
+        lastDailyDate = UserDefaults.shared.object(forKey: Keys.dailyDate) as? Date
     }
 
     private func ensureBuiltInWordBook() {
