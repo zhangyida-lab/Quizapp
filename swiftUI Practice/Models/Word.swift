@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - 单词模型
-struct Word: Identifiable, Codable, Equatable {
+struct Word: Identifiable, Codable, Equatable, Hashable {
     var id: UUID
     var word: String              // 英文单词
     var phonetic: String          // 音标 "/ˈæpəl/"
@@ -12,7 +12,7 @@ struct Word: Identifiable, Codable, Equatable {
     var source: Source
     var createdAt: Date
 
-    struct Definition: Codable, Equatable {
+    struct Definition: Codable, Equatable, Hashable {
         var meaning: String       // 中文释义
         var exampleEn: String?    // 英文例句
         var exampleZh: String?    // 例句中文翻译
@@ -46,7 +46,7 @@ struct Word: Identifiable, Codable, Equatable {
 }
 
 // MARK: - 词库
-struct WordBook: Identifiable, Codable {
+struct WordBook: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
     var level: String             // "CET-4" "CET-6" "IELTS" "自定义"
