@@ -749,15 +749,13 @@ enum QuizPDFGenerator {
                      color: colSecondary, alignment: .left)
             currentY += 20
 
-            // 分隔线
-            drawLine(y: currentY, color: colBorder)
-            currentY += 16
+         
 
             // 分数大字（左）+ 分类标签（右对齐）
             let scoreText = "\(vm.score) / \(vm.questions.count)"
             drawText(scoreText,
                      x: margin, y: currentY, width: bodyW - 120,
-                     font: .boldSystemFont(ofSize: 52),
+                     font: .boldSystemFont(ofSize: 40),
                      color: colAccent, alignment: .left)
 
             // 分类标签右对齐，与分数垂直居中
@@ -794,7 +792,7 @@ enum QuizPDFGenerator {
 
             // 三格统计卡片（增大高度，调整文字位置）
             let cardW = (bodyW - 16) / 3
-            let cardH: CGFloat = 78
+            let cardH: CGFloat = 90
             let cardY = currentY
             let stats: [(String, String, UIColor)] = [
                 ("\(vm.score)",                      "答对题数", colGreen),
@@ -811,9 +809,7 @@ enum QuizPDFGenerator {
             }
             currentY = cardY + cardH + 28
 
-            // 分隔线 + 题目列表标题
-            drawLine(y: currentY, color: colBorder)
-            currentY += 16
+            
             drawText("题目详情", x: margin, y: currentY, width: bodyW,
                      font: .boldSystemFont(ofSize: 18), color: colPrimary, alignment: .left)
             currentY += 28
