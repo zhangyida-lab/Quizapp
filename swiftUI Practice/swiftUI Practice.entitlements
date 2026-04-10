@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.acspace.swiftUI-Practice</string>
+		<string>group.com.acspace.Lexora</string>
 	</array>
 </dict>
 </plist>

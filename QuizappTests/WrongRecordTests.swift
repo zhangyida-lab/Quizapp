@@ -1,5 +1,5 @@
 import XCTest
-@testable import swiftUI_Practice
+@testable import Lexora
 
 // MARK: - SM-2 算法测试
 

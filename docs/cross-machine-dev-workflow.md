@@ -104,7 +104,7 @@ Claude Code 的对话记忆（`~/.claude/`）存储在**本地机器**，不随 
 
 ### 3.1 注册 URL Scheme（Widget 点击跳转 App）
 
-1. Xcode 左侧选择项目根节点 → 选中 **swiftUI Practice** target
+1. Xcode 左侧选择项目根节点 → 选中 **Lexora** target
 2. 切换到 **Info** 标签页
 3. 找到 **URL Types** 一栏，点击 `+`
 4. 填写：
@@ -117,7 +117,7 @@ Claude Code 的对话记忆（`~/.claude/`）存储在**本地机器**，不随 
 
 ### 3.2 为主 App 开启 App Groups
 
-1. 选中 **swiftUI Practice** target → **Signing & Capabilities**
+1. 选中 **Lexora** target → **Signing & Capabilities**
 2. 点击左上角 `+ Capability`，选择 **App Groups**
 3. 点击 `+` 添加：`group.com.acspace.swiftUI-Practice`
 
@@ -165,7 +165,7 @@ Widget Extension 需要用到主 App 里的两个文件，要在 File Inspector 
 1. 在 Xcode 左侧 Project Navigator 中，将 `WordBooks/` 文件夹拖入项目
 2. 弹窗选项中选择 **"Create folder references"**（图标为蓝色文件夹，不是黄色 Group）
 3. **Destination**：勾选 **Copy items if needed**
-4. **Add to targets**：勾选 **swiftUI Practice**（主 App），VocabWidget 不需要
+4. **Add to targets**：勾选 **Lexora**（主 App），VocabWidget 不需要
 5. 拖入后，在 **Build Phases → Copy Bundle Resources** 里确认 11 个 JSON 文件都在列表中
 
 ---

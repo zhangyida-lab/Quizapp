@@ -1,4 +1,4 @@
-# QuizApp
+# Lexora
 
 一款基于 SwiftUI 开发的 iOS 趣味答题应用，支持题库管理、错题本、每日推荐、试卷生成等功能。
 
@@ -265,7 +265,7 @@ struct ExamPaper: Codable {
 1. 打开 `swiftUI Practice.xcodeproj`
 2. Xcode 顶部工具栏，点击 Simulator 下拉菜单 → 选择你的 iPhone
 3. 首次连接需在 iPhone 上点击 **"信任此电脑"**
-4. 确认 Scheme 是 **swiftUI Practice**（主 App，不是 VocabWidget）
+4. 确认 Scheme 是 **Lexora**（主 App，不是 VocabWidget）
 5. `Cmd+R` 构建并安装到真机
 
 > 首次在真机运行，iPhone 会提示"未受信任的开发者"：  

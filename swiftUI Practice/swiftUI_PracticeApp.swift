@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct swiftUI_PracticeApp: App {
+struct LexoraApp: App {
     private let modelContainer: ModelContainer
     @StateObject private var store: QuizStore
     @StateObject private var vocabStore = VocabularyStore()

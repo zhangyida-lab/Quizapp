@@ -8,7 +8,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.acspace.swiftUI-Practice</string>
+			<string>com.acspace.Lexora</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>quizapp</string>

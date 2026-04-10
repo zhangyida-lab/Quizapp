@@ -3,7 +3,7 @@ import Foundation
 // MARK: - App Groups 共享 UserDefaults
 // 定义在此处，供主 App 和所有 Extension 共用
 extension UserDefaults {
-    static let shared = UserDefaults(suiteName: "group.com.acspace.swiftUI-Practice") ?? .standard
+    static let shared = UserDefaults(suiteName: "group.com.acspace.Lexora") ?? .standard
 }
 
 // MARK: - 轻量级共享数据访问层

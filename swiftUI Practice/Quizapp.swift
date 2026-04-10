@@ -908,7 +908,7 @@ enum QuizPDFGenerator {
             checkBreak(neededH: 40)
             drawLine(y: currentY, color: colBorder)
             currentY += 10
-            drawText("由 QuizApp 生成 · \(dateF.string(from: Date()))",
+            drawText("由 Lexora 生成 ·\(dateF.string(from: Date()))",
                      x: margin, y: currentY, width: bodyW,
                      font: .italicSystemFont(ofSize: 10),
                      color: colSecondary, alignment: .center)
