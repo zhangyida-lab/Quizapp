@@ -120,7 +120,8 @@ struct WordChoiceView: View {
                 OptionButton(
                     label: "\(["A","B","C","D"][idx]).",
                     text: opt,
-                    state: vm.optionState(idx)
+                    state: vm.optionState(idx),
+                    isAnswered: vm.selectedIndex != nil
                 ) {
                     vm.select(idx)
                     vocabStore.recordStudy(wordId: vm.currentItem.word.id,
