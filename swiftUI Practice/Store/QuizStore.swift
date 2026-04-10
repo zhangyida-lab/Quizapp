@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
 // MARK: - 分类展示信息
 struct CategoryInfo: Identifiable, Equatable {
@@ -28,7 +29,6 @@ struct CategoryInfo: Identifiable, Equatable {
         case "艺术": return Color(red: 0.88, green: 0.35, blue: 0.55)
         case "体育": return Color(red: 0.25, green: 0.72, blue: 0.45)
         default:
-            // 为未知分类生成稳定颜色
             let h = Double(abs(name.hashValue) % 360) / 360.0
             return Color(hue: h, saturation: 0.6, brightness: 0.75)
         }
@@ -56,13 +56,13 @@ class QuizStore: ObservableObject {
     @Published var hiddenCategories: Set<String> = []
 
     private var lastDailyDate: Date?
+    private let modelContext: ModelContext
 
     // MARK: 计算属性
     var allQuestions: [Question] {
         questionBanks.filter { $0.isEnabled }.flatMap { $0.questions }
     }
 
-    /// 所有分类（含隐藏），用于管理界面
     var allCategories: [CategoryInfo] {
         let grouped = Dictionary(grouping: allQuestions, by: { $0.category })
         return grouped
@@ -70,7 +70,6 @@ class QuizStore: ObservableObject {
             .sorted { $0.name < $1.name }
     }
 
-    /// 可见分类（已过滤隐藏），用于首页展示
     var categories: [CategoryInfo] {
         allCategories.filter { !hiddenCategories.contains($0.name) }
     }
@@ -113,8 +112,10 @@ class QuizStore: ObservableObject {
     var wrongTotalCount: Int { wrongRecords.filter { !$0.isMastered }.count }
 
     // MARK: 初始化
-    init() {
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
         load()
+        migrateFromUserDefaultsIfNeeded()
         ensureBuiltInBank()
         refreshDailyIfNeeded()
     }
@@ -170,7 +171,6 @@ class QuizStore: ObservableObject {
         }
         var result: [Question] = []
 
-        // 1. 到期错题优先（最多 15 题，只取可见分类）
         let dueIds = Set(wrongRecords.filter { $0.isDue }.map { $0.questionId })
         let visibleDue = visibleQuestions
             .filter { dueIds.contains($0.id) }
@@ -181,7 +181,6 @@ class QuizStore: ObservableObject {
             }
         result.append(contentsOf: visibleDue.prefix(15))
 
-        // 2. 随机新题补充到 20 题（排除所有 due 错题，确保 due 题不超过 15 道）
         if result.count < 20 {
             let existingIds = Set(result.map { $0.id })
             let fillQs = visibleQuestions
@@ -197,19 +196,17 @@ class QuizStore: ObservableObject {
     }
 
     // MARK: 试卷管理
-    /// 创建并保存一份新试卷，返回其 id
     @discardableResult
     func saveExamPaper(config: ExamConfig, questions: [Question],
                        scores: [Int]) -> UUID {
         let title = config.autoTitle(actualCount: questions.count)
         let paper = ExamPaper(title: title, config: config,
                               questions: questions, questionScores: scores)
-        examPapers.insert(paper, at: 0)   // 最新在前
+        examPapers.insert(paper, at: 0)
         save()
         return paper.id
     }
 
-    /// 向已有试卷追加一次作答记录
     func addAttempt(_ attempt: ExamAttempt, toPaperId id: UUID) {
         guard let idx = examPapers.firstIndex(where: { $0.id == id }) else { return }
         examPapers[idx].attempts.append(attempt)
@@ -249,14 +246,12 @@ class QuizStore: ObservableObject {
         return try exportBank(combined)
     }
 
-    // MARK: 带图片上传的导出（用于分享）
-    /// 将本地 .file 图片上传到 Cloudinary，替换为公开 URL 后导出
     func exportBankForSharing(_ bank: QuestionBank) async throws -> Data {
         var uploadedBank = bank
         for i in uploadedBank.questions.indices {
             guard let img = uploadedBank.questions[i].image,
                   img.type == .file else { continue }
-            let fileURL  = URL(fileURLWithPath: img.value)
+            let fileURL   = URL(fileURLWithPath: img.value)
             let remoteURL = try await CloudinaryUploader.upload(fileURL: fileURL)
             uploadedBank.questions[i].image = QuestionImageData(type: .url, value: remoteURL)
         }
@@ -273,7 +268,6 @@ class QuizStore: ObservableObject {
         return try await exportBankForSharing(combined)
     }
 
-    /// 上传图片 + 上传 JSON → 返回可扫码的公开 URL
     func shareBankAsURL(_ bank: QuestionBank) async throws -> String {
         let jsonData = try await exportBankForSharing(bank)
         return try await CloudinaryUploader.uploadJSON(jsonData, name: bank.name)
@@ -292,6 +286,23 @@ class QuizStore: ObservableObject {
     func toggleBankEnabled(_ bank: QuestionBank) {
         guard let idx = questionBanks.firstIndex(where: { $0.id == bank.id }) else { return }
         questionBanks[idx].isEnabled.toggle()
+        generateDailyRecommendations()
+        save()
+    }
+
+    func renameCategory(from oldName: String, to newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != oldName else { return }
+        for bi in questionBanks.indices {
+            for qi in questionBanks[bi].questions.indices
+                where questionBanks[bi].questions[qi].category == oldName {
+                questionBanks[bi].questions[qi].category = trimmed
+            }
+        }
+        if hiddenCategories.contains(oldName) {
+            hiddenCategories.remove(oldName)
+            hiddenCategories.insert(trimmed)
+        }
         generateDailyRecommendations()
         save()
     }
@@ -315,43 +326,175 @@ class QuizStore: ObservableObject {
         }
     }
 
-    // MARK: 持久化
-    private let banksKey      = "quiz_banks_v2"
-    private let recordsKey    = "quiz_wrong_records_v2"
-    private let dailyQKey     = "quiz_daily_questions_v2"
-    private let dailyDKey     = "quiz_daily_date_v2"
-    private let papersKey     = "quiz_exam_papers_v1"
-    private let hiddenCatKey  = "quiz_hidden_categories_v1"
+    // MARK: - 持久化（SwiftData）
 
     func save() {
-        let enc = JSONEncoder()
-        enc.dateEncodingStrategy = .iso8601
-        if let d = try? enc.encode(questionBanks)           { UserDefaults.standard.set(d, forKey: banksKey) }
-        if let d = try? enc.encode(wrongRecords)            { UserDefaults.standard.set(d, forKey: recordsKey) }
-        if let d = try? enc.encode(examPapers)              { UserDefaults.standard.set(d, forKey: papersKey) }
-        if let d = try? enc.encode(Array(hiddenCategories)) { UserDefaults.standard.set(d, forKey: hiddenCatKey) }
+        saveBanks()
+        saveRecords()
+        savePapers()
+        saveSettings()
+        try? modelContext.save()
     }
 
-    func load() {
-        let dec = JSONDecoder()
-        dec.dateDecodingStrategy = .iso8601
-        if let d = UserDefaults.standard.data(forKey: banksKey),
-           let b = try? dec.decode([QuestionBank].self, from: d)  { questionBanks = b }
-        if let d = UserDefaults.standard.data(forKey: papersKey),
-           let p = try? dec.decode([ExamPaper].self, from: d)     { examPapers = p }
-        if let d = UserDefaults.standard.data(forKey: recordsKey),
-           let r = try? dec.decode([WrongRecord].self, from: d)   { wrongRecords = r }
-        if let d = UserDefaults.standard.data(forKey: dailyQKey),
-           let q = try? dec.decode([Question].self, from: d)      { dailyQuestions = q }
-        if let d = UserDefaults.standard.data(forKey: hiddenCatKey),
-           let c = try? dec.decode([String].self, from: d)        { hiddenCategories = Set(c) }
-        lastDailyDate = UserDefaults.standard.object(forKey: dailyDKey) as? Date
+    private func load() {
+        let dec = makeDecoder()
+
+        // 题库（按创建时间升序）
+        let banksDesc = FetchDescriptor<QuestionBankEntity>(
+            sortBy: [SortDescriptor(\.createdAt)]
+        )
+        questionBanks = ((try? modelContext.fetch(banksDesc)) ?? []).map { $0.toStruct() }
+
+        // 错题记录
+        let recordsDesc = FetchDescriptor<WrongRecordEntity>()
+        wrongRecords = ((try? modelContext.fetch(recordsDesc)) ?? []).map { $0.toStruct() }
+
+        // 试卷（最新在前）
+        let papersDesc = FetchDescriptor<ExamPaperEntity>(
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        examPapers = ((try? modelContext.fetch(papersDesc)) ?? []).compactMap { $0.toStruct() }
+
+        // 应用设置
+        let settingsDesc = FetchDescriptor<AppSettingsEntity>()
+        if let settings = (try? modelContext.fetch(settingsDesc))?.first {
+            if let cats = try? dec.decode([String].self, from: settings.hiddenCatsData) {
+                hiddenCategories = Set(cats)
+            }
+            if let data = settings.dailyQuestionsData,
+               let questions = try? dec.decode([Question].self, from: data) {
+                dailyQuestions = questions
+            }
+            lastDailyDate = settings.lastDailyDate
+        }
     }
 
     private func saveDailyCache() {
+        let enc = makeEncoder()
+        let settings = getOrCreateSettings()
+        settings.dailyQuestionsData = try? enc.encode(dailyQuestions)
+        settings.lastDailyDate      = lastDailyDate
+        try? modelContext.save()
+    }
+
+    // MARK: SwiftData 同步辅助
+
+    private func saveBanks() {
+        let existing    = fetchAll(QuestionBankEntity.self)
+        let existingMap = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+        let currentIDs  = Set(questionBanks.map { $0.id })
+        for entity in existing where !currentIDs.contains(entity.id) {
+            modelContext.delete(entity)
+        }
+        for bank in questionBanks {
+            if let entity = existingMap[bank.id] { entity.syncFrom(bank) }
+            else { modelContext.insert(QuestionBankEntity(bank: bank)) }
+        }
+    }
+
+    private func saveRecords() {
+        let existing    = fetchAll(WrongRecordEntity.self)
+        let existingMap = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+        let currentIDs  = Set(wrongRecords.map { $0.id })
+        for entity in existing where !currentIDs.contains(entity.id) {
+            modelContext.delete(entity)
+        }
+        for record in wrongRecords {
+            if let entity = existingMap[record.id] { entity.syncFrom(record) }
+            else { modelContext.insert(WrongRecordEntity(record: record)) }
+        }
+    }
+
+    private func savePapers() {
+        let existing    = fetchAll(ExamPaperEntity.self)
+        let existingMap = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+        let currentIDs  = Set(examPapers.map { $0.id })
+        for entity in existing where !currentIDs.contains(entity.id) {
+            modelContext.delete(entity)
+        }
+        for paper in examPapers {
+            if let entity = existingMap[paper.id] { entity.syncFrom(paper) }
+            else { modelContext.insert(ExamPaperEntity(paper: paper)) }
+        }
+    }
+
+    private func saveSettings() {
+        let enc      = makeEncoder()
+        let settings = getOrCreateSettings()
+        settings.hiddenCatsData = (try? enc.encode(Array(hiddenCategories))) ?? Data()
+        settings.lastDailyDate  = lastDailyDate
+    }
+
+    private func getOrCreateSettings() -> AppSettingsEntity {
+        let desc = FetchDescriptor<AppSettingsEntity>()
+        if let existing = (try? modelContext.fetch(desc))?.first { return existing }
+        let settings = AppSettingsEntity()
+        modelContext.insert(settings)
+        return settings
+    }
+
+    private func fetchAll<T: PersistentModel>(_ type: T.Type) -> [T] {
+        (try? modelContext.fetch(FetchDescriptor<T>())) ?? []
+    }
+
+    // MARK: UserDefaults → SwiftData 一次性迁移
+
+    private func migrateFromUserDefaultsIfNeeded() {
+        // SwiftData 已有数据（非首次启动），跳过迁移
+        guard questionBanks.isEmpty else { return }
+
+        let ud  = UserDefaults.standard
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .iso8601
+
+        let banksKey     = "quiz_banks_v2"
+        let recordsKey   = "quiz_wrong_records_v2"
+        let papersKey    = "quiz_exam_papers_v1"
+        let hiddenCatKey = "quiz_hidden_categories_v1"
+        let dailyQKey    = "quiz_daily_questions_v2"
+        let dailyDKey    = "quiz_daily_date_v2"
+
+        // UserDefaults 也没有数据（全新安装），不需迁移
+        guard ud.data(forKey: banksKey) != nil else { return }
+
+        if let d = ud.data(forKey: banksKey),
+           let banks = try? dec.decode([QuestionBank].self, from: d) {
+            questionBanks = banks
+        }
+        if let d = ud.data(forKey: recordsKey),
+           let records = try? dec.decode([WrongRecord].self, from: d) {
+            wrongRecords = records
+        }
+        if let d = ud.data(forKey: papersKey),
+           let papers = try? dec.decode([ExamPaper].self, from: d) {
+            examPapers = papers
+        }
+        if let d = ud.data(forKey: hiddenCatKey),
+           let cats = try? dec.decode([String].self, from: d) {
+            hiddenCategories = Set(cats)
+        }
+        if let d = ud.data(forKey: dailyQKey),
+           let questions = try? dec.decode([Question].self, from: d) {
+            dailyQuestions = questions
+        }
+        lastDailyDate = ud.object(forKey: dailyDKey) as? Date
+
+        // 持久化到 SwiftData，清除 UserDefaults
+        save()
+        [banksKey, recordsKey, papersKey, hiddenCatKey, dailyQKey, dailyDKey]
+            .forEach { ud.removeObject(forKey: $0) }
+    }
+
+    // MARK: JSON 辅助
+    private func makeEncoder() -> JSONEncoder {
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .iso8601
-        if let d = try? enc.encode(dailyQuestions) { UserDefaults.standard.set(d, forKey: dailyQKey) }
-        UserDefaults.standard.set(lastDailyDate, forKey: dailyDKey)
+        return enc
+    }
+
+    private func makeDecoder() -> JSONDecoder {
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .iso8601
+        return dec
     }
 }

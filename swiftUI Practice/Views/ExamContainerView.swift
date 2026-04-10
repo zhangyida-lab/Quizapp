@@ -1,6 +1,7 @@
 import SwiftUI
 import QuickLook
 import UIKit
+import SwiftData 
 
 // MARK: - 考试容器
 
@@ -198,19 +199,19 @@ struct ExamResultView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 28) {
-                Spacer(minLength: 16)
-                scoreRing
-                gradeSection
+            VStack(spacing: 16) {
+                scoreHeroCard
+                subjectInfoStrip
                 statsRow
                 detailToggle
                 if showDetail { questionDetailList }
                 actionButtons
                 Spacer(minLength: 20)
             }
+            .padding(.top, 16)
         }
         .background(Color.quizBg.ignoresSafeArea())
-        .navigationTitle("考试结果")
+        .navigationTitle("考试成绩单")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showPDF) {
@@ -218,39 +219,89 @@ struct ExamResultView: View {
         }
     }
 
-    var scoreRing: some View {
-        ZStack {
-            Circle().stroke(Color.quizBorder, lineWidth: 10).frame(width: 180, height: 180)
-            Circle()
-                .trim(from: 0, to: CGFloat(percentage) / 100)
-                .stroke(grade.color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                .frame(width: 180, height: 180)
-                .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 1.0), value: percentage)
-            VStack(spacing: 4) {
-                Text("\(earnedScore)")
-                    .font(.system(size: 48, weight: .bold)).foregroundColor(.white)
-                Text("/ \(totalScore) 分").font(.system(size: 15)).foregroundColor(.secondary)
+    // MARK: 成绩英雄卡（环形 + 分数 + 评级）
+    var scoreHeroCard: some View {
+        VStack(spacing: 18) {
+            // 环形进度
+            ZStack {
+                Circle()
+                    .stroke(Color.quizBorder, lineWidth: 12)
+                    .frame(width: 160, height: 160)
+                Circle()
+                    .trim(from: 0, to: CGFloat(percentage) / 100)
+                    .stroke(grade.color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                    .frame(width: 160, height: 160)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 1.0), value: percentage)
+                VStack(spacing: 2) {
+                    HStack(alignment: .lastTextBaseline, spacing: 2) {
+                        Text("\(earnedScore)")
+                            .font(.system(size: 46, weight: .bold))
+                            .foregroundColor(grade.color)
+                        Text("分")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(grade.color.opacity(0.8))
+                    }
+                    Text("/ \(totalScore) 分")
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            // 评级 + 正确率
+            VStack(spacing: 6) {
+                Text(grade.label)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(grade.color)
+                    .padding(.horizontal, 20).padding(.vertical, 5)
+                    .background(grade.color.opacity(0.12))
+                    .cornerRadius(20)
+
+                Text("正确率 \(percentage)%  ·  答对 \(vm.score) / \(vm.questions.count) 题")
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
             }
         }
+        .padding(.vertical, 28)
+        .frame(maxWidth: .infinity)
+        .background(Color.quizCard)
+        .cornerRadius(20)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(grade.color.opacity(0.25), lineWidth: 1))
+        .padding(.horizontal, 16)
     }
 
-    var gradeSection: some View {
-        VStack(spacing: 6) {
-            Text(grade.label)
-                .font(.system(size: 30, weight: .bold)).foregroundColor(grade.color)
-            Text("正确率 \(percentage)%  ·  答对 \(vm.score) / \(vm.questions.count) 题")
-                .font(.system(size: 14)).foregroundColor(.secondary)
+    // MARK: 科目 / 模式 信息条
+    var subjectInfoStrip: some View {
+        let subjects = config.subjects.sorted().joined(separator: " · ")
+        return HStack(spacing: 8) {
+            Label(subjects, systemImage: "square.grid.2x2.fill")
+                .lineLimit(1)
+            Spacer()
+            Label(config.examMode.rawValue,
+                  systemImage: config.examMode == .exam ? "lock.fill" : "bolt.fill")
         }
-    }
-
-    var statsRow: some View {
-        HStack(spacing: 12) {
-            ExamStatCard(value: "\(earnedScore)",               label: "得分",   color: grade.color)
-            ExamStatCard(value: "\(totalScore - earnedScore)",  label: "失分",   color: Color.quizRed)
-            ExamStatCard(value: "\(vm.questions.count - vm.score)", label: "答错题", color: Color(red: 0.86, green: 0.55, blue: 0.25))
-        }
+        .font(.system(size: 12))
+        .foregroundColor(.secondary)
         .padding(.horizontal, 20)
+    }
+
+    // MARK: 三项统计卡
+    var statsRow: some View {
+        HStack(spacing: 10) {
+            ExamStatCard(icon: "checkmark.circle.fill",
+                         value: "\(vm.score)",
+                         label: "答对题数",
+                         color: Color.quizGreen)
+            ExamStatCard(icon: "xmark.circle.fill",
+                         value: "\(vm.questions.count - vm.score)",
+                         label: "答错题数",
+                         color: Color.quizRed)
+            ExamStatCard(icon: "minus.circle.fill",
+                         value: "\(totalScore - earnedScore)",
+                         label: "失分",
+                         color: Color(red: 0.86, green: 0.55, blue: 0.25))
+        }
+        .padding(.horizontal, 16)
     }
 
     var detailToggle: some View {
@@ -657,14 +708,21 @@ enum BlankExamPDFGenerator {
 
 // MARK: - 辅助组件
 struct ExamStatCard: View {
-    let value: String; let label: String; let color: Color
+    let icon: String; let value: String; let label: String; let color: Color
     var body: some View {
         VStack(spacing: 6) {
-            Text(value).font(.system(size: 22, weight: .bold)).foregroundColor(color)
-            Text(label).font(.system(size: 12)).foregroundColor(.secondary)
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundColor(color)
+            Text(value)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.white)
+            Text(label)
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
         }
-        .frame(maxWidth: .infinity).padding(.vertical, 16).background(Color.quizCard).cornerRadius(12)
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.quizBorder, lineWidth: 0.5))
+        .frame(maxWidth: .infinity).padding(.vertical, 14).background(Color.quizCard).cornerRadius(12)
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(color.opacity(0.3), lineWidth: 1))
     }
 }
 
@@ -682,6 +740,8 @@ private extension Array {
             questionScores: [34, 33, 33]
         )
     }
-    .environmentObject(QuizStore())
+    .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
     .preferredColorScheme(.dark)
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import Vision
+import SwiftData 
 
 // MARK: - 拍照录题视图
 
@@ -639,6 +640,8 @@ struct CameraPickerView: UIViewControllerRepresentable {
 
 #Preview {
     NavigationStack { PhotoCaptureView() }
-        .environmentObject(QuizStore())
+        .environmentObject(QuizStore(modelContext: try! ModelContainer(for:
+  QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
+  AppSettingsEntity.self).mainContext))
         .preferredColorScheme(.dark)
 }
