@@ -48,12 +48,12 @@ struct VocabAppShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: AddWordIntent(),
             phrases: [
+                "Save word \(\.$word)",
+                "Add \(\.$word) to vocab",
+                "Log word \(\.$word)",
                 "添加生词 \(\.$word)",
-                "用\(.applicationName)记住单词 \(\.$word)",
                 "把 \(\.$word) 加入生词本",
-                "Add word \(\.$word) in \(.applicationName)",
-                "Save word \(\.$word) to my vocabulary",
-                "Remember \(\.$word) in \(.applicationName)"
+                "Add word \(\.$word) in \(.applicationName)"
             ],
             shortTitle: "Add Word",
             systemImageName: "plus.circle"
@@ -61,10 +61,10 @@ struct VocabAppShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: TodayWordsIntent(),
             phrases: [
+                "Word review today",
+                "My vocab today",
                 "今天有几个单词要复习",
-                "查看\(.applicationName)今日单词",
                 "我今天的单词复习情况",
-                "How many words to review today in \(.applicationName)",
                 "Check today's vocabulary in \(.applicationName)"
             ],
             shortTitle: "Today's Words",
