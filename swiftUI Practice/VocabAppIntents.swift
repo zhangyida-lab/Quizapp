@@ -48,9 +48,9 @@ struct VocabAppShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: AddWordIntent(),
             phrases: [
-                "Save word \(\.$word)",
-                "Add \(\.$word) to vocab",
-                "Log word \(\.$word)",
+                "Save \(\.$word) to vocab",
+                "Remember \(\.$word)",
+                "Memorize \(\.$word)",
                 "添加生词 \(\.$word)",
                 "把 \(\.$word) 加入生词本",
                 "Add word \(\.$word) in \(.applicationName)"
