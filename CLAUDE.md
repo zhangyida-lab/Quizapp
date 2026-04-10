@@ -81,3 +81,55 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 ```
 
 `QuestionBankImport` provides lenient parsing — `id`, `difficulty`, `explanation`, `tags` are all optional.
+
+---
+
+## Vocabulary Module（feature/vocabulary-learning 分支）
+
+### 架构概述
+词汇模块是独立功能分支，**不使用 SwiftData**，采用 `UserDefaults + JSONEncoder` + `ObservableObject`，原因是 Widget Extension 和 Siri App Intent 需要跨进程读写，SwiftData 不支持跨 target 共享。
+
+**App Group ID：** `group.com.acspace.swiftUI-Practice`
+
+### 核心文件
+
+| 文件 | 职责 |
+|------|------|
+| `Models/Word.swift` | `Word`、`WordBook`、`WordRecord`（SM-2）、`WordBookImport`（宽松解析） |
+| `Store/VocabularyStore.swift` | 主 ObservableObject，管理词库/记录/TTS/每日单词 |
+| `Store/BuiltInWordBooks.swift` | 11 个内置词库目录（指向 Bundle JSON），懒加载 |
+| `Store/VocabSharedHelper.swift` | 轻量静态层，供 Widget/Siri Extension 使用，含 `UserDefaults.shared` 定义 |
+| `VocabAppIntents.swift` | Siri Shortcuts：`AddWordIntent`、`TodayWordsIntent` |
+| `VocabWidget/VocabWidget.swift` | WidgetKit：4 种尺寸，30 分钟刷新，Deep Link `quizapp://vocabulary` |
+| `Views/Vocabulary/` | `VocabularyHomeView`、`FlashCardView`、`WordChoiceView`、`WordNotebookView`、`VocabQRImportView` |
+| `WordBooks/*.json` | 11 个内置词库 JSON（初中/高中/CET-4精选&完整/CET-6精选&完整/考研/托福/SAT/商务/技术） |
+
+### UserDefaults 存储键
+
+| Key | 内容 |
+|-----|------|
+| `vocab_books_v1` | 用户自建/导入词库（不含内置词库数据） |
+| `vocab_records_v1` | SM-2 学习记录 |
+| `vocab_daily_v1` / `vocab_daily_date_v1` | 每日单词缓存 |
+| `vocab_builtin_enabled_v1` | 已启用的内置词库 UUID 列表 |
+| `vocab_total_count_v1` | 总词数缓存（Widget 读取） |
+
+### 内置词库加载机制
+- 词库 JSON 文件打包进 App Bundle（`WordBooks/` 文件夹）
+- 默认全部**未启用**，不占 UserDefaults 空间
+- 用户点击"启用"后，异步从 Bundle 解析 JSON 加载进内存
+- `save()` 只持久化用户词库 + 已启用 UUID 列表，不把内置单词写入 UserDefaults
+
+### MainTabView
+共 6 个 Tab（tag 0-5）：首页 / 今日 / 错题本 / **词汇**（tag=3）/ 题库 / 录题
+词汇 Tab badge 显示 `vocabStore.dueCount`，Deep Link `quizapp://vocabulary` 跳转到 tag=3
+
+### 待完成的 Xcode 配置（Mac 上操作一次，commit 后永久生效）
+1. **URL Scheme**：主 App target → Info → URL Types → 添加 `quizapp`
+2. **App Groups**：主 App target → Signing & Capabilities → App Groups → `group.com.acspace.swiftUI-Practice`
+3. **创建 Widget Extension target**：File → New → Target → Widget Extension，命名 `VocabWidget`，删除默认生成文件
+4. **VocabWidget target 配置**：
+   - App Groups 能力 → `group.com.acspace.swiftUI-Practice`
+   - Target Membership 勾选：`VocabWidget.swift`、`Word.swift`、`VocabSharedHelper.swift`
+5. **WordBooks 文件夹**：拖入 Xcode，选 "Create folder references"，勾选主 App target
+6. **配置完后务必 commit `project.pbxproj` 和 `.entitlements` 文件**，下次 pull 无需重复配置
