@@ -9,16 +9,15 @@ struct AddWordIntent: AppIntent {
         categoryName: "词汇学习"
     )
 
-    /// 用户说「添加生词 eloquent」时，"eloquent" 会填入这里
     @Parameter(title: "单词", description: "要添加的英文单词")
-    var word: String
+    var term: String   // 避免使用 'word'，该词与 NLU 系统保留词汇冲突
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let success = VocabSharedHelper.quickAdd(word: word)
+        let success = VocabSharedHelper.quickAdd(word: term)
         if success {
-            return .result(dialog: "已将「\(word)」加入生词本，记得之后补充释义 📖")
+            return .result(dialog: "已将「\(term)」加入生词本，记得之后补充释义 📖")
         } else {
-            return .result(dialog: "「\(word)」已经在你的词库里了 ✅")
+            return .result(dialog: "「\(term)」已经在你的词库里了 ✅")
         }
     }
 }
@@ -42,18 +41,18 @@ struct TodayWordsIntent: AppIntent {
     }
 }
 
-// MARK: - Siri 推荐短语（让 Siri 主动建议）
+// MARK: - Siri 推荐短语
 struct VocabAppShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: AddWordIntent(),
             phrases: [
-                "Save \(\.$word) to vocab",
-                "Remember \(\.$word)",
-                "Memorize \(\.$word)",
-                "添加生词 \(\.$word)",
-                "把 \(\.$word) 加入生词本",
-                "Add word \(\.$word) in \(.applicationName)"
+                "Save \(\.$term) to vocab",
+                "Remember \(\.$term)",
+                "Memorize \(\.$term)",
+                "添加生词 \(\.$term)",
+                "把 \(\.$term) 加入生词本",
+                "Add \(\.$term) in \(.applicationName)"
             ],
             shortTitle: "Add Word",
             systemImageName: "plus.circle"
