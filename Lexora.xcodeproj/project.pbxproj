@@ -279,6 +279,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VocabWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VocabWidget;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,6 +308,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VocabWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VocabWidget;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -455,6 +457,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "swiftUI-Practice-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要访问摄像头以扫描二维码，录题功能使用";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "截图识词功能使用，录题功能使用";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -486,6 +490,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "swiftUI-Practice-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要访问摄像头以扫描二维码，录题功能使用";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "截图识词功能使用，录题功能使用";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
