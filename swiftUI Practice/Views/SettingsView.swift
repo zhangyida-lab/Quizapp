@@ -6,6 +6,8 @@ struct SettingsView: View {
     @EnvironmentObject private var store: QuizStore
     @EnvironmentObject private var vocabStore: VocabularyStore
 
+    @State private var wechatCopied = false
+
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
 
@@ -14,6 +16,7 @@ struct SettingsView: View {
             Color.quizBg.ignoresSafeArea()
             Form {
                 algorithmSection
+                feedbackSection
                 aboutSection
                 legalSection
             }
@@ -48,6 +51,57 @@ struct SettingsView: View {
             }
         } header: {
             SettingsSectionHeader("学习算法")
+        }
+        .listRowBackground(Color.quizCard)
+    }
+
+    // MARK: 反馈与联系
+    private var feedbackSection: some View {
+        Section {
+            // 邮件反馈
+            Link(destination: URL(string: "mailto:acboo2020@gmail.com?subject=Lexora%20反馈&body=App%20版本：\(appVersion)%20(\(buildNumber))%0A设备：\(UIDevice.current.model)%20iOS%20\(UIDevice.current.systemVersion)%0A%0A问题描述：")!) {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "envelope.fill", color: Color(red: 0.20, green: 0.60, blue: 0.86))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("发送邮件反馈")
+                            .foregroundColor(.white)
+                        Text("acboo2020@gmail.com")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            // 微信
+            Button {
+                UIPasteboard.general.string = "danshengshuo"
+                wechatCopied = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    wechatCopied = false
+                }
+            } label: {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "message.fill", color: Color(red: 0.13, green: 0.75, blue: 0.37))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("微信联系开发者")
+                            .foregroundColor(.white)
+                        Text("danshengshuo")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text(wechatCopied ? "已复制" : "点击复制")
+                        .font(.caption)
+                        .foregroundColor(wechatCopied ? Color.quizGreen : .secondary)
+                        .animation(.easeInOut(duration: 0.2), value: wechatCopied)
+                }
+            }
+        } header: {
+            SettingsSectionHeader("反馈与联系")
         }
         .listRowBackground(Color.quizCard)
     }
