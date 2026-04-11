@@ -155,6 +155,62 @@ class VocabularyStore: ObservableObject {
         }
     }
 
+    // MARK: 手动添加单词
+    enum AddWordResult {
+        case enriched   // 在内置词库找到，已补全释义
+        case added      // 未找到，以"待补充释义"添加
+        case duplicate  // 单词已存在
+    }
+
+    @discardableResult
+    func quickAddManual(word: String) -> AddWordResult {
+        let trimmed = word.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return .duplicate }
+        let lower = trimmed.lowercased()
+
+        // 已存在则跳过
+        let exists = wordBooks.filter { !$0.isBuiltIn }.flatMap { $0.words }
+            .contains { $0.word.lowercased() == lower }
+        if exists { return .duplicate }
+
+        // 优先从已启用内置词库匹配
+        let builtInWords = wordBooks.filter { $0.isBuiltIn && $0.isEnabled }.flatMap { $0.words }
+        if let match = builtInWords.first(where: { $0.word.lowercased() == lower }) {
+            var newWord = match
+            newWord.id = UUID()
+            newWord.source = .manual
+            newWord.createdAt = Date()
+            addToMyNotebook(newWord)
+            return .enriched
+        }
+
+        let newWord = Word(
+            word: trimmed, phonetic: "", partOfSpeech: "n.",
+            definitions: [Word.Definition(meaning: "（待补充释义）", exampleEn: nil, exampleZh: nil)],
+            source: .manual
+        )
+        addToMyNotebook(newWord)
+        return .added
+    }
+
+    // 在内置词库中查询单词预览（用于手动添加时的实时提示）
+    func lookupInBuiltIn(word: String) -> Word? {
+        let lower = word.lowercased()
+        return wordBooks.filter { $0.isBuiltIn && $0.isEnabled }.flatMap { $0.words }
+            .first { $0.word.lowercased() == lower }
+    }
+
+    private func addToMyNotebook(_ word: Word) {
+        if let idx = wordBooks.firstIndex(where: { $0.name == "我的生词本" && !$0.isBuiltIn }) {
+            wordBooks[idx].words.append(word)
+        } else {
+            var book = WordBook(name: "我的生词本", level: "自定义", description: "手动添加的生词")
+            book.words.append(word)
+            wordBooks.append(book)
+        }
+        save()
+    }
+
     // MARK: 用户词库管理
     func addWordBook(_ book: WordBook) {
         wordBooks.append(book)

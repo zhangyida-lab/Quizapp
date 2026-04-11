@@ -12,10 +12,13 @@ struct VocabularyHomeView: View {
     @State private var selectedBook: WordBook? = nil
 
     // 导入相关
-    @State private var showImportPicker = false
-    @State private var showQRImport     = false
+    @State private var showImportPicker  = false
+    @State private var showQRImport      = false
     @State private var importError: String? = nil
-    @State private var showImportError  = false
+    @State private var showImportError   = false
+    // 添加单词
+    @State private var showManualAdd     = false
+    @State private var showScreenshotAdd = false
 
     var body: some View {
         ZStack {
@@ -38,15 +41,29 @@ struct VocabularyHomeView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
-                    Button {
-                        showImportPicker = true
-                    } label: {
-                        Label("从文件导入", systemImage: "doc.badge.plus")
+                    Section("添加单词") {
+                        Button {
+                            showManualAdd = true
+                        } label: {
+                            Label("手动添加", systemImage: "keyboard")
+                        }
+                        Button {
+                            showScreenshotAdd = true
+                        } label: {
+                            Label("截图识词", systemImage: "text.viewfinder")
+                        }
                     }
-                    Button {
-                        showQRImport = true
-                    } label: {
-                        Label("扫码导入", systemImage: "qrcode.viewfinder")
+                    Section("导入词库") {
+                        Button {
+                            showImportPicker = true
+                        } label: {
+                            Label("从文件导入", systemImage: "doc.badge.plus")
+                        }
+                        Button {
+                            showQRImport = true
+                        } label: {
+                            Label("扫码导入", systemImage: "qrcode.viewfinder")
+                        }
                     }
                 } label: {
                     Image(systemName: "plus.circle")
@@ -66,6 +83,16 @@ struct VocabularyHomeView: View {
         // 扫码导入
         .sheet(isPresented: $showQRImport) {
             VocabQRImportView()
+                .environmentObject(vocabStore)
+        }
+        // 手动添加
+        .sheet(isPresented: $showManualAdd) {
+            ManualAddSheet()
+                .environmentObject(vocabStore)
+        }
+        // 截图识词
+        .sheet(isPresented: $showScreenshotAdd) {
+            ScreenshotAddSheet()
                 .environmentObject(vocabStore)
         }
         // 导入错误提示
