@@ -122,11 +122,22 @@ class QuizStore: ObservableObject {
 
     // MARK: 答题记录
     func recordAnswer(questionId: UUID, isCorrect: Bool) {
+        let cfg = AlgorithmSettingsStore.loadConfig()
         if let idx = wrongRecords.firstIndex(where: { $0.questionId == questionId }) {
-            wrongRecords[idx].update(isCorrect: isCorrect)
+            wrongRecords[idx].update(
+                isCorrect: isCorrect,
+                wrongResetDays: cfg.sm2WrongResetDays,
+                minEaseFactor: cfg.sm2MinEaseFactor,
+                easePenalty: cfg.sm2EasePenalty
+            )
         } else if !isCorrect {
             var record = WrongRecord(questionId: questionId)
-            record.update(isCorrect: false)
+            record.update(
+                isCorrect: false,
+                wrongResetDays: cfg.sm2WrongResetDays,
+                minEaseFactor: cfg.sm2MinEaseFactor,
+                easePenalty: cfg.sm2EasePenalty
+            )
             wrongRecords.append(record)
         }
         save()
@@ -162,6 +173,10 @@ class QuizStore: ObservableObject {
     }
 
     func generateDailyRecommendations() {
+        let cfg = AlgorithmSettingsStore.loadConfig()
+        let total = cfg.dailyQuestionCount
+        let maxDue = max(1, Int(Double(total) * cfg.dueQuestionMaxRatio))
+
         let visibleQuestions = allQuestions.filter { !hiddenCategories.contains($0.category) }
         guard !visibleQuestions.isEmpty else {
             dailyQuestions = []
@@ -169,8 +184,8 @@ class QuizStore: ObservableObject {
             saveDailyCache()
             return
         }
-        var result: [Question] = []
 
+        // 1. 到期错题（按优先级排序，取 maxDue 上限）
         let dueIds = Set(wrongRecords.filter { $0.isDue }.map { $0.questionId })
         let visibleDue = visibleQuestions
             .filter { dueIds.contains($0.id) }
@@ -179,20 +194,64 @@ class QuizStore: ObservableObject {
                 let p2 = wrongRecords.first { $0.questionId == q2.id }?.priorityScore ?? 0
                 return p1 > p2
             }
-        result.append(contentsOf: visibleDue.prefix(15))
+        var result = Array(visibleDue.prefix(maxDue))
 
-        if result.count < 20 {
+        // 2. 补充题（不足 total 时填满）
+        if result.count < total {
             let existingIds = Set(result.map { $0.id })
-            let fillQs = visibleQuestions
-                .filter { !existingIds.contains($0.id) && !dueIds.contains($0.id) }
-                .shuffled()
-                .prefix(20 - result.count)
-            result.append(contentsOf: fillQs)
+            let candidates = visibleQuestions.filter { !existingIds.contains($0.id) && !dueIds.contains($0.id) }
+            let needed = total - result.count
+
+            if cfg.useWeightedFill {
+                // 加权随机：错误率高、从未答对的题优先
+                let wrongIdMap = Dictionary(uniqueKeysWithValues: wrongRecords.map { ($0.questionId, $0) })
+                let weighted = candidates
+                    .map { q -> (Question, Double) in
+                        let rec = wrongIdMap[q.id]
+                        let weight: Double
+                        if let r = rec {
+                            // 答对过但错误率高的题给更高权重
+                            let errorRate = r.correctStreak == 0 ? 1.0 : Double(r.wrongCount) / Double(r.wrongCount + r.correctStreak)
+                            weight = 1.0 + errorRate * 3.0
+                        } else {
+                            weight = 1.0   // 从未做过的题基础权重
+                        }
+                        return (q, weight)
+                    }
+                    .sorted { $0.1 > $1.1 }  // 权重高的排前面
+
+                // 加权随机采样
+                let fillQs = weightedSample(from: weighted, count: needed)
+                result.append(contentsOf: fillQs)
+            } else {
+                result.append(contentsOf: candidates.shuffled().prefix(needed))
+            }
         }
 
         dailyQuestions = result.shuffled()
         lastDailyDate = Date()
         saveDailyCache()
+    }
+
+    /// 加权随机采样（权重越高被选中概率越大）
+    private func weightedSample(from items: [(Question, Double)], count: Int) -> [Question] {
+        var pool = items
+        var selected: [Question] = []
+        let needed = min(count, pool.count)
+        for _ in 0..<needed {
+            let totalWeight = pool.reduce(0) { $0 + $1.1 }
+            guard totalWeight > 0 else { break }
+            var r = Double.random(in: 0..<totalWeight)
+            for (i, (q, w)) in pool.enumerated() {
+                r -= w
+                if r <= 0 {
+                    selected.append(q)
+                    pool.remove(at: i)
+                    break
+                }
+            }
+        }
+        return selected
     }
 
     // MARK: 试卷管理

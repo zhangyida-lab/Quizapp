@@ -96,14 +96,32 @@ class VocabularyStore: ObservableObject {
         refreshDailyIfNeeded()
     }
 
-    // MARK: 每日单词（最多 15 个到期 + 补充新词至 20）
+    // MARK: 每日单词
     func generateDailyWords() {
-        var result = Array(dueWords.prefix(15))
-        let studiedIds = Set(wordRecords.map { $0.wordId })
-        let newWords = allWords.filter { !studiedIds.contains($0.id) }.shuffled()
-        let needed = max(0, 20 - result.count)
-        result += Array(newWords.prefix(needed))
-        dailyWords = result
+        let cfg = AlgorithmSettingsStore.loadConfig()
+        let total = cfg.dailyWordCount
+        let maxReview = max(1, Int(Double(total) * (1.0 - cfg.newWordRatio)))
+        let maxNew    = max(0, total - maxReview)
+
+        // 1. 复习词（到期的，按优先级排序）
+        var result = Array(dueWords.prefix(maxReview))
+
+        // 2. 新词（从未学过的）
+        if result.count < total {
+            let studiedIds = Set(wordRecords.map { $0.wordId })
+            let newWords = allWords.filter { !studiedIds.contains($0.id) }.shuffled()
+            let neededNew = min(maxNew, total - result.count)
+            result += Array(newWords.prefix(neededNew))
+        }
+
+        // 3. 若复习词 + 新词还不够，继续用复习词补满
+        if result.count < total {
+            let existingIds = Set(result.map { $0.id })
+            let moreReview = dueWords.filter { !existingIds.contains($0.id) }
+            result += Array(moreReview.prefix(total - result.count))
+        }
+
+        dailyWords = result.shuffled()
         lastDailyDate = Date()
         saveDailyCache()
     }
@@ -115,11 +133,22 @@ class VocabularyStore: ObservableObject {
 
     // MARK: 学习记录更新
     func recordStudy(wordId: UUID, isCorrect: Bool) {
+        let cfg = AlgorithmSettingsStore.loadConfig()
         if let idx = wordRecords.firstIndex(where: { $0.wordId == wordId }) {
-            wordRecords[idx].update(isCorrect: isCorrect)
+            wordRecords[idx].update(
+                isCorrect: isCorrect,
+                wrongResetDays: cfg.sm2WrongResetDays,
+                minEaseFactor: cfg.sm2MinEaseFactor,
+                easePenalty: cfg.sm2EasePenalty
+            )
         } else {
             var record = WordRecord(wordId: wordId)
-            record.update(isCorrect: isCorrect)
+            record.update(
+                isCorrect: isCorrect,
+                wrongResetDays: cfg.sm2WrongResetDays,
+                minEaseFactor: cfg.sm2MinEaseFactor,
+                easePenalty: cfg.sm2EasePenalty
+            )
             wordRecords.append(record)
         }
         save()

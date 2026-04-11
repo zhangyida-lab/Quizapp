@@ -6,6 +6,7 @@ struct LexoraApp: App {
     private let modelContainer: ModelContainer
     @StateObject private var store: QuizStore
     @StateObject private var vocabStore = VocabularyStore()
+    @StateObject private var algoStore  = AlgorithmSettingsStore()
 
     init() {
         let schema = Schema([
@@ -26,6 +27,7 @@ struct LexoraApp: App {
             MainTabView()
                 .environmentObject(store)
                 .environmentObject(vocabStore)
+                .environmentObject(algoStore)
                 .modelContainer(modelContainer)
                 .preferredColorScheme(.dark)
         }

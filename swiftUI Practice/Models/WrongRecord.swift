@@ -33,7 +33,10 @@ struct WrongRecord: Identifiable, Codable {
     }
 
     // MARK: - SM-2 算法更新
-    mutating func update(isCorrect: Bool) {
+    mutating func update(isCorrect: Bool,
+                         wrongResetDays: Int = 1,
+                         minEaseFactor: Double = 1.3,
+                         easePenalty: Double = 0.2) {
         let quality = isCorrect ? 4 : 1
         lastAttemptDate = Date()
 
@@ -44,13 +47,12 @@ struct WrongRecord: Identifiable, Codable {
             case 2:  intervalDays = 3
             default: intervalDays = max(1, Int((Double(intervalDays) * easeFactor).rounded()))
             }
-            // 更新难度系数（答对越流畅系数越高）
-            easeFactor = max(1.3, easeFactor + 0.1 - Double(5 - quality) * (0.08 + Double(5 - quality) * 0.02))
+            easeFactor = max(minEaseFactor, easeFactor + 0.1 - Double(5 - quality) * (0.08 + Double(5 - quality) * 0.02))
         } else {
             wrongCount += 1
             correctStreak = 0
-            intervalDays = 1
-            easeFactor = max(1.3, easeFactor - 0.2)
+            intervalDays = wrongResetDays
+            easeFactor = max(minEaseFactor, easeFactor - easePenalty)
         }
 
         nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()

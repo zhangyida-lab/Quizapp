@@ -32,6 +32,7 @@ struct LibraryView: View {
                 VStack(spacing: 20) {
                     summarySection
                     actionButtons
+                    algorithmSettingsEntry
                     if !store.allCategories.isEmpty {
                         categoryManageSection
                     }
@@ -106,6 +107,40 @@ struct LibraryView: View {
             LibStatCard(icon: "doc.text.fill",         value: "\(store.allQuestions.count)",  label: "启用题目", color: Color.quizGreen)
             LibStatCard(icon: "square.grid.2x2.fill",  value: "\(store.categories.count)",    label: "分类数量", color: Color(red: 0.86, green: 0.55, blue: 0.25))
         }
+        .padding(.horizontal, 16)
+    }
+
+    // MARK: 算法设置入口
+    var algorithmSettingsEntry: some View {
+        NavigationLink(destination: AlgorithmSettingsView()) {
+            HStack(spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.quizPurple.opacity(0.25))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 20))
+                        .foregroundColor(Color.quizPurpleLight)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("算法设置")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text("调整每日推荐、单词学习、SM-2 及试卷生成参数")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+            .padding(14)
+            .background(Color.quizCard)
+            .cornerRadius(14)
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.quizPurple.opacity(0.3), lineWidth: 1))
+        }
+        .buttonStyle(PlainButtonStyle())
         .padding(.horizontal, 16)
     }
 
