@@ -29,13 +29,13 @@ struct DailyReviewView: View {
                 VStack {
                     Spacer()
                     NavigationLink(destination: QuizContainerView(
-                        categoryName: "今日推荐",
+                        categoryName: "推荐",
                         categoryColor: Color.quizPurple,
                         questions: store.dailyQuestions
                     )) {
                         HStack(spacing: 10) {
                             Image(systemName: "play.fill").font(.system(size: 15))
-                            Text("开始今日练习（\(store.dailyQuestions.count) 题）")
+                            Text("开始练习（\(store.dailyQuestions.count) 题）")
                                 .font(.system(size: 17, weight: .semibold))
                         }
                         .foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 16)
@@ -47,7 +47,7 @@ struct DailyReviewView: View {
                 }
             }
         }
-        .navigationTitle("今日推荐")
+        .navigationTitle("推荐")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
@@ -66,10 +66,6 @@ struct DailyReviewView: View {
     // MARK: 头部
     var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(dateString)
-                .font(.system(size: 13)).foregroundColor(.secondary)
-            Text(store.dailyQuestions.isEmpty ? "暂无推荐题目" : "今日为你精选了 \(store.dailyQuestions.count) 道题")
-                .font(.system(size: 22, weight: .bold)).foregroundColor(.white)
             if store.dueQuestions.count > 0 {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.circle.fill")

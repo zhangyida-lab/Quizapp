@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- 不进行跨 App 追踪 -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+
+    <!-- 无追踪域名 -->
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+
+    <!-- 不上传用户数据到服务器，无需声明收集类型 -->
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array/>
+
+    <!-- Required Reason APIs -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+
+        <!-- UserDefaults：用于本地存储题库、词库、学习记录和设置 -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- CA92.1：读写本 App 自身写入的用户设置与数据 -->
+                <string>CA92.1</string>
+            </array>
+        </dict>
+
+    </array>
+
+</dict>
+</plist>

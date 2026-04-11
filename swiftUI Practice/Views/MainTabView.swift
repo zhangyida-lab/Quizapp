@@ -9,12 +9,12 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
 
-            // Tab 0: 今日
+            // Tab 0: 推荐
             NavigationStack {
                 DailyReviewView()
             }
             .tabItem {
-                Label("今日", systemImage: "calendar.badge.clock")
+                Label("推荐", systemImage: "calendar.badge.clock")
             }
             .tag(0)
 
