@@ -1,0 +1,330 @@
+{
+  "version": "1.0",
+  "name": "软件工程师常用英语",
+  "level": "专业",
+  "description": "软件开发日常高频英语词汇，涵盖编程、架构、协作、文档等场景，共 45 个精选单词",
+  "words": [
+    {
+      "word": "algorithm",
+      "phonetic": "/ˈælɡərɪðəm/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "算法", "exampleEn": "A sorting algorithm arranges data in order.", "exampleZh": "排序算法将数据按顺序排列。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "abstraction",
+      "phonetic": "/æbˈstrækʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "抽象，抽象化", "exampleEn": "Good abstraction hides implementation details.", "exampleZh": "好的抽象隐藏了实现细节。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "authentication",
+      "phonetic": "/ɔːˌθentɪˈkeɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "身份验证，认证", "exampleEn": "Two-factor authentication improves security.", "exampleZh": "双因素身份验证提高了安全性。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "backend",
+      "phonetic": "/ˈbækend/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "后端（服务器端）", "exampleEn": "The backend handles database operations.", "exampleZh": "后端处理数据库操作。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "bandwidth",
+      "phonetic": "/ˈbændwɪdθ/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "带宽；（工作）容量", "exampleEn": "I don't have the bandwidth to take on more tasks.", "exampleZh": "我没有精力再承担更多任务了。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "cache",
+      "phonetic": "/kæʃ/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "缓存；缓冲存储", "exampleEn": "Clear the cache to refresh the page.", "exampleZh": "清除缓存以刷新页面。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "callback",
+      "phonetic": "/ˈkɔːlbæk/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "回调函数", "exampleEn": "Pass a callback function to handle the response.", "exampleZh": "传递一个回调函数来处理响应。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "compile",
+      "phonetic": "/kəmˈpaɪl/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "编译；整理汇编", "exampleEn": "The code failed to compile due to a syntax error.", "exampleZh": "由于语法错误，代码编译失败。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "concurrency",
+      "phonetic": "/kənˈkʌrənsi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "并发，并发性", "exampleEn": "Handling concurrency requires careful design.", "exampleZh": "处理并发需要仔细的设计。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "container",
+      "phonetic": "/kənˈteɪnər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "容器（如 Docker 容器）", "exampleEn": "Each microservice runs in its own container.", "exampleZh": "每个微服务都在自己的容器中运行。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "debug",
+      "phonetic": "/diːˈbʌɡ/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "调试，排除故障", "exampleEn": "I spent two hours debugging this function.", "exampleZh": "我花了两个小时调试这个函数。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "dependency",
+      "phonetic": "/dɪˈpendənsi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "依赖，依赖项，依存关系", "exampleEn": "Check the project's dependencies before building.", "exampleZh": "构建前检查项目的依赖项。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "deploy",
+      "phonetic": "/dɪˈplɔɪ/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "部署，发布，上线", "exampleEn": "We deploy to production every Friday.", "exampleZh": "我们每周五部署到生产环境。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "deprecate",
+      "phonetic": "/ˈdeprəkeɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "弃用，标记为过时", "exampleEn": "This API endpoint has been deprecated.", "exampleZh": "这个API端点已被弃用。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "documentation",
+      "phonetic": "/ˌdɒkjumenˈteɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "文档，技术文档，说明文件", "exampleEn": "Good documentation saves time for everyone.", "exampleZh": "好的文档为每个人节省时间。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "encryption",
+      "phonetic": "/ɪnˈkrɪpʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "加密，数据加密", "exampleEn": "All passwords are stored with encryption.", "exampleZh": "所有密码都经过加密存储。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "endpoint",
+      "phonetic": "/ˈendpɔɪnt/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "端点，接口地址（API）", "exampleEn": "Call this endpoint to get user data.", "exampleZh": "调用此端点获取用户数据。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "exception",
+      "phonetic": "/ɪkˈsepʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "异常，例外；异常情况", "exampleEn": "Always handle exceptions gracefully.", "exampleZh": "始终要优雅地处理异常。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "framework",
+      "phonetic": "/ˈfreɪmwɜːk/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "框架，开发框架", "exampleEn": "React is a popular frontend framework.", "exampleZh": "React 是一个流行的前端框架。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "frontend",
+      "phonetic": "/ˈfrʌntend/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "前端（客户端/界面层）", "exampleEn": "The frontend communicates with the backend via API.", "exampleZh": "前端通过API与后端通信。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "iterate",
+      "phonetic": "/ˈɪtəreɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "迭代，循环；反复改进", "exampleEn": "We iterate quickly based on user feedback.", "exampleZh": "我们根据用户反馈快速迭代。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "latency",
+      "phonetic": "/ˈleɪtənsi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "延迟，响应时间", "exampleEn": "High latency degrades the user experience.", "exampleZh": "高延迟会降低用户体验。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "legacy",
+      "phonetic": "/ˈleɡəsi/",
+      "partOfSpeech": "adj./n.",
+      "definitions": [{ "meaning": "遗留的；遗留系统", "exampleEn": "Maintaining legacy code is challenging.", "exampleZh": "维护遗留代码是一项挑战。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "middleware",
+      "phonetic": "/ˈmɪdlweər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "中间件", "exampleEn": "The middleware handles request authentication.", "exampleZh": "中间件处理请求认证。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "migration",
+      "phonetic": "/maɪˈɡreɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "迁移，数据迁移，系统迁移", "exampleEn": "The database migration took three hours.", "exampleZh": "数据库迁移花了三个小时。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "modular",
+      "phonetic": "/ˈmɒdjulər/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "模块化的，按模块构建的", "exampleEn": "A modular design makes code reusable.", "exampleZh": "模块化设计使代码可复用。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "optimization",
+      "phonetic": "/ˌɒptɪmaɪˈzeɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "优化，性能优化", "exampleEn": "Performance optimization reduced load time by 50%.", "exampleZh": "性能优化将加载时间缩短了50%。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "parameter",
+      "phonetic": "/pəˈræmɪtər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "参数，形参", "exampleEn": "Pass the user ID as a parameter.", "exampleZh": "将用户ID作为参数传递。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "pipeline",
+      "phonetic": "/ˈpaɪplaɪn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "流水线，管道；CI/CD 流程", "exampleEn": "The CI/CD pipeline runs tests automatically.", "exampleZh": "CI/CD 流水线自动运行测试。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "prototype",
+      "phonetic": "/ˈprəʊtətaɪp/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "原型，原型设计", "exampleEn": "Build a prototype before full development.", "exampleZh": "在全面开发前先构建原型。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "refactor",
+      "phonetic": "/riːˈfæktər/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "重构（代码）", "exampleEn": "We need to refactor this module for clarity.", "exampleZh": "我们需要重构这个模块以提高清晰度。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "repository",
+      "phonetic": "/rɪˈpɒzɪtri/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "代码仓库，版本库（Git repo）", "exampleEn": "Clone the repository to your local machine.", "exampleZh": "将代码仓库克隆到本地机器。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "rollback",
+      "phonetic": "/ˈrəʊlbæk/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "回滚，版本回退", "exampleEn": "We had to rollback the release due to a bug.", "exampleZh": "由于一个bug，我们不得不回滚版本。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "scalability",
+      "phonetic": "/ˌskeɪləˈbɪlɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "可扩展性，可伸缩性", "exampleEn": "Cloud services offer excellent scalability.", "exampleZh": "云服务提供出色的可扩展性。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "schema",
+      "phonetic": "/ˈskiːmə/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "模式，数据库结构，数据架构", "exampleEn": "Update the database schema before deploying.", "exampleZh": "部署前更新数据库结构。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "sprint",
+      "phonetic": "/sprɪnt/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "冲刺（敏捷开发周期）", "exampleEn": "This feature will be in the next sprint.", "exampleZh": "这个功能将在下个冲刺周期完成。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "syntax",
+      "phonetic": "/ˈsɪntæks/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "语法，句法；编程语法规则", "exampleEn": "Python syntax is clean and readable.", "exampleZh": "Python 语法简洁易读。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "thread",
+      "phonetic": "/θred/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "线程；讨论串", "exampleEn": "This task runs on a background thread.", "exampleZh": "这个任务在后台线程上运行。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "throughput",
+      "phonetic": "/ˈθruːpʊt/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "吞吐量，处理能力", "exampleEn": "The system handles high throughput efficiently.", "exampleZh": "该系统高效地处理高吞吐量。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "variable",
+      "phonetic": "/ˈveəriəbl/",
+      "partOfSpeech": "n./adj.",
+      "definitions": [{ "meaning": "变量；可变的", "exampleEn": "Declare the variable before using it.", "exampleZh": "在使用变量之前先声明它。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "version",
+      "phonetic": "/ˈvɜːʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "版本", "exampleEn": "Always document the API version.", "exampleZh": "始终记录API版本。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "vulnerability",
+      "phonetic": "/ˌvʌlnərəˈbɪlɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "漏洞，安全漏洞，脆弱性", "exampleEn": "This vulnerability allows remote code execution.", "exampleZh": "此漏洞允许远程代码执行。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "workflow",
+      "phonetic": "/ˈwɜːkfləʊ/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "工作流程，自动化流程", "exampleEn": "GitHub Actions automates our deployment workflow.", "exampleZh": "GitHub Actions 自动化了我们的部署工作流程。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "payload",
+      "phonetic": "/ˈpeɪləʊd/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "载荷，数据负载（API 请求/响应体）", "exampleEn": "The request payload must be in JSON format.", "exampleZh": "请求的数据载荷必须是JSON格式。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "mock",
+      "phonetic": "/mɒk/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "模拟（测试中的模拟对象）", "exampleEn": "We mock the API calls in unit tests.", "exampleZh": "我们在单元测试中模拟API调用。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "redundancy",
+      "phonetic": "/rɪˈdʌndənsi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "冗余；备份机制", "exampleEn": "Data redundancy prevents single points of failure.", "exampleZh": "数据冗余防止单点故障。" }],
+      "difficulty": 3
+    }
+  ]
+}

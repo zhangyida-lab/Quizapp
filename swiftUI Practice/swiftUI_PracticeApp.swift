@@ -2,9 +2,10 @@ import SwiftUI
 import SwiftData
 
 @main
-struct swiftUI_PracticeApp: App {
+struct LexoraApp: App {
     private let modelContainer: ModelContainer
     @StateObject private var store: QuizStore
+    @StateObject private var vocabStore = VocabularyStore()
 
     init() {
         let schema = Schema([
@@ -18,12 +19,20 @@ struct swiftUI_PracticeApp: App {
         _store = StateObject(wrappedValue: QuizStore(modelContext: container.mainContext))
     }
 
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
             MainTabView()
                 .environmentObject(store)
+                .environmentObject(vocabStore)
                 .modelContainer(modelContainer)
                 .preferredColorScheme(.dark)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                vocabStore.reload()
+            }
         }
     }
 }

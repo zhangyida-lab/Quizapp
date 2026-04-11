@@ -1,0 +1,358 @@
+{
+  "version": "1.0",
+  "name": "CET-4 核心词汇",
+  "level": "CET-4",
+  "description": "大学英语四级高频核心词汇，共 50 个精选单词",
+  "words": [
+    {
+      "word": "account",
+      "phonetic": "/əˈkaʊnt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "账户；解释，说明", "exampleEn": "Please account for your absence.", "exampleZh": "请解释你缺席的原因。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "accurate",
+      "phonetic": "/ˈækjərət/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "准确的，精确的", "exampleEn": "The report must be accurate.", "exampleZh": "报告必须准确。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "adapt",
+      "phonetic": "/əˈdæpt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "适应；改编", "exampleEn": "We must adapt to the new environment.", "exampleZh": "我们必须适应新环境。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "adequate",
+      "phonetic": "/ˈædɪkwət/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "足够的，适当的", "exampleEn": "Make sure you get adequate sleep.", "exampleZh": "确保你有足够的睡眠。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "adjust",
+      "phonetic": "/əˈdʒʌst/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "调整，适应", "exampleEn": "Please adjust the volume.", "exampleZh": "请调整音量。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "adopt",
+      "phonetic": "/əˈdɒpt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "采用；收养", "exampleEn": "They adopted a new strategy.", "exampleZh": "他们采用了新策略。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "appropriate",
+      "phonetic": "/əˈprəʊpriət/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "适当的，合适的", "exampleEn": "Choose appropriate clothing for the weather.", "exampleZh": "根据天气选择合适的衣服。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "approve",
+      "phonetic": "/əˈpruːv/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "批准；赞成", "exampleEn": "The manager approved the proposal.", "exampleZh": "经理批准了这个提案。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "argument",
+      "phonetic": "/ˈɑːɡjumənt/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "争论；论点", "exampleEn": "They had a strong argument about the plan.", "exampleZh": "他们就这个计划进行了激烈争论。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "assume",
+      "phonetic": "/əˈsjuːm/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "假设；承担", "exampleEn": "Don't assume you know the answer.", "exampleZh": "不要假设你知道答案。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "available",
+      "phonetic": "/əˈveɪləbl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "可用的；有空的", "exampleEn": "Are you available tomorrow morning?", "exampleZh": "你明天早上有空吗？" }],
+      "difficulty": 2
+    },
+    {
+      "word": "aware",
+      "phonetic": "/əˈweər/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "意识到的，知道的", "exampleEn": "Be aware of your surroundings.", "exampleZh": "注意你周围的环境。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "behavior",
+      "phonetic": "/bɪˈheɪvjər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "行为，举止", "exampleEn": "His behavior was completely unacceptable.", "exampleZh": "他的行为完全不可接受。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "career",
+      "phonetic": "/kəˈrɪər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "职业，事业", "exampleEn": "She built a successful career in medicine.", "exampleZh": "她在医学领域建立了成功的事业。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "circumstance",
+      "phonetic": "/ˈsɜːkəmstæns/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "情况，环境，境况", "exampleEn": "Under no circumstances should you lie.", "exampleZh": "在任何情况下都不应该撒谎。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "claim",
+      "phonetic": "/kleɪm/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "声称；要求；主张", "exampleEn": "He claimed he was innocent.", "exampleZh": "他声称自己是无辜的。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "collapse",
+      "phonetic": "/kəˈlæps/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "崩溃；倒塌", "exampleEn": "The old bridge collapsed in the storm.", "exampleZh": "那座老桥在暴风雨中倒塌了。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "communicate",
+      "phonetic": "/kəˈmjuːnɪkeɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "交流，沟通，传达", "exampleEn": "It is important to communicate clearly.", "exampleZh": "清晰地沟通很重要。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "competition",
+      "phonetic": "/ˌkɒmpəˈtɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "竞争；比赛", "exampleEn": "The competition was fierce this year.", "exampleZh": "今年的竞争非常激烈。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "concern",
+      "phonetic": "/kənˈsɜːn/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "关心；担忧；涉及", "exampleEn": "His health is a major concern.", "exampleZh": "他的健康是一个主要关切。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "consequence",
+      "phonetic": "/ˈkɒnsɪkwəns/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "后果，结果", "exampleEn": "Think about the consequences of your actions.", "exampleZh": "想想你行为的后果。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "contribute",
+      "phonetic": "/kənˈtrɪbjuːt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "贡献；捐献；促成", "exampleEn": "Everyone should contribute to the team.", "exampleZh": "每个人都应该为团队做贡献。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "convenient",
+      "phonetic": "/kənˈviːniənt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "方便的，便利的", "exampleEn": "Online shopping is very convenient.", "exampleZh": "网购非常方便。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "convince",
+      "phonetic": "/kənˈvɪns/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "说服，使信服", "exampleEn": "I tried to convince him to stay.", "exampleZh": "我试图说服他留下来。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "cooperate",
+      "phonetic": "/kəʊˈɒpəreɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "合作，协作", "exampleEn": "We need to cooperate to succeed.", "exampleZh": "我们需要合作才能成功。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "crisis",
+      "phonetic": "/ˈkraɪsɪs/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "危机，紧急关头", "exampleEn": "The company is facing a financial crisis.", "exampleZh": "公司正面临财务危机。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "damage",
+      "phonetic": "/ˈdæmɪdʒ/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "损害，损坏", "exampleEn": "The flood caused serious damage.", "exampleZh": "洪水造成了严重损害。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "debate",
+      "phonetic": "/dɪˈbeɪt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "辩论，讨论", "exampleEn": "There was a heated debate in class.", "exampleZh": "课堂上有一场激烈的辩论。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "decline",
+      "phonetic": "/dɪˈklaɪn/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "下降；拒绝；衰退", "exampleEn": "Sales have declined sharply.", "exampleZh": "销售额大幅下降。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "define",
+      "phonetic": "/dɪˈfaɪn/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "定义，界定", "exampleEn": "How do you define success?", "exampleZh": "你如何定义成功？" }],
+      "difficulty": 2
+    },
+    {
+      "word": "demand",
+      "phonetic": "/dɪˈmɑːnd/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "需求；要求", "exampleEn": "Demand for electric cars is growing.", "exampleZh": "对电动汽车的需求正在增长。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "desire",
+      "phonetic": "/dɪˈzaɪər/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "渴望，欲望", "exampleEn": "He has a strong desire to succeed.", "exampleZh": "他有强烈的成功欲望。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "distribute",
+      "phonetic": "/dɪˈstrɪbjuːt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "分发，分配，分布", "exampleEn": "Please distribute the handouts to everyone.", "exampleZh": "请把讲义分发给大家。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "diverse",
+      "phonetic": "/daɪˈvɜːs/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "多样的，不同的", "exampleEn": "Our team has a diverse background.", "exampleZh": "我们的团队背景多样。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "emphasis",
+      "phonetic": "/ˈemfəsɪs/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "强调，重点", "exampleEn": "The teacher puts emphasis on pronunciation.", "exampleZh": "老师强调发音。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "employ",
+      "phonetic": "/ɪmˈplɔɪ/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "雇用；使用，采用", "exampleEn": "The factory employs over 500 workers.", "exampleZh": "这家工厂雇用了500多名工人。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "environment",
+      "phonetic": "/ɪnˈvaɪrənmənt/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "环境，周围状况", "exampleEn": "We must protect the environment.", "exampleZh": "我们必须保护环境。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "establish",
+      "phonetic": "/ɪˈstæblɪʃ/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "建立，创立，确立", "exampleEn": "They established a new company last year.", "exampleZh": "他们去年创立了一家新公司。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "evaluate",
+      "phonetic": "/ɪˈvæljueɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "评估，评价", "exampleEn": "We need to evaluate the results carefully.", "exampleZh": "我们需要仔细评估结果。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "evidence",
+      "phonetic": "/ˈevɪdəns/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "证据，证明", "exampleEn": "The evidence strongly supports the theory.", "exampleZh": "证据有力地支持了这一理论。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "function",
+      "phonetic": "/ˈfʌŋkʃn/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "功能；起作用", "exampleEn": "What is the main function of this button?", "exampleZh": "这个按钮的主要功能是什么？" }],
+      "difficulty": 2
+    },
+    {
+      "word": "genuine",
+      "phonetic": "/ˈdʒenjuɪn/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "真正的，真诚的", "exampleEn": "She showed genuine interest in the topic.", "exampleZh": "她对这个话题表现出真正的兴趣。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "guarantee",
+      "phonetic": "/ˌɡærənˈtiː/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "保证，担保", "exampleEn": "I can guarantee the quality of this product.", "exampleZh": "我可以保证这个产品的质量。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "ignore",
+      "phonetic": "/ɪɡˈnɔːr/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "忽视，不理会", "exampleEn": "Don't ignore the warning signs.", "exampleZh": "不要忽视警告信号。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "impact",
+      "phonetic": "/ˈɪmpækt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "影响，冲击", "exampleEn": "Social media has a huge impact on society.", "exampleZh": "社交媒体对社会有巨大影响。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "implement",
+      "phonetic": "/ˈɪmplɪment/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "实施，执行，落实", "exampleEn": "The new policy will be implemented next month.", "exampleZh": "新政策将于下月实施。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "indicate",
+      "phonetic": "/ˈɪndɪkeɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "表明，指示，显示", "exampleEn": "The data indicates a positive trend.", "exampleZh": "数据表明了一个积极的趋势。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "maintain",
+      "phonetic": "/meɪnˈteɪn/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "维持，保持，维修", "exampleEn": "It is hard to maintain a healthy lifestyle.", "exampleZh": "保持健康的生活方式很难。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "obvious",
+      "phonetic": "/ˈɒbviəs/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "明显的，显然的", "exampleEn": "The answer is obvious to everyone.", "exampleZh": "答案对每个人来说都是显而易见的。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "potential",
+      "phonetic": "/pəˈtenʃl/",
+      "partOfSpeech": "adj./n.",
+      "definitions": [{ "meaning": "潜在的；潜力，潜能", "exampleEn": "She has great potential as a leader.", "exampleZh": "她作为领导者有很大潜力。" }],
+      "difficulty": 2
+    }
+  ]
+}

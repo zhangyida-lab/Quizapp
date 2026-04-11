@@ -1,0 +1,323 @@
+{
+  "version": "1.0",
+  "name": "商务英语核心词汇",
+  "level": "商务",
+  "description": "职场商务英语高频词汇，涵盖谈判、财务、管理、合同等场景，共 45 个精选单词",
+  "words": [
+    {
+      "word": "acquisition",
+      "phonetic": "/ˌækwɪˈzɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "收购，并购；获得", "exampleEn": "The acquisition of the startup cost $50 million.", "exampleZh": "收购这家初创公司花费了5000万美元。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "agenda",
+      "phonetic": "/əˈdʒendə/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "议程，日程；议事日程", "exampleEn": "Let's go over today's meeting agenda.", "exampleZh": "让我们过一下今天的会议议程。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "asset",
+      "phonetic": "/ˈæset/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "资产，财产；有价值的东西", "exampleEn": "Her experience is a great asset to the team.", "exampleZh": "她的经验对团队是一大财富。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "audit",
+      "phonetic": "/ˈɔːdɪt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "审计，审查", "exampleEn": "The company undergoes an annual audit.", "exampleZh": "公司每年接受一次审计。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "benchmark",
+      "phonetic": "/ˈbentʃmɑːk/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "基准，标杆；以…为基准衡量", "exampleEn": "We use industry benchmarks to measure performance.", "exampleZh": "我们用行业基准来衡量绩效。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "board",
+      "phonetic": "/bɔːd/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "董事会；委员会", "exampleEn": "The board approved the new budget.", "exampleZh": "董事会批准了新预算。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "budget",
+      "phonetic": "/ˈbʌdʒɪt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "预算；做预算", "exampleEn": "We need to stay within the budget.", "exampleZh": "我们需要保持在预算之内。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "capital",
+      "phonetic": "/ˈkæpɪtl/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "资本，资金；首都", "exampleEn": "The startup raised capital from investors.", "exampleZh": "这家初创公司从投资者那里筹集了资金。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "collaboration",
+      "phonetic": "/kəˌlæbəˈreɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "合作，协作", "exampleEn": "Success depends on close collaboration.", "exampleZh": "成功取决于紧密合作。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "commission",
+      "phonetic": "/kəˈmɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "佣金，提成；委员会", "exampleEn": "Sales reps earn a 10% commission.", "exampleZh": "销售代表获得10%的佣金。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "compliance",
+      "phonetic": "/kəmˈplaɪəns/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "合规，遵从，依从", "exampleEn": "All staff must ensure regulatory compliance.", "exampleZh": "所有员工必须确保符合法规要求。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "confidential",
+      "phonetic": "/ˌkɒnfɪˈdenʃl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "机密的，保密的", "exampleEn": "This information is strictly confidential.", "exampleZh": "这些信息严格保密。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "contract",
+      "phonetic": "/ˈkɒntrækt/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "合同，合约；签合同", "exampleEn": "Please review the contract before signing.", "exampleZh": "签名前请仔细审阅合同。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "deadline",
+      "phonetic": "/ˈdedlaɪn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "截止日期，最后期限", "exampleEn": "The project deadline is next Friday.", "exampleZh": "项目截止日期是下周五。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "delegate",
+      "phonetic": "/ˈdelɪɡeɪt/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "授权，委派；代表", "exampleEn": "Good managers know how to delegate tasks.", "exampleZh": "好的管理者知道如何分配任务。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "dividend",
+      "phonetic": "/ˈdɪvɪdend/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "股息，红利；回报", "exampleEn": "Shareholders received a high dividend this year.", "exampleZh": "股东今年获得了高额股息。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "entrepreneur",
+      "phonetic": "/ˌɒntrəprəˈnɜːr/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "企业家，创业者", "exampleEn": "She is a successful tech entrepreneur.", "exampleZh": "她是一位成功的科技企业家。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "equity",
+      "phonetic": "/ˈekwɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "股权；公平，公正", "exampleEn": "The founders kept 60% equity in the company.", "exampleZh": "创始人保留了公司60%的股权。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "expenditure",
+      "phonetic": "/ɪkˈspendɪtʃər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "支出，花费，经费", "exampleEn": "We need to reduce our monthly expenditure.", "exampleZh": "我们需要减少每月支出。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "facilitate",
+      "phonetic": "/fəˈsɪlɪteɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "促进，推动，使便利", "exampleEn": "Technology facilitates communication.", "exampleZh": "技术促进了沟通交流。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "fiscal",
+      "phonetic": "/ˈfɪskl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "财政的，会计的，税务的", "exampleEn": "The fiscal year ends in December.", "exampleZh": "财政年度于12月结束。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "forecast",
+      "phonetic": "/ˈfɔːkɑːst/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "预测，预报，预计", "exampleEn": "The sales forecast looks promising.", "exampleZh": "销售预测看起来很乐观。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "incentive",
+      "phonetic": "/ɪnˈsentɪv/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "激励，奖励，诱因", "exampleEn": "Financial incentives motivate employees.", "exampleZh": "财务激励能激励员工。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "infrastructure",
+      "phonetic": "/ˈɪnfrəstrʌktʃər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "基础设施，基础架构", "exampleEn": "We need to invest in digital infrastructure.", "exampleZh": "我们需要投资数字基础设施。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "initiative",
+      "phonetic": "/ɪˈnɪʃətɪv/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "倡议，主动性；新举措", "exampleEn": "We launched a new sustainability initiative.", "exampleZh": "我们发起了一项新的可持续发展倡议。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "inventory",
+      "phonetic": "/ˈɪnvəntri/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "库存，存货；清单", "exampleEn": "We need to check the current inventory.", "exampleZh": "我们需要检查当前库存。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "invoice",
+      "phonetic": "/ˈɪnvɔɪs/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "发票，账单；开发票", "exampleEn": "Please send the invoice by email.", "exampleZh": "请通过电子邮件发送发票。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "leverage",
+      "phonetic": "/ˈliːvərɪdʒ/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "杠杆作用；充分利用", "exampleEn": "We can leverage our existing network.", "exampleZh": "我们可以充分利用现有网络。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "liability",
+      "phonetic": "/ˌlaɪəˈbɪlɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "负债，债务；法律责任", "exampleEn": "The company has limited liability.", "exampleZh": "该公司具有有限责任。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "merger",
+      "phonetic": "/ˈmɜːdʒər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "合并，兼并（公司）", "exampleEn": "The merger created the largest bank in the country.", "exampleZh": "这次合并创造了该国最大的银行。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "negotiate",
+      "phonetic": "/nɪˈɡəʊʃieɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "谈判，协商，交涉", "exampleEn": "We need to negotiate the contract terms.", "exampleZh": "我们需要协商合同条款。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "outsource",
+      "phonetic": "/ˈaʊtsɔːs/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "外包，将…外包", "exampleEn": "Many companies outsource their IT support.", "exampleZh": "许多公司将IT支持外包出去。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "overhead",
+      "phonetic": "/ˈəʊvəhed/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "间接费用，管理费用，经常性开支", "exampleEn": "Reducing overhead costs improves profit margins.", "exampleZh": "降低间接费用可提高利润率。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "portfolio",
+      "phonetic": "/pɔːtˈfəʊliəʊ/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "投资组合；作品集；文件夹", "exampleEn": "She manages a diverse investment portfolio.", "exampleZh": "她管理着多元化的投资组合。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "productivity",
+      "phonetic": "/ˌprɒdʌkˈtɪvɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "生产力，生产率，工作效率", "exampleEn": "Remote work can increase productivity.", "exampleZh": "远程工作可以提高工作效率。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "proposal",
+      "phonetic": "/prəˈpəʊzl/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "提案，建议书，计划书", "exampleEn": "Please submit your proposal by Monday.", "exampleZh": "请在周一前提交你的提案。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "quarterly",
+      "phonetic": "/ˈkwɔːtəli/",
+      "partOfSpeech": "adj./adv.",
+      "definitions": [{ "meaning": "每季度的；每季度地", "exampleEn": "We hold quarterly performance reviews.", "exampleZh": "我们每季度进行一次绩效评估。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "revenue",
+      "phonetic": "/ˈrevənjuː/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "收入，营业额，税收", "exampleEn": "Annual revenue exceeded $10 million.", "exampleZh": "年收入超过了1000万美元。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "shareholder",
+      "phonetic": "/ˈʃeəhəʊldər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "股东，持股人", "exampleEn": "Shareholders voted to approve the deal.", "exampleZh": "股东投票通过了该交易。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "stakeholder",
+      "phonetic": "/ˈsteɪkhəʊldər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "利益相关者，利益关系方", "exampleEn": "We must consider all stakeholders' interests.", "exampleZh": "我们必须考虑所有利益相关者的利益。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "startup",
+      "phonetic": "/ˈstɑːtʌp/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "初创公司，创业公司", "exampleEn": "The startup raised $2 million in seed funding.", "exampleZh": "这家初创公司筹集了200万美元的种子资金。" }],
+      "difficulty": 1
+    },
+    {
+      "word": "strategy",
+      "phonetic": "/ˈstrætədʒi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "战略，策略，计划", "exampleEn": "We need a clear marketing strategy.", "exampleZh": "我们需要一个清晰的营销策略。" }],
+      "difficulty": 2
+    },
+    {
+      "word": "turnover",
+      "phonetic": "/ˈtɜːnəʊvər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "营业额；人员流动率", "exampleEn": "Annual turnover reached a record high.", "exampleZh": "年营业额创历史新高。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "valuation",
+      "phonetic": "/ˌvæljuˈeɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "估值，估价，价值评估", "exampleEn": "The company's valuation is $1 billion.", "exampleZh": "该公司估值为10亿美元。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "venture",
+      "phonetic": "/ˈventʃər/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "风险投资；冒险事业；冒险", "exampleEn": "They launched a joint venture in Asia.", "exampleZh": "他们在亚洲启动了一个合资企业。" }],
+      "difficulty": 3
+    }
+  ]
+}

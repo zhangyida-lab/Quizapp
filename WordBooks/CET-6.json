@@ -1,0 +1,365 @@
+{
+  "version": "1.0",
+  "name": "CET-6 核心词汇",
+  "level": "CET-6",
+  "description": "大学英语六级高频核心词汇，共 50 个精选单词",
+  "words": [
+    {
+      "word": "abrupt",
+      "phonetic": "/əˈbrʌpt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "突然的；唐突的，粗鲁的", "exampleEn": "His abrupt departure surprised everyone.", "exampleZh": "他突然离开让大家都很惊讶。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "abstract",
+      "phonetic": "/ˈæbstrækt/",
+      "partOfSpeech": "adj./n.",
+      "definitions": [{ "meaning": "抽象的；摘要", "exampleEn": "The concept is too abstract to understand easily.", "exampleZh": "这个概念太抽象，不容易理解。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "accumulate",
+      "phonetic": "/əˈkjuːmjuleɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "积累，积聚", "exampleEn": "Dust accumulates quickly in an empty room.", "exampleZh": "灰尘在空房间里积聚得很快。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "acknowledge",
+      "phonetic": "/əkˈnɒlɪdʒ/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "承认；答谢，告知收到", "exampleEn": "She acknowledged her mistake publicly.", "exampleZh": "她公开承认了自己的错误。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "advocate",
+      "phonetic": "/ˈædvəkeɪt/",
+      "partOfSpeech": "v./n.",
+      "definitions": [{ "meaning": "提倡，主张；倡导者", "exampleEn": "He advocates for environmental protection.", "exampleZh": "他倡导环境保护。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "aesthetic",
+      "phonetic": "/iːsˈθetɪk/",
+      "partOfSpeech": "adj./n.",
+      "definitions": [{ "meaning": "美学的，审美的；美感", "exampleEn": "The building has a clean aesthetic design.", "exampleZh": "这座建筑有简洁的美学设计。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "alleviate",
+      "phonetic": "/əˈliːvieɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "减轻，缓和，缓解", "exampleEn": "Exercise can alleviate stress significantly.", "exampleZh": "运动可以显著缓解压力。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "ambiguous",
+      "phonetic": "/æmˈbɪɡjuəs/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "模糊的，含糊不清的", "exampleEn": "The contract contained some ambiguous terms.", "exampleZh": "合同中包含一些含糊的条款。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "anticipate",
+      "phonetic": "/ænˈtɪsɪpeɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "预期，预料；期待", "exampleEn": "We anticipate strong growth next year.", "exampleZh": "我们预计明年会有强劲增长。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "arbitrary",
+      "phonetic": "/ˈɑːbɪtrəri/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "任意的，武断的", "exampleEn": "The decision seemed completely arbitrary.", "exampleZh": "这个决定看起来完全是武断的。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "authentic",
+      "phonetic": "/ɔːˈθentɪk/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "真实的，可靠的；正宗的", "exampleEn": "This is an authentic Italian recipe.", "exampleZh": "这是一道正宗的意大利食谱。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "autonomy",
+      "phonetic": "/ɔːˈtɒnəmi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "自主权，自治", "exampleEn": "Students need autonomy to learn effectively.", "exampleZh": "学生需要自主权才能有效学习。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "bias",
+      "phonetic": "/ˈbaɪəs/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "偏见，偏向；使有偏见", "exampleEn": "Unconscious bias affects many decisions.", "exampleZh": "无意识的偏见影响着许多决定。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "catalyst",
+      "phonetic": "/ˈkætəlɪst/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "催化剂；推动变化的因素", "exampleEn": "The invention was a catalyst for change.", "exampleZh": "这项发明是变革的催化剂。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "chronic",
+      "phonetic": "/ˈkrɒnɪk/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "慢性的；长期的，积习难改的", "exampleEn": "He suffers from chronic back pain.", "exampleZh": "他患有慢性背痛。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "cognition",
+      "phonetic": "/kɒɡˈnɪʃn/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "认知，认识能力", "exampleEn": "Sleep deprivation impairs cognition.", "exampleZh": "睡眠不足会损害认知能力。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "coherent",
+      "phonetic": "/kəʊˈhɪərənt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "连贯的，一致的，清晰的", "exampleEn": "Please write a coherent essay.", "exampleZh": "请写一篇连贯的文章。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "compensate",
+      "phonetic": "/ˈkɒmpenseɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "补偿，赔偿；弥补", "exampleEn": "The company will compensate the victims.", "exampleZh": "公司将赔偿受害者。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "complexity",
+      "phonetic": "/kəmˈpleksɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "复杂性，复杂程度", "exampleEn": "The complexity of the task was underestimated.", "exampleZh": "这项任务的复杂性被低估了。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "compromise",
+      "phonetic": "/ˈkɒmprəmaɪz/",
+      "partOfSpeech": "n./v.",
+      "definitions": [{ "meaning": "妥协，折中；危及", "exampleEn": "Both sides agreed to a compromise.", "exampleZh": "双方同意妥协。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "consolidate",
+      "phonetic": "/kənˈsɒlɪdeɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "巩固，加强；合并", "exampleEn": "The merger helped consolidate their market position.", "exampleZh": "这次合并有助于巩固他们的市场地位。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "controversial",
+      "phonetic": "/ˌkɒntrəˈvɜːʃl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "有争议的，引起争论的", "exampleEn": "It was a highly controversial decision.", "exampleZh": "这是一个极具争议的决定。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "correlate",
+      "phonetic": "/ˈkɒrəleɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "相关联，关联", "exampleEn": "Exercise correlates with better mental health.", "exampleZh": "锻炼与更好的心理健康相关。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "credibility",
+      "phonetic": "/ˌkredəˈbɪlɪti/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "可信度，可靠性，信誉", "exampleEn": "The scandal damaged his credibility.", "exampleZh": "丑闻损害了他的信誉。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "deduce",
+      "phonetic": "/dɪˈdjuːs/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "推断，演绎，推导出", "exampleEn": "From the clues, we can deduce the answer.", "exampleZh": "从这些线索中，我们可以推断出答案。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "deficiency",
+      "phonetic": "/dɪˈfɪʃnsi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "缺乏，不足，缺陷", "exampleEn": "Iron deficiency can cause fatigue.", "exampleZh": "铁缺乏会导致疲劳。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "deliberate",
+      "phonetic": "/dɪˈlɪbərət/",
+      "partOfSpeech": "adj./v.",
+      "definitions": [{ "meaning": "故意的，深思熟虑的；仔细考虑", "exampleEn": "It was a deliberate attempt to mislead.", "exampleZh": "这是一次故意误导的尝试。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "demographic",
+      "phonetic": "/ˌdeməˈɡræfɪk/",
+      "partOfSpeech": "adj./n.",
+      "definitions": [{ "meaning": "人口统计的；人口特征", "exampleEn": "The demographic shift is happening rapidly.", "exampleZh": "人口结构的转变正在迅速发生。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "derive",
+      "phonetic": "/dɪˈraɪv/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "获得，取得；起源于，派生于", "exampleEn": "He derives great pleasure from reading.", "exampleZh": "他从阅读中获得极大的乐趣。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "deteriorate",
+      "phonetic": "/dɪˈtɪəriəreɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "恶化，变坏，退化", "exampleEn": "His health began to deteriorate rapidly.", "exampleZh": "他的健康开始迅速恶化。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "dilemma",
+      "phonetic": "/dɪˈlemə/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "困境，进退两难的局面", "exampleEn": "She faced a moral dilemma at work.", "exampleZh": "她在工作中面临道德困境。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "diminish",
+      "phonetic": "/dɪˈmɪnɪʃ/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "减少，降低，削弱", "exampleEn": "His influence has diminished over time.", "exampleZh": "他的影响力随时间推移而减弱。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "elaborate",
+      "phonetic": "/ɪˈlæbərət/",
+      "partOfSpeech": "adj./v.",
+      "definitions": [{ "meaning": "精心制作的；详细说明", "exampleEn": "Could you elaborate on that point?", "exampleZh": "你能详细说明那一点吗？" }],
+      "difficulty": 4
+    },
+    {
+      "word": "eloquent",
+      "phonetic": "/ˈeləkwənt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "口才流利的，雄辩的，有说服力的", "exampleEn": "She gave an eloquent speech.", "exampleZh": "她发表了一篇雄辩的演讲。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "empirical",
+      "phonetic": "/ɪmˈpɪrɪkl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "以经验为依据的，实证的", "exampleEn": "We need empirical evidence to support the claim.", "exampleZh": "我们需要实证证据来支持这一主张。" }],
+      "difficulty": 5
+    },
+    {
+      "word": "fluctuate",
+      "phonetic": "/ˈflʌktʃueɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "波动，起伏，变动", "exampleEn": "Prices fluctuate with supply and demand.", "exampleZh": "价格随供求关系波动。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "formidable",
+      "phonetic": "/ˈfɔːmɪdəbl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "强大的，令人敬畏的，可怕的", "exampleEn": "She is a formidable opponent.", "exampleZh": "她是一个强大的对手。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "hierarchy",
+      "phonetic": "/ˈhaɪərɑːki/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "等级制度，层级结构", "exampleEn": "The company has a strict hierarchy.", "exampleZh": "公司有严格的等级制度。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "hypothesis",
+      "phonetic": "/haɪˈpɒθəsɪs/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "假设，假说", "exampleEn": "Scientists tested the hypothesis carefully.", "exampleZh": "科学家仔细测试了这一假说。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "ideology",
+      "phonetic": "/ˌaɪdiˈɒlədʒi/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "意识形态，思想体系", "exampleEn": "Political ideology shapes public policy.", "exampleZh": "政治意识形态影响公共政策。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "inevitable",
+      "phonetic": "/ɪnˈevɪtəbl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "不可避免的，必然的", "exampleEn": "Change is inevitable in life.", "exampleZh": "变化在生活中是不可避免的。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "inherent",
+      "phonetic": "/ɪnˈhɪərənt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "固有的，内在的，生来就有的", "exampleEn": "There is an inherent risk in every investment.", "exampleZh": "每项投资都有固有风险。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "innovative",
+      "phonetic": "/ˈɪnəveɪtɪv/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "创新的，有革新精神的", "exampleEn": "The company is known for its innovative products.", "exampleZh": "该公司以其创新产品闻名。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "intrinsic",
+      "phonetic": "/ɪnˈtrɪnzɪk/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "内在的，固有的，本质的", "exampleEn": "Learning has intrinsic value.", "exampleZh": "学习具有内在价值。" }],
+      "difficulty": 5
+    },
+    {
+      "word": "manipulate",
+      "phonetic": "/məˈnɪpjuleɪt/",
+      "partOfSpeech": "v.",
+      "definitions": [{ "meaning": "操纵，控制；巧妙处理", "exampleEn": "He tried to manipulate the situation.", "exampleZh": "他试图操纵局势。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "metaphor",
+      "phonetic": "/ˈmetəfər/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "比喻，隐喻", "exampleEn": "Time is money is a common metaphor.", "exampleZh": "\"时间就是金钱\"是一个常见的比喻。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "negligible",
+      "phonetic": "/ˈneɡlɪdʒɪbl/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "微不足道的，可以忽略的", "exampleEn": "The difference is negligible.", "exampleZh": "差异微乎其微。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "paradigm",
+      "phonetic": "/ˈpærədaɪm/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "范式，范例，典范", "exampleEn": "AI represents a paradigm shift in technology.", "exampleZh": "人工智能代表着技术的范式转变。" }],
+      "difficulty": 5
+    },
+    {
+      "word": "prevalent",
+      "phonetic": "/ˈprevələnt/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "普遍的，流行的，盛行的", "exampleEn": "Smartphones are prevalent in modern society.", "exampleZh": "智能手机在现代社会十分普遍。" }],
+      "difficulty": 4
+    },
+    {
+      "word": "profound",
+      "phonetic": "/prəˈfaʊnd/",
+      "partOfSpeech": "adj.",
+      "definitions": [{ "meaning": "深刻的，深远的，意义深远的", "exampleEn": "The experience had a profound effect on her.", "exampleZh": "这次经历对她产生了深远影响。" }],
+      "difficulty": 3
+    },
+    {
+      "word": "scrutiny",
+      "phonetic": "/ˈskruːtɪni/",
+      "partOfSpeech": "n.",
+      "definitions": [{ "meaning": "详细审查，仔细检查", "exampleEn": "The policy came under intense scrutiny.", "exampleZh": "该政策受到了严格审查。" }],
+      "difficulty": 4
+    }
+  ]
+}

@@ -469,7 +469,7 @@ enum ExamPDFGenerator {
                 y += bH + 8
             }
             need(30); drawLine(y: y); y += 10
-            drawTxt("由 QuizApp 生成 · \(df.string(from: Date()))", x: margin, y: y, w: bodyW, font: .italicSystemFont(ofSize: 10), color: colSecondary, align: .center)
+            drawTxt("由 Lexora 生成 ·\(df.string(from: Date()))", x: margin, y: y, w: bodyW, font: .italicSystemFont(ofSize: 10), color: colSecondary, align: .center)
         }
 
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("exam_\(Int(Date().timeIntervalSince1970)).pdf")
@@ -651,7 +651,7 @@ enum BlankExamPDFGenerator {
             y += CGFloat((questions.count + cols - 1) / cols) * cellH + 16
 
             drawLine(y: y, color: colBorder, width: 0.5); y += 10
-            drawTxt("由 QuizApp 生成 · \(df.string(from: Date()))",
+            drawTxt("由 Lexora 生成 ·\(df.string(from: Date()))",
                     x: margin, y: y, w: bodyW,
                     font: .italicSystemFont(ofSize: 9), color: colSecondary, align: .center)
         }

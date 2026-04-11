@@ -1,5 +1,5 @@
 import XCTest
-@testable import swiftUI_Practice
+@testable import Lexora
 
 // MARK: - QuizStore 业务逻辑测试
 
