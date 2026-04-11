@@ -71,7 +71,7 @@ struct DailyReviewView: View {
                     HStack(spacing: 6) {
                         Image(systemName: m == .quiz ? "doc.text.fill" : "text.book.closed.fill")
                             .font(.system(size: 13))
-                        Text(m == .quiz ? "题目" : "词汇")
+                        Text(m == .quiz ? "刷题" : "背词")
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(mode == m ? .white : .secondary)
@@ -242,7 +242,7 @@ struct DailyReviewView: View {
                 )) {
                     startButtonLabel(
                         icon: "play.fill",
-                        text: "开始练习（\(store.dailyQuestions.count) 题）",
+                        text: "开始（\(store.dailyQuestions.count) 题）",
                         color: Color.quizPurple
                     )
                 }

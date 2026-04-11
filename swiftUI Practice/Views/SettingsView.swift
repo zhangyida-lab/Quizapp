@@ -39,6 +39,13 @@ struct SettingsView: View {
                     }
                 }
             }
+            NavigationLink(destination: HelpView()) {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "questionmark.circle.fill", color: Color(red: 0.20, green: 0.60, blue: 0.86))
+                    Text("使用帮助")
+                        .foregroundColor(.white)
+                }
+            }
         } header: {
             SettingsSectionHeader("学习算法")
         }
