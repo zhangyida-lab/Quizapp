@@ -448,8 +448,8 @@ enum ExamPDFGenerator {
             for (i, (v, l, c)) in stats.enumerated() {
                 let x = margin + CGFloat(i) * (cw + 8)
                 drawCard(x: x, y: cy, w: cw, h: ch)
-                drawTxt(v, x: x, y: cy + 8, w: cw, font: .boldSystemFont(ofSize: 22), color: c, align: .center)
-                drawTxt(l, x: x, y: cy + 36, w: cw, font: .systemFont(ofSize: 11), color: colSecondary, align: .center)
+                drawTxt(v, x: x + 4, y: cy + 14, w: cw - 8, font: .boldSystemFont(ofSize: 20), color: c, align: .center, multi: true)
+                drawTxt(l, x: x + 4, y: cy + 42, w: cw - 8, font: .systemFont(ofSize: 11), color: colSecondary, align: .center, multi: true)
             }
             y = cy + ch + 28; drawLine(y: y); y += 14
             drawTxt("逐题得分明细", x: margin, y: y, w: bodyW, font: .boldSystemFont(ofSize: 16), color: colPrimary); y += 26
@@ -462,9 +462,9 @@ enum ExamPDFGenerator {
                 let bH = max(48, qH + 28)
                 need(bH + 8); drawCard(x: margin, y: y, w: bodyW, h: bH)
                 let cc = correct ? colGreen : colRed
-                drawCircle(x: margin + 10, y: y + (bH - 22) / 2, d: 22, fill: cc.withAlphaComponent(0.15), stroke: cc)
-                drawTxt("\(i+1)", x: margin + 10, y: y + (bH - 22) / 2 + 3, w: 22, font: .boldSystemFont(ofSize: 10), color: cc, align: .center)
-                drawTxt(q.text, x: margin + 38, y: y + 8, w: bodyW - 100, font: .systemFont(ofSize: 12), color: colPrimary, multi: true)
+                drawCircle(x: margin + 10, y: y + 4, d: 22, fill: cc.withAlphaComponent(0.15), stroke: cc)
+                drawTxt("\(i+1)", x: margin + 10, y: y + 7, w: 22, font: .boldSystemFont(ofSize: 10), color: cc, align: .center, multi: true)
+                drawTxt(q.text, x: margin + 38, y: y + 4, w: bodyW - 100, font: .systemFont(ofSize: 12), color: colPrimary, multi: true)
                 drawTxt("\(earned)/\(possible)分", x: margin + bodyW - 60, y: y + (bH - 16) / 2, w: 52, font: .boldSystemFont(ofSize: 13), color: cc, align: .right)
                 y += bH + 8
             }
@@ -528,9 +528,6 @@ enum BlankExamPDFGenerator {
             ctx.beginPage()
             UIColor.white.setFill()
             UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: pageH))
-            // 顶部色条
-            colAccent.setFill()
-            UIRectFill(CGRect(x: 0, y: 0, width: pageW, height: 4))
             // 页脚
             let footer = "第 \(pageNum) 页 / 共 \(estimatePageCount(questions: questions)) 页"
             drawTxt(footer, x: margin, y: pageH - 28, w: bodyW,
@@ -562,8 +559,6 @@ enum BlankExamPDFGenerator {
                     font: .systemFont(ofSize: 11), color: colSecondary, align: .center)
             y += 18
 
-            drawLine(y: y, color: colAccent, width: 1.2); y += 8
-
             let instr = "注意事项：每题只有一个正确答案，请在对应选项上画圈。答题时间请合理分配。"
             drawTxt(instr, x: margin, y: y, w: bodyW,
                     font: .italicSystemFont(ofSize: 10), color: colSecondary)
@@ -586,10 +581,10 @@ enum BlankExamPDFGenerator {
                 // 题号 + 分值标签
                 let numStr = "\(i + 1)."
                 drawTxt(numStr, x: margin, y: y, w: 22,
-                        font: .boldSystemFont(ofSize: 12), color: colPrimary)
+                        font: .boldSystemFont(ofSize: 12), color: colPrimary, multi: true)
                 let scoreTag = "(\(score)分)"
                 drawTxt(scoreTag, x: pageW - margin - 36, y: y, w: 36,
-                        font: .systemFont(ofSize: 10), color: colSecondary, align: .right)
+                        font: .systemFont(ofSize: 10), color: colSecondary, align: .right, multi: true)
 
                 // 题目文字
                 drawTxt(q.text, x: margin + 24, y: y, w: bodyW - 60,
@@ -610,8 +605,7 @@ enum BlankExamPDFGenerator {
                 }
 
                 // 答题框
-                y += 6
-                drawLine(y: y, color: colBorder, width: 0.5); y += 5
+                y += 8
                 drawTxt("我的答案：___", x: margin + 24, y: y, w: 120,
                         font: .systemFont(ofSize: 10), color: colSecondary)
                 y += 20
@@ -621,8 +615,7 @@ enum BlankExamPDFGenerator {
             newPage()
             drawTxt("参考答案", x: margin, y: y, w: bodyW,
                     font: .boldSystemFont(ofSize: 16), color: colPrimary)
-            y += 8
-            drawLine(y: y, color: colAccent, width: 1); y += 14
+            y += 14
 
             let cols = 5
             let cellW = bodyW / CGFloat(cols)
@@ -638,15 +631,12 @@ enum BlankExamPDFGenerator {
 
                 let answerLabel = ["A", "B", "C", "D"][safe: q.correctIndex] ?? "?"
                 let cell = "\(i + 1). \(answerLabel)"
-                let bgColor = i % 2 == 0 ? colLightBg : UIColor.white
-                bgColor.setFill()
-                UIRectFill(CGRect(x: cx, y: cy, width: cellW, height: cellH - 2))
                 drawTxt(cell, x: cx + 4, y: cy + 6, w: cellW - 8,
                         font: .systemFont(ofSize: 12), color: colPrimary)
             }
             y += CGFloat((questions.count + cols - 1) / cols) * cellH + 16
 
-            drawLine(y: y, color: colBorder, width: 0.5); y += 10
+            y += 10
             drawTxt("由 Lexora 生成 ·\(df.string(from: Date()))",
                     x: margin, y: y, w: bodyW,
                     font: .italicSystemFont(ofSize: 9), color: colSecondary, align: .center)

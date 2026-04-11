@@ -759,7 +759,7 @@ enum QuizPDFGenerator {
                      color: colAccent, alignment: .left)
 
             // 分类标签右对齐，与分数垂直居中
-            let badgeFont = UIFont.boldSystemFont(ofSize: 12)
+            let badgeFont = UIFont.boldSystemFont(ofSize: 16)
             let badgeTxtSz = (categoryName as NSString).size(withAttributes:
                 [.font: badgeFont, .foregroundColor: UIColor.white])
             let bW = badgeTxtSz.width + 24
@@ -802,10 +802,10 @@ enum QuizPDFGenerator {
             for (i, (val, lbl, col)) in stats.enumerated() {
                 let cx = margin + CGFloat(i) * (cardW + 8)
                 drawCard(x: cx, y: cardY, w: cardW, h: cardH)
-                drawText(val, x: cx, y: cardY + 14, width: cardW,
-                         font: .boldSystemFont(ofSize: 22), color: col, alignment: .center)
-                drawText(lbl, x: cx, y: cardY + 50, width: cardW,
-                         font: .systemFont(ofSize: 11), color: colSecondary, alignment: .center)
+                drawText(val, x: cx + 4, y: cardY + 38, width: cardW - 8,
+                         font: .boldSystemFont(ofSize: 22), color: col, alignment: .center, multiline: true)
+                drawText(lbl, x: cx + 4, y: cardY + 70, width: cardW - 8,
+                         font: .systemFont(ofSize: 11), color: colSecondary, alignment: .center, multiline: true)
             }
             currentY = cardY + cardH + 28
 
@@ -840,13 +840,13 @@ enum QuizPDFGenerator {
                 drawText("\(qi + 1).",
                          x: blockX + 10, y: blockY + 10, width: 24,
                          font: .boldSystemFont(ofSize: 12),
-                         color: circleColor, alignment: .left)
+                         color: circleColor, alignment: .left, multiline: true)
 
                 let resultIcon = isCorrect ? "✓" : "✗"
                 drawText(resultIcon,
                          x: blockX + blockW - 26, y: blockY + 10, width: 18,
                          font: .boldSystemFont(ofSize: 13),
-                         color: circleColor, alignment: .center)
+                         color: circleColor, alignment: .center, multiline: true)
 
                 // 题目文本（与选项统一缩进：blockX + 36）
                 let qX = blockX + 36
