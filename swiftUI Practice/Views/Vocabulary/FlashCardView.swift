@@ -15,6 +15,7 @@ struct FlashCardView: View {
     @State private var isFinished = false
     @State private var offset: CGFloat = 0
     @State private var dragOpacity: Double = 1.0
+    @State private var isAnimating = false   // 防止快速点击导致 index 越界
 
     private var current: Word { words[currentIndex] }
     private var progress: Double { Double(currentIndex) / Double(words.count) }
@@ -290,6 +291,9 @@ struct FlashCardView: View {
 
     // MARK: 逻辑
     private func submitAnswer(known: Bool) {
+        guard !isAnimating && !isFinished else { return }
+        isAnimating = true
+
         vocabStore.recordStudy(wordId: current.id, isCorrect: known)
         if known { knownCount += 1 } else { unknownCount += 1 }
 
@@ -306,6 +310,7 @@ struct FlashCardView: View {
             } else {
                 isFinished = true
             }
+            isAnimating = false
         }
     }
 }

@@ -59,6 +59,22 @@ class VocabularyStore: ObservableObject {
         return allWords.filter { studiedIds.contains($0.id) }
     }
 
+    /// 不认识单词：已学过至少一次、连续答对次数为 0、且未被标记为已掌握
+    var unknownWords: [Word] {
+        let unknownIds = Set(
+            wordRecords
+                .filter { $0.studyCount > 0 && $0.correctStreak == 0 && !$0.isMastered }
+                .map { $0.wordId }
+        )
+        return allWords.filter { unknownIds.contains($0.id) }
+            .sorted { w1, w2 in
+                let s1 = wordRecords.first { $0.wordId == w1.id }?.studyCount ?? 0
+                let s2 = wordRecords.first { $0.wordId == w2.id }?.studyCount ?? 0
+                return s1 > s2   // 学习次数最多（最难记）的排前面
+            }
+    }
+
+    var unknownCount: Int { unknownWords.count }
     var dueCount: Int { dueWords.count }
     var masteredCount: Int { masteredWords.count }
 

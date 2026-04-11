@@ -176,11 +176,12 @@ struct StatPill: View {
     let icon: String
     let value: String
     let label: String
+    var valueColor: Color = .white
 
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: icon).font(.system(size: 11)).foregroundColor(Color.quizPurpleLight)
-            Text(value).font(.system(size: 13, weight: .semibold)).foregroundColor(.white)
+            Text(value).font(.system(size: 13, weight: .semibold)).foregroundColor(valueColor)
             Text(label).font(.system(size: 11)).foregroundColor(.secondary)
         }
         .padding(.horizontal, 10)

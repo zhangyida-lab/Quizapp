@@ -5,11 +5,12 @@ import UniformTypeIdentifiers
 struct VocabularyHomeView: View {
     @EnvironmentObject private var vocabStore: VocabularyStore
 
-    @State private var showFlashCard    = false
-    @State private var showChoice       = false
+    @State private var showFlashCard      = false
+    @State private var showChoice         = false
     @State private var flashWords: [Word] = []
     @State private var choiceWords: [Word] = []
     @State private var selectedBook: WordBook? = nil
+    @State private var showUnknownWords   = false
 
     // 导入相关
     @State private var showImportPicker  = false
@@ -27,6 +28,7 @@ struct VocabularyHomeView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     statsHeader
                     dailyBanner
+                    unknownWordsBanner
                     studyModesSection
                     builtInBooksSection
                     userBooksSection
@@ -123,6 +125,10 @@ struct VocabularyHomeView: View {
         .navigationDestination(isPresented: $showChoice) {
             WordChoiceView(words: choiceWords, allWords: vocabStore.allWords)
         }
+        // 不认识单词本
+        .navigationDestination(isPresented: $showUnknownWords) {
+            UnknownWordsView()
+        }
         // 词库详情
         .navigationDestination(item: $selectedBook) { book in
             WordBookDetailView(book: book)
@@ -151,8 +157,9 @@ struct VocabularyHomeView: View {
                          value: "\(vocabStore.allWords.count)", label: "单词总数")
                 StatPill(icon: "checkmark.seal.fill",
                          value: "\(vocabStore.masteredCount)", label: "已掌握")
-                StatPill(icon: "clock.arrow.circlepath",
-                         value: "\(vocabStore.dueCount)", label: "待复习")
+                StatPill(icon: "xmark.circle.fill",
+                         value: "\(vocabStore.unknownCount)", label: "不认识",
+                         valueColor: vocabStore.unknownCount > 0 ? .quizRed : .secondary)
             }
             .padding(.top, 4)
         }
@@ -199,6 +206,48 @@ struct VocabularyHomeView: View {
         }
         .buttonStyle(PlainButtonStyle())
         .padding(.horizontal, 20)
+    }
+
+    // MARK: 不认识单词横幅（有不认识单词时才显示）
+    @ViewBuilder
+    private var unknownWordsBanner: some View {
+        if vocabStore.unknownCount > 0 {
+            Button {
+                showUnknownWords = true
+            } label: {
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.quizRed.opacity(0.20))
+                            .frame(width: 52, height: 52)
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.quizRed)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("不认识单词本")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                        Text("有 \(vocabStore.unknownCount) 个单词需要加强练习")
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.quizRed.opacity(0.7))
+                }
+                .padding(16)
+                .background(Color.quizCard)
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.quizRed.opacity(0.3), lineWidth: 1)
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.horizontal, 20)
+        }
     }
 
     // MARK: 学习模式
