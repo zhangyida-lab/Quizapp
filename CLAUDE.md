@@ -20,7 +20,7 @@ Open `swiftUI Practice.xcodeproj` in Xcode. Build/run with `Cmd+R`. There are no
 - `quiz_exam_papers_v1` — `[ExamPaper]`
 - `quiz_daily_questions_v2` / `quiz_daily_date_v2` — daily cache
 
-**Navigation:** `MainTabView` (5 tabs) wraps each tab in its own `NavigationStack`. Deep navigation uses `NavigationLink` and `.navigationDestination`.
+**Navigation:** `MainTabView` (4 tabs) wraps each tab in its own `NavigationStack`. Deep navigation uses `NavigationLink` and `.navigationDestination`.
 
 **Quiz flow:**
 1. User picks category (HomeView) or configures exam (ExamConfigView → LibraryView tab)
@@ -39,9 +39,19 @@ Open `swiftUI Practice.xcodeproj` in Xcode. Build/run with `Cmd+R`. There are no
 | `Models/ExamConfig.swift` | `ExamConfig` (Codable): `ScoreMode` (.uniform/.byDifficulty), `ExamMode` (.practice/.exam), `selectQuestions()`, `scores(for:)` |
 | `Models/ExamPaper.swift` | `ExamPaper` (full question snapshot, multiple `ExamAttempt`s), `bestAttempt`, `lastAttempt` |
 | `Store/BuiltInQuestions.swift` | 36 built-in questions, fixed UUID `"00000000-0000-0000-0000-000000000001"` |
-| `Views/ExamContainerView.swift` | Exam session: creates/links paper in store on `.onAppear`, saves `ExamAttempt` via `.onChange(of: vm.isFinished)`, `ExamResultView`, `ExamPDFGenerator` |
+| `Views/ExamContainerView.swift` | Exam session + `ExamPDFGenerator`（成绩单）+ `BlankExamPDFGenerator`（空白试卷，无装饰线） |
 | `Views/ExamHistoryView.swift` | Lists saved `ExamPaper`s, `PaperDetailView` with attempt history and re-take button |
-| `Views/LibraryView.swift` | Question bank management, entry points to ExamConfigView and ExamHistoryView |
+| `Views/LibraryView.swift` | 题库管理，含「生成试卷」「历史试卷」「拍照录题」入口 |
+| `Homeview.swift` | 答题 Tab 主页：分类网格 + 错题本入口卡片（`wrongBookBanner` → `WrongBookView`） |
+| `Views/DailyReviewView.swift` | 今日 Tab：答题每日推荐 + 词汇待复习摘要（`vocabSummaryBanner`） |
+
+## PDF 生成注意事项
+
+两套 PDF 生成器，**必须用 `multiline: true` 才能让文字正确对齐**：
+- `QuizPDFGenerator`（`Quizapp.swift`）：普通答题结果报告，`drawText` 函数
+- `ExamPDFGenerator` / `BlankExamPDFGenerator`（`ExamContainerView.swift`）：考试成绩单 / 空白试卷，`drawTxt` 函数
+
+不加 `multiline: true` 时：水平对齐（`.center`）不生效，垂直起点计算方式也与多行模式不同，导致题号和题目文字错位。
 
 ## Exam Mode Logic
 
