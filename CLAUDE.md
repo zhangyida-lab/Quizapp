@@ -89,20 +89,22 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 ### 架构概述
 词汇模块是独立功能分支，**不使用 SwiftData**，采用 `UserDefaults + JSONEncoder` + `ObservableObject`，原因是 Widget Extension 和 Siri App Intent 需要跨进程读写，SwiftData 不支持跨 target 共享。
 
-**App Group ID：** `group.com.acspace.swiftUI-Practice`
+**App Group ID：** `group.com.acspace.Lexora`（已更名，entitlements 已同步）
 
 ### 核心文件
 
 | 文件 | 职责 |
 |------|------|
 | `Models/Word.swift` | `Word`、`WordBook`、`WordRecord`（SM-2）、`WordBookImport`（宽松解析） |
-| `Store/VocabularyStore.swift` | 主 ObservableObject，管理词库/记录/TTS/每日单词 |
+| `Store/VocabularyStore.swift` | 主 ObservableObject，管理词库/记录/TTS/每日单词；含 `reload()`、`updateWord()`、`enrichPendingWords()`、`applyEnrichment(from:)` |
 | `Store/BuiltInWordBooks.swift` | 11 个内置词库目录（指向 Bundle JSON），懒加载 |
-| `Store/VocabSharedHelper.swift` | 轻量静态层，供 Widget/Siri Extension 使用，含 `UserDefaults.shared` 定义 |
-| `VocabAppIntents.swift` | Siri Shortcuts：`AddWordIntent`、`TodayWordsIntent` |
+| `Store/VocabSharedHelper.swift` | 轻量静态层，供 Widget/Siri Extension 使用，含 `UserDefaults.shared` 定义（suite: `group.com.acspace.Lexora`） |
+| `VocabAppIntents.swift` | Siri Shortcuts：`AddWordIntent`（requestValueDialog 方式）、`TodayWordsIntent` |
 | `VocabWidget/VocabWidget.swift` | WidgetKit：4 种尺寸，30 分钟刷新，Deep Link `quizapp://vocabulary` |
-| `Views/Vocabulary/` | `VocabularyHomeView`、`FlashCardView`、`WordChoiceView`、`WordNotebookView`、`VocabQRImportView` |
+| `Views/Vocabulary/VocabularyHomeView.swift` | 词汇主页；含 `WordBookDetailView`、`WordDetailSheet`、`WordEditSheet` |
+| `Views/Vocabulary/` | `FlashCardView`、`WordChoiceView`、`WordNotebookView`、`VocabQRImportView` |
 | `WordBooks/*.json` | 11 个内置词库 JSON（初中/高中/CET-4精选&完整/CET-6精选&完整/考研/托福/SAT/商务/技术） |
+| `LexoraIconView.swift` | App 图标设计（紫色渐变 + L 字母），ImageRenderer 导出 1024×1024 PNG |
 
 ### UserDefaults 存储键
 
@@ -120,16 +122,26 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - 用户点击"启用"后，异步从 Bundle 解析 JSON 加载进内存
 - `save()` 只持久化用户词库 + 已启用 UUID 列表，不把内置单词写入 UserDefaults
 
+### 单词自动补全机制
+- **启动 / 回到前台**：`reload()` → `enrichPendingWords()` 扫描用户词库中释义为"（待补充释义）"的单词，在已启用内置词库里查找同名词，自动复制释义/音标/词性
+- **启用新词库时**：`toggleBuiltInBook` 加载完成后调用 `checkEnrichmentProposal(for:bookWords:)`，统计用户词库中的匹配数，有则设置 `@Published var enrichmentProposal`，UI 弹 Alert 询问是否一键同步；用户确认后调用 `applyEnrichment(from:)`
+
+### Siri 集成
+- 触发短语（英文）：`"Add word in Lexora"`、`"Save word in Lexora"` 等，触发后 Siri 再问 "Which word do you want to add?"
+- 参数通过 `@Parameter(title:, requestValueDialog:)` 在运行时收集，不在 phrases 中内联（避免 NLU 训练报错）
+- 添加的单词写入 `UserDefaults.shared`（App Group），app 回到前台时 `reload()` 同步到内存
+
+### 单词编辑
+- `WordDetailSheet` 左上角铅笔按钮 → 打开 `WordEditSheet`（表单编辑释义、音标、词性、例句）
+- 保存后调用 `VocabularyStore.updateWord(_:)`，`WordDetailSheet` 和列表通过 `liveWord` / `liveWords` 计算属性实时反映最新内容
+
 ### MainTabView
 共 6 个 Tab（tag 0-5）：首页 / 今日 / 错题本 / **词汇**（tag=3）/ 题库 / 录题
 词汇 Tab badge 显示 `vocabStore.dueCount`，Deep Link `quizapp://vocabulary` 跳转到 tag=3
 
-### 待完成的 Xcode 配置（Mac 上操作一次，commit 后永久生效）
-1. **URL Scheme**：主 App target → Info → URL Types → 添加 `quizapp`
-2. **App Groups**：主 App target → Signing & Capabilities → App Groups → `group.com.acspace.swiftUI-Practice`
-3. **创建 Widget Extension target**：File → New → Target → Widget Extension，命名 `VocabWidget`，删除默认生成文件
-4. **VocabWidget target 配置**：
-   - App Groups 能力 → `group.com.acspace.swiftUI-Practice`
-   - Target Membership 勾选：`VocabWidget.swift`、`Word.swift`、`VocabSharedHelper.swift`
-5. **WordBooks 文件夹**：拖入 Xcode，选 "Create folder references"，勾选主 App target
-6. **配置完后务必 commit `project.pbxproj` 和 `.entitlements` 文件**，下次 pull 无需重复配置
+### Xcode 配置（已完成，已 commit，下次 pull 无需重复）
+1. **App 名称**：Lexora（`swiftUI_PracticeApp` → `LexoraApp`）
+2. **URL Scheme**：`quizapp`（Info.plist）
+3. **App Groups**：主 App + Widget Extension 均已配置 `group.com.acspace.Lexora`
+4. **Widget Extension**：Bundle ID `com.acspace.Lexora.VocabWidget`
+5. **WordBooks 文件夹**：已以 folder reference 方式加入主 App target
