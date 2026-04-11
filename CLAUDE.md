@@ -112,6 +112,8 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 | `VocabAppIntents.swift` | Siri Shortcuts：`AddWordIntent`（requestValueDialog 方式）、`TodayWordsIntent` |
 | `VocabWidget/VocabWidget.swift` | WidgetKit：4 种尺寸，30 分钟刷新，Deep Link `quizapp://vocabulary` |
 | `Views/Vocabulary/VocabularyHomeView.swift` | 词汇主页；含 `WordBookDetailView`、`WordDetailSheet`、`WordEditSheet` |
+| `Views/Vocabulary/UnknownWordsView.swift` | 不认识单词本：列出 `correctStreak==0` 的已学单词，支持闪卡练习、搜索、单词级别标记已掌握 |
+| `Views/Vocabulary/WordAddViews.swift` | `ManualAddSheet`（手动添加）、`ScreenshotAddSheet`（截图 OCR 识词批量添加） |
 | `Views/Vocabulary/` | `FlashCardView`、`WordChoiceView`、`WordNotebookView`、`VocabQRImportView` |
 | `WordBooks/*.json` | 11 个内置词库 JSON（初中/高中/CET-4精选&完整/CET-6精选&完整/考研/托福/SAT/商务/技术） |
 | `LexoraIconView.swift` | App 图标设计（紫色渐变 + L 字母），ImageRenderer 导出 1024×1024 PNG |
@@ -145,6 +147,16 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - `WordDetailSheet` 左上角铅笔按钮 → 打开 `WordEditSheet`（表单编辑释义、音标、词性、例句）
 - 保存后调用 `VocabularyStore.updateWord(_:)`，`WordDetailSheet` 和列表通过 `liveWord` / `liveWords` 计算属性实时反映最新内容
 
+### 不认识单词本
+- `VocabularyStore.unknownWords`：`studyCount > 0 && correctStreak == 0 && !isMastered`，按学习次数降序
+- `VocabularyStore.unknownCount`：用于 UI badge 和横幅显示
+- `VocabularyHomeView` 中 `unknownWordsBanner`：有不认识单词时显示红色入口卡片
+- **重要**：`UnknownWordsView` 进入闪卡时必须先把单词快照存入 `@State var flashCardWords`，再 `showFlashCard = true`。**不能**在 `navigationDestination` 里直接用 `vocabStore.unknownWords.shuffled()`——store 更新会触发 closure 重新执行，生成更短的数组，而 `currentIndex` 保持旧值，导致越界崩溃。
+
+### FlashCardView 崩溃防护
+- `@State private var isAnimating`：每次 `submitAnswer` 开始时置 `true`，0.25s 动画完成后置 `false`，防止快速点击导致多次触发
+- `guard !isAnimating && !isFinished`：两个条件都要检查
+
 ### MainTabView
 共 4 个 Tab（tag 0-3）：今日 / **答题**（tag=1）/ **词汇**（tag=2）/ 题库
 - 答题 Tab：包含错题本入口（HomeView 内 `wrongBookBanner` → WrongBookView），badge 显示 `store.dueQuestions.count`
@@ -159,3 +171,20 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 3. **App Groups**：主 App + Widget Extension 均已配置 `group.com.acspace.Lexora`
 4. **Widget Extension**：Bundle ID `com.acspace.Lexora.VocabWidget`
 5. **WordBooks 文件夹**：已以 folder reference 方式加入主 App target
+
+---
+
+## App Store 上架准备
+
+### 已完成
+- `PrivacyInfo.xcprivacy`：主 App 和 VocabWidget 各一份，声明 `NSPrivacyAccessedAPICategoryUserDefaults`（Reason: `CA92.1`）
+  - **注意**：`.xcprivacy` 不被 `PBXFileSystemSynchronizedRootGroup` 自动识别，需在 Xcode 中手动 Add Files 并勾选对应 target
+- 隐私政策页面：`https://zhangyida-lab.github.io/lexora-privacy/`（中英双语，托管于 GitHub Pages）
+
+### 待完成（提审前必须）
+- Info.plist 补充相机和相册权限说明：
+  - `NSCameraUsageDescription`（拍照录题功能使用）
+  - `NSPhotoLibraryUsageDescription`（截图识词功能使用）
+- App Store Connect：截图（至少 iPhone 6.5"）、App 描述、关键词、年龄分级
+- App Store Connect 填写隐私政策 URL：`https://zhangyida-lab.github.io/lexora-privacy/`
+- App 图标：确认 `Assets.xcassets/AppIcon` 中 1024×1024 已正确配置（参考 `LexoraIconView.swift`）
