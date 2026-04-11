@@ -9,8 +9,9 @@ struct AddWordIntent: AppIntent {
         categoryName: "词汇学习"
     )
 
-    @Parameter(title: "单词", description: "要添加的英文单词")
-    var term: String   // 避免使用 'word'，该词与 NLU 系统保留词汇冲突
+    @Parameter(title: "单词", description: "要添加的英文单词",
+               requestValueDialog: IntentDialog("Which word do you want to add?"))
+    var term: String
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let success = VocabSharedHelper.quickAdd(word: term)
@@ -47,12 +48,11 @@ struct VocabAppShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: AddWordIntent(),
             phrases: [
-                "Save \(\.$term) to vocab",
-                "Remember \(\.$term)",
-                "Memorize \(\.$term)",
-                "添加生词 \(\.$term)",
-                "把 \(\.$term) 加入生词本",
-                "Add \(\.$term) in \(.applicationName)"
+                "Add word in \(.applicationName)",
+                "Save word in \(.applicationName)",
+                "Remember word in \(.applicationName)",
+                "添加生词 in \(.applicationName)",
+                "记单词 in \(.applicationName)"
             ],
             shortTitle: "Add Word",
             systemImageName: "plus.circle"

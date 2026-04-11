@@ -2,12 +2,21 @@ import Foundation
 import SwiftUI
 import AVFoundation
 
+// MARK: - 启用词库后的匹配同步提案
+struct EnrichmentProposal: Identifiable {
+    let id = UUID()
+    let bookName: String      // 刚启用的内置词库名
+    let bookId: UUID
+    let matchCount: Int       // 生词本中可同步的单词数
+}
+
 // MARK: - 词汇中央数据仓库
 class VocabularyStore: ObservableObject {
     @Published var wordBooks: [WordBook] = []
     @Published var wordRecords: [WordRecord] = []
     @Published var dailyWords: [Word] = []
-    @Published var loadingBookId: UUID? = nil   // 启用内置词库时的加载状态
+    @Published var loadingBookId: UUID? = nil       // 启用内置词库时的加载状态
+    @Published var enrichmentProposal: EnrichmentProposal? = nil  // 待确认的同步提案
 
     private var lastDailyDate: Date?
 
@@ -60,6 +69,14 @@ class VocabularyStore: ObservableObject {
     // MARK: 初始化
     init() {
         load()
+        enrichPendingWords()
+        refreshDailyIfNeeded()
+    }
+
+    // 从后台回到前台时调用，确保 Siri/Widget 写入的数据同步到内存
+    func reload() {
+        load()
+        enrichPendingWords()
         refreshDailyIfNeeded()
     }
 
@@ -127,6 +144,8 @@ class VocabularyStore: ObservableObject {
                     self.loadingBookId = nil
                     self.refreshDailyIfNeeded()
                     self.save()
+                    // 检查用户生词本中有多少词可以从本词库同步
+                    self.checkEnrichmentProposal(for: bookId, bookWords: words)
                 }
             }
         } else {
@@ -161,6 +180,16 @@ class VocabularyStore: ObservableObject {
         wordBooks.append(book)
         refreshDailyIfNeeded()
         save()
+    }
+
+    func updateWord(_ word: Word) {
+        for bi in wordBooks.indices {
+            if let wi = wordBooks[bi].words.firstIndex(where: { $0.id == word.id }) {
+                wordBooks[bi].words[wi] = word
+                save()
+                return
+            }
+        }
     }
 
     func deleteWord(_ wordId: UUID, from bookId: UUID) {
@@ -231,6 +260,75 @@ class VocabularyStore: ObservableObject {
         if let data = try? encoder.encode(wordRecords) {
             UserDefaults.shared.set(data, forKey: Keys.records)
         }
+    }
+
+    // 检测刚启用的词库与用户生词本的匹配数，有则生成同步提案
+    private func checkEnrichmentProposal(for bookId: UUID, bookWords: [Word]) {
+        let bookWordMap = Dictionary(
+            bookWords.map { ($0.word.lowercased(), $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        let userWords = wordBooks.filter { !$0.isBuiltIn }.flatMap { $0.words }
+        let matchCount = userWords.filter { bookWordMap[$0.word.lowercased()] != nil }.count
+        guard matchCount > 0 else { return }
+
+        let bookName = wordBooks.first { $0.id == bookId }?.name ?? "内置词库"
+        enrichmentProposal = EnrichmentProposal(
+            bookName: bookName,
+            bookId: bookId,
+            matchCount: matchCount
+        )
+    }
+
+    // 用指定内置词库的内容同步用户生词本中匹配的单词
+    func applyEnrichment(from bookId: UUID) {
+        let bookWords = wordBooks.first { $0.id == bookId }?.words ?? []
+        let bookWordMap = Dictionary(
+            bookWords.map { ($0.word.lowercased(), $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        var changed = false
+        for bi in wordBooks.indices {
+            guard !wordBooks[bi].isBuiltIn else { continue }
+            for wi in wordBooks[bi].words.indices {
+                let w = wordBooks[bi].words[wi]
+                if let match = bookWordMap[w.word.lowercased()] {
+                    wordBooks[bi].words[wi].phonetic     = match.phonetic
+                    wordBooks[bi].words[wi].partOfSpeech = match.partOfSpeech
+                    wordBooks[bi].words[wi].definitions  = match.definitions
+                    changed = true
+                }
+            }
+        }
+        if changed { save() }
+        enrichmentProposal = nil
+    }
+
+    // 自动补全释义：对用户词库中标记为"待补充释义"的单词，
+    // 在已启用的内置词库里查找同名词并复制其释义/音标/词性
+    private func enrichPendingWords() {
+        let builtInWords = wordBooks
+            .filter { $0.isBuiltIn && $0.isEnabled }
+            .flatMap { $0.words }
+        guard !builtInWords.isEmpty else { return }
+
+        var changed = false
+        for bi in wordBooks.indices {
+            guard !wordBooks[bi].isBuiltIn else { continue }
+            for wi in wordBooks[bi].words.indices {
+                let w = wordBooks[bi].words[wi]
+                guard w.definitions.first?.meaning == "（待补充释义）" else { continue }
+                if let match = builtInWords.first(where: {
+                    $0.word.lowercased() == w.word.lowercased()
+                }) {
+                    wordBooks[bi].words[wi].phonetic     = match.phonetic
+                    wordBooks[bi].words[wi].partOfSpeech = match.partOfSpeech
+                    wordBooks[bi].words[wi].definitions  = match.definitions
+                    changed = true
+                }
+            }
+        }
+        if changed { save() }
     }
 
     private func saveDailyCache() {

@@ -19,6 +19,8 @@ struct LexoraApp: App {
         _store = StateObject(wrappedValue: QuizStore(modelContext: container.mainContext))
     }
 
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
             MainTabView()
@@ -26,6 +28,11 @@ struct LexoraApp: App {
                 .environmentObject(vocabStore)
                 .modelContainer(modelContainer)
                 .preferredColorScheme(.dark)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                vocabStore.reload()
+            }
         }
     }
 }

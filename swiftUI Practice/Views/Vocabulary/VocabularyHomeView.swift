@@ -74,6 +74,20 @@ struct VocabularyHomeView: View {
         } message: {
             Text(importError ?? "JSON 格式不正确，请检查文件内容")
         }
+        // 启用词库后的同步提案 Alert
+        .alert(
+            "发现匹配单词",
+            isPresented: Binding(
+                get: { vocabStore.enrichmentProposal != nil },
+                set: { if !$0 { vocabStore.enrichmentProposal = nil } }
+            ),
+            presenting: vocabStore.enrichmentProposal
+        ) { proposal in
+            Button("同步释义") { vocabStore.applyEnrichment(from: proposal.bookId) }
+            Button("暂不同步", role: .cancel) { vocabStore.enrichmentProposal = nil }
+        } message: { proposal in
+            Text("你的生词本中有 \(proposal.matchCount) 个单词在「\(proposal.bookName)」中有完整释义，是否同步到生词本？")
+        }
         // 闪卡
         .navigationDestination(isPresented: $showFlashCard) {
             FlashCardView(words: flashWords)
@@ -492,9 +506,14 @@ struct WordBookDetailView: View {
     @State private var searchText = ""
     @State private var selectedWord: Word? = nil
 
+    // 从 store 动态读取最新单词，确保编辑后列表立即刷新
+    private var liveWords: [Word] {
+        vocabStore.wordBooks.first { $0.id == book.id }?.words ?? book.words
+    }
+
     var filtered: [Word] {
-        guard !searchText.isEmpty else { return book.words }
-        return book.words.filter {
+        guard !searchText.isEmpty else { return liveWords }
+        return liveWords.filter {
             $0.word.localizedCaseInsensitiveContains(searchText) ||
             $0.primaryMeaning.localizedCaseInsensitiveContains(searchText)
         }
@@ -574,6 +593,13 @@ struct WordDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     let word: Word
 
+    @State private var showEdit = false
+
+    // 从 store 动态读取，编辑后自动显示最新内容
+    private var liveWord: Word {
+        vocabStore.wordBooks.flatMap { $0.words }.first { $0.id == word.id } ?? word
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -583,10 +609,10 @@ struct WordDetailSheet: View {
                         // 单词主体
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                Text(word.word)
+                                Text(liveWord.word)
                                     .font(.system(size: 32, weight: .bold))
                                     .foregroundColor(.white)
-                                Text(word.partOfSpeech)
+                                Text(liveWord.partOfSpeech)
                                     .font(.system(size: 14))
                                     .foregroundColor(Color.quizPurpleLight)
                                     .padding(.horizontal, 8).padding(.vertical, 3)
@@ -594,11 +620,11 @@ struct WordDetailSheet: View {
                                     .cornerRadius(6)
                             }
                             HStack(spacing: 10) {
-                                Text(word.phonetic)
+                                Text(liveWord.phonetic)
                                     .font(.system(size: 16))
                                     .foregroundColor(.secondary)
                                 Button {
-                                    vocabStore.speak(word.word)
+                                    vocabStore.speak(liveWord.word)
                                 } label: {
                                     Image(systemName: "speaker.wave.2.fill")
                                         .font(.system(size: 16))
@@ -615,7 +641,7 @@ struct WordDetailSheet: View {
                                 .foregroundColor(.secondary)
                                 .textCase(.uppercase)
 
-                            ForEach(Array(word.definitions.enumerated()), id: \.offset) { i, def in
+                            ForEach(Array(liveWord.definitions.enumerated()), id: \.offset) { i, def in
                                 VStack(alignment: .leading, spacing: 6) {
                                     HStack(alignment: .top, spacing: 8) {
                                         Text("\(i + 1).")
@@ -645,7 +671,7 @@ struct WordDetailSheet: View {
                         }
 
                         // 掌握程度
-                        if let record = vocabStore.wordRecord(for: word.id) {
+                        if let record = vocabStore.wordRecord(for: liveWord.id) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("学习状态")
                                     .font(.system(size: 13, weight: .semibold))
@@ -660,9 +686,9 @@ struct WordDetailSheet: View {
                         }
 
                         // 标记已掌握
-                        let isMastered = vocabStore.wordRecord(for: word.id)?.isMastered ?? false
+                        let isMastered = vocabStore.wordRecord(for: liveWord.id)?.isMastered ?? false
                         Button {
-                            vocabStore.toggleMastered(word.id)
+                            vocabStore.toggleMastered(liveWord.id)
                         } label: {
                             HStack {
                                 Image(systemName: isMastered ? "checkmark.seal.fill" : "seal")
@@ -683,10 +709,22 @@ struct WordDetailSheet: View {
             .navigationTitle("单词详情")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showEdit = true
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundColor(Color.quizPurpleLight)
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { dismiss() }
                         .foregroundColor(Color.quizPurpleLight)
                 }
+            }
+            .sheet(isPresented: $showEdit) {
+                WordEditSheet(word: liveWord)
+                    .environmentObject(vocabStore)
             }
         }
         .preferredColorScheme(.dark)
@@ -705,6 +743,93 @@ private struct InfoChip: View {
         .padding(.vertical, 10)
         .background(Color.quizCard)
         .cornerRadius(8)
+    }
+}
+
+// MARK: - 单词编辑弹窗
+struct WordEditSheet: View {
+    @EnvironmentObject private var vocabStore: VocabularyStore
+    @Environment(\.dismiss) private var dismiss
+
+    let word: Word
+
+    @State private var meaning: String = ""
+    @State private var phonetic: String = ""
+    @State private var partOfSpeech: String = ""
+    @State private var exampleEn: String = ""
+    @State private var exampleZh: String = ""
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.quizBg.ignoresSafeArea()
+                Form {
+                    Section("单词") {
+                        HStack {
+                            Text(word.word)
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                            Spacer()
+                            TextField("音标", text: $phonetic)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        TextField("词性（如 n. v. adj.）", text: $partOfSpeech)
+                    }
+                    .listRowBackground(Color.quizCard)
+
+                    Section("释义") {
+                        TextField("中文释义", text: $meaning, axis: .vertical)
+                            .lineLimit(2...4)
+                    }
+                    .listRowBackground(Color.quizCard)
+
+                    Section("例句（选填）") {
+                        TextField("英文例句", text: $exampleEn, axis: .vertical)
+                            .lineLimit(2...4)
+                        TextField("中文翻译", text: $exampleZh, axis: .vertical)
+                            .lineLimit(2...4)
+                    }
+                    .listRowBackground(Color.quizCard)
+                }
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("编辑单词")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("取消") { dismiss() }
+                        .foregroundColor(.secondary)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("保存") { save() }
+                        .foregroundColor(Color.quizPurpleLight)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+        .onAppear {
+            phonetic      = word.phonetic
+            partOfSpeech  = word.partOfSpeech
+            meaning       = word.definitions.first?.meaning ?? ""
+            exampleEn     = word.definitions.first?.exampleEn ?? ""
+            exampleZh     = word.definitions.first?.exampleZh ?? ""
+        }
+    }
+
+    private func save() {
+        let def = Word.Definition(
+            meaning: meaning.isEmpty ? "（待补充释义）" : meaning,
+            exampleEn: exampleEn.isEmpty ? nil : exampleEn,
+            exampleZh: exampleZh.isEmpty ? nil : exampleZh
+        )
+        var updated = word
+        updated.phonetic     = phonetic
+        updated.partOfSpeech = partOfSpeech.isEmpty ? "n." : partOfSpeech
+        updated.definitions  = [def]
+        vocabStore.updateWord(updated)
+        dismiss()
     }
 }
 
