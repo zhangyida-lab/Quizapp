@@ -19,22 +19,22 @@ struct MainTabView: View {
             }
             .tag(0)
 
-            // Tab 1: 答题（含错题本入口）
+            // Tab 1: 刷题（含错题本入口）
             NavigationStack {
                 HomeView()
             }
             .tabItem {
-                Label("答题", systemImage: "questionmark.circle.fill")
+                Label("刷题", systemImage: "bolt.fill")
             }
             .badge(store.dueQuestions.count > 0 ? store.dueQuestions.count : 0)
             .tag(1)
 
-            // Tab 2: 词汇（含生词本入口）
+            // Tab 2: 背词（含生词本入口）
             NavigationStack {
                 VocabularyHomeView()
             }
             .tabItem {
-                Label("词汇", systemImage: "text.book.closed.fill")
+                Label("背词", systemImage: "brain.head.profile")
             }
             .badge(vocabStore.dueCount > 0 ? vocabStore.dueCount : 0)
             .tag(2)

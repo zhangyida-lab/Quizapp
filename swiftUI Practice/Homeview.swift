@@ -28,7 +28,7 @@ struct HomeView: View {
                 .padding(.bottom, 40)
             }
         }
-        .navigationTitle("答题")
+        .navigationTitle("刷题")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {

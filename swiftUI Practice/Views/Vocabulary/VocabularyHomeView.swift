@@ -37,7 +37,7 @@ struct VocabularyHomeView: View {
                 .padding(.bottom, 40)
             }
         }
-        .navigationTitle("词汇学习")
+        .navigationTitle("背词")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
