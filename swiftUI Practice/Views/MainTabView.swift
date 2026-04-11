@@ -4,6 +4,7 @@ import SwiftData
 struct MainTabView: View {
     @EnvironmentObject private var store: QuizStore
     @EnvironmentObject private var vocabStore: VocabularyStore
+    @EnvironmentObject private var algoStore: AlgorithmSettingsStore
     @State private var selectedTab = 0
 
     var body: some View {
@@ -46,6 +47,15 @@ struct MainTabView: View {
                 Label("题库", systemImage: "tray.full.fill")
             }
             .tag(3)
+
+            // Tab 4: 设置
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("设置", systemImage: "gearshape.fill")
+            }
+            .tag(4)
         }
         .tint(Color.quizPurpleLight)
         .onOpenURL { url in
@@ -62,5 +72,6 @@ struct MainTabView: View {
             QuestionBankEntity.self, WrongRecordEntity.self, ExamPaperEntity.self,
             AppSettingsEntity.self).mainContext))
         .environmentObject(VocabularyStore())
+        .environmentObject(AlgorithmSettingsStore())
         .preferredColorScheme(.dark)
 }
