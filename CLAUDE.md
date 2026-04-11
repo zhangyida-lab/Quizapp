@@ -136,8 +136,12 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - 保存后调用 `VocabularyStore.updateWord(_:)`，`WordDetailSheet` 和列表通过 `liveWord` / `liveWords` 计算属性实时反映最新内容
 
 ### MainTabView
-共 6 个 Tab（tag 0-5）：首页 / 今日 / 错题本 / **词汇**（tag=3）/ 题库 / 录题
-词汇 Tab badge 显示 `vocabStore.dueCount`，Deep Link `quizapp://vocabulary` 跳转到 tag=3
+共 4 个 Tab（tag 0-3）：今日 / **答题**（tag=1）/ **词汇**（tag=2）/ 题库
+- 答题 Tab：包含错题本入口（HomeView 内 `wrongBookBanner` → WrongBookView），badge 显示 `store.dueQuestions.count`
+- 词汇 Tab：包含生词本（VocabularyHomeView 内），badge 显示 `vocabStore.dueCount`
+- 题库 Tab：包含拍照录题入口（LibraryView 内 NavigationLink → PhotoCaptureView）
+- 今日 Tab：显示答题推荐 + 词汇待复习摘要
+- Deep Link `quizapp://vocabulary` 跳转到 tag=2
 
 ### Xcode 配置（已完成，已 commit，下次 pull 无需重复）
 1. **App 名称**：Lexora（`swiftUI_PracticeApp` → `LexoraApp`）

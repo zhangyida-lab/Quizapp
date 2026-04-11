@@ -9,35 +9,26 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
 
-            // Tab 1: 首页
-            NavigationStack {
-                HomeView()
-            }
-            .tabItem {
-                Label("首页", systemImage: "house.fill")
-            }
-            .tag(0)
-
-            // Tab 2: 今日推荐
+            // Tab 0: 今日
             NavigationStack {
                 DailyReviewView()
             }
             .tabItem {
                 Label("今日", systemImage: "calendar.badge.clock")
             }
-            .tag(1)
+            .tag(0)
 
-            // Tab 3: 错题本
+            // Tab 1: 答题（含错题本入口）
             NavigationStack {
-                WrongBookView()
+                HomeView()
             }
             .tabItem {
-                Label("错题本", systemImage: "bookmark.fill")
+                Label("答题", systemImage: "questionmark.circle.fill")
             }
             .badge(store.dueQuestions.count > 0 ? store.dueQuestions.count : 0)
-            .tag(2)
+            .tag(1)
 
-            // Tab 4: 词汇学习
+            // Tab 2: 词汇（含生词本入口）
             NavigationStack {
                 VocabularyHomeView()
             }
@@ -45,30 +36,21 @@ struct MainTabView: View {
                 Label("词汇", systemImage: "text.book.closed.fill")
             }
             .badge(vocabStore.dueCount > 0 ? vocabStore.dueCount : 0)
-            .tag(3)
+            .tag(2)
 
-            // Tab 5: 题库
+            // Tab 3: 题库（含录题入口）
             NavigationStack {
                 LibraryView()
             }
             .tabItem {
                 Label("题库", systemImage: "tray.full.fill")
             }
-            .tag(4)
-
-            // Tab 6: 拍照录题
-            NavigationStack {
-                PhotoCaptureView()
-            }
-            .tabItem {
-                Label("录题", systemImage: "camera.fill")
-            }
-            .tag(5)
+            .tag(3)
         }
         .tint(Color.quizPurpleLight)
         .onOpenURL { url in
             if url.scheme == "quizapp" && url.host == "vocabulary" {
-                selectedTab = 3
+                selectedTab = 2
             }
         }
     }

@@ -5,6 +5,7 @@ import SwiftData
 
 struct DailyReviewView: View {
     @EnvironmentObject private var store: QuizStore
+    @EnvironmentObject private var vocabStore: VocabularyStore
     @State private var showQuiz = false
 
     var body: some View {
@@ -15,6 +16,7 @@ struct DailyReviewView: View {
                 VStack(spacing: 24) {
                     headerSection
                     statsRow
+                    vocabSummaryBanner
                     dueSectionIfNeeded
                     questionListSection
                     Spacer(minLength: 80)
@@ -96,6 +98,46 @@ struct DailyReviewView: View {
             DailyStatCard(icon: "checkmark.seal.fill",  value: "\(store.masteredCount)",         label: "已掌握",     color: Color.quizGreen)
         }
         .padding(.horizontal, 20)
+    }
+
+    // MARK: 词汇今日摘要
+    @ViewBuilder
+    var vocabSummaryBanner: some View {
+        if vocabStore.dueCount > 0 || !vocabStore.dailyWords.isEmpty {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Color.quizPurple.opacity(0.2))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "text.book.closed.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(Color.quizPurpleLight)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("词汇学习")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                    Group {
+                        if vocabStore.dueCount > 0 {
+                            Text("有 \(vocabStore.dueCount) 个单词待复习")
+                        } else {
+                            Text("今日词汇复习已完成 🎉")
+                        }
+                    }
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                }
+                Spacer()
+                Text("词汇 Tab")
+                    .font(.system(size: 11))
+                    .foregroundColor(Color.quizPurpleLight.opacity(0.7))
+            }
+            .padding(14)
+            .background(Color.quizCard)
+            .cornerRadius(14)
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.quizPurple.opacity(0.25), lineWidth: 1))
+            .padding(.horizontal, 20)
+        }
     }
 
     // MARK: 到期错题提示

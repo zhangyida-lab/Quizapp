@@ -792,7 +792,7 @@ enum QuizPDFGenerator {
 
             // 三格统计卡片（增大高度，调整文字位置）
             let cardW = (bodyW - 16) / 3
-            let cardH: CGFloat = 100
+            let cardH: CGFloat = 120
             let cardY = currentY
             let stats: [(String, String, UIColor)] = [
                 ("\(vm.score)",                      "答对题数", colGreen),

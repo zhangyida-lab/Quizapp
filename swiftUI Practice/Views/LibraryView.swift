@@ -154,6 +154,19 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainButtonStyle())
 
+            // 录题入口
+            NavigationLink(destination: PhotoCaptureView()) {
+                HStack(spacing: 8) {
+                    Image(systemName: "camera.fill").font(.system(size: 15))
+                    Text("拍照录题").font(.system(size: 15, weight: .semibold))
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.system(size: 13)).foregroundColor(.white.opacity(0.6))
+                }
+                .foregroundColor(.white).padding(.horizontal, 16).padding(.vertical, 14)
+                .background(Color(red: 0.20, green: 0.55, blue: 0.80)).cornerRadius(12)
+            }
+            .buttonStyle(PlainButtonStyle())
+
             HStack(spacing: 12) {
             Button {
                 showImportPicker = true

@@ -569,8 +569,6 @@ enum BlankExamPDFGenerator {
                     font: .italicSystemFont(ofSize: 10), color: colSecondary)
             y += 22
 
-            drawLine(y: y, color: colBorder, width: 0.5); y += 16
-
             // ── 题目列表 ──
             let labels = ["A", "B", "C", "D"]
             for (i, q) in questions.enumerated() {
@@ -617,8 +615,6 @@ enum BlankExamPDFGenerator {
                 drawTxt("我的答案：___", x: margin + 24, y: y, w: 120,
                         font: .systemFont(ofSize: 10), color: colSecondary)
                 y += 20
-                drawLine(y: y, color: colLightBg, width: 0.5)
-                y += 14
             }
 
             // ── 答案汇总页 ──

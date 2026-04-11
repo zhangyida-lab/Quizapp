@@ -146,13 +146,6 @@ struct VocabularyHomeView: View {
     // MARK: 统计栏
     private var statsHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("你好，学习达人 👋")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-            Text("今天记几个单词？")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-
             HStack(spacing: 12) {
                 StatPill(icon: "text.book.closed.fill",
                          value: "\(vocabStore.allWords.count)", label: "单词总数")

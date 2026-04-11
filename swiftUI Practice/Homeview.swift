@@ -19,6 +19,7 @@ struct HomeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 28) {
                     headerSection
+                    wrongBookBanner
                     featuredSection
                     categoryGridSection
                 }
@@ -26,7 +27,7 @@ struct HomeView: View {
                 .padding(.bottom, 40)
             }
         }
-        .navigationTitle("趣味答题")
+        .navigationTitle("答题")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
@@ -44,13 +45,6 @@ struct HomeView: View {
     // MARK: 顶部欢迎区
     var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("你好，答题达人 👋")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-            Text("今天挑战哪个分类？")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-
             HStack(spacing: 12) {
                 StatPill(icon: "list.bullet",       value: "\(store.allQuestions.count)", label: "题目总数")
                 StatPill(icon: "square.grid.2x2",   value: "\(store.categories.count)",   label: "分类数量")
@@ -58,6 +52,45 @@ struct HomeView: View {
             }
             .padding(.top, 4)
         }
+        .padding(.horizontal, 20)
+    }
+
+    // MARK: 错题本入口
+    var wrongBookBanner: some View {
+        NavigationLink(destination: WrongBookView()) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.quizRed.opacity(0.18))
+                        .frame(width: 52, height: 52)
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 22))
+                        .foregroundColor(Color.quizRed)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("错题本")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text(store.dueQuestions.isEmpty
+                         ? "暂无待复习错题 🎉"
+                         : "有 \(store.dueQuestions.count) 道错题待复习")
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color.quizRed.opacity(0.6))
+            }
+            .padding(16)
+            .background(Color.quizCard)
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.quizRed.opacity(store.dueQuestions.isEmpty ? 0.1 : 0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
         .padding(.horizontal, 20)
     }
 
