@@ -39,23 +39,14 @@ struct MainTabView: View {
             .badge(vocabStore.dueCount > 0 ? vocabStore.dueCount : 0)
             .tag(2)
 
-            // Tab 3: 题库（含录题入口）
-            NavigationStack {
-                LibraryView()
-            }
-            .tabItem {
-                Label("题库", systemImage: "tray.full.fill")
-            }
-            .tag(3)
-
-            // Tab 4: 设置
+            // Tab 3: 设置
             NavigationStack {
                 SettingsView()
             }
             .tabItem {
                 Label("设置", systemImage: "gearshape.fill")
             }
-            .tag(4)
+            .tag(3)
         }
         .tint(Color.quizPurpleLight)
         .onOpenURL { url in

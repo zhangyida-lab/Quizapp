@@ -5,7 +5,8 @@ import SwiftData
 
 struct HomeView: View {
     @EnvironmentObject private var store: QuizStore
-    @State private var showHelp = false
+    @State private var showHelp    = false
+    @State private var showLibrary = false
 
     let columns = [
         GridItem(.flexible(), spacing: 14),
@@ -32,14 +33,24 @@ struct HomeView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button { showHelp = true } label: {
-                    Image(systemName: "questionmark.circle")
-                        .foregroundColor(Color.quizPurpleLight)
-                        .font(.system(size: 18))
+                HStack(spacing: 16) {
+                    Button { showLibrary = true } label: {
+                        Image(systemName: "tray.full.fill")
+                            .foregroundColor(Color.quizPurpleLight)
+                            .font(.system(size: 17))
+                    }
+                    Button { showHelp = true } label: {
+                        Image(systemName: "questionmark.circle")
+                            .foregroundColor(Color.quizPurpleLight)
+                            .font(.system(size: 18))
+                    }
                 }
             }
         }
         .sheet(isPresented: $showHelp) { HelpView() }
+        .navigationDestination(isPresented: $showLibrary) {
+            LibraryView()
+        }
     }
 
     // MARK: 顶部欢迎区
