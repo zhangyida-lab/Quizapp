@@ -10,6 +10,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Keep language practical and clear — avoid overly formal or academic phrasing
 - Encourage the user to mix English words into Chinese prompts as a stepping stone
 
+## TODO
+
+优先级从高到低：
+
+- [ ] **App Store screenshots** — 至少 iPhone 6.5" 截图，上传到 App Store Connect
+- [ ] **App Store Connect setup** — App 描述、关键词、年龄分级、隐私政策 URL
+- [ ] **Replace placeholder App Store URL** — `SettingsView` ShareSheet 中的占位链接替换为真实链接（上架后）
+- [ ] **Hide debug section in release builds** — `ReminderSettingsView` 中的「发送测试通知」区域在正式版中隐藏（用 `#if DEBUG` 包裹）
+- [ ] **Study streak feature (连续学习天数)** — 记录并展示连续学习天数，提升用户留存
+- [ ] **Onboarding flow (新用户引导)** — 首次启动时引导用户导入题库 / 启用词库，减少新用户流失
+- [ ] **Progress charts (学习进度图表)** — 每周答题数 / 背词数柱状图，让学习成果可视化
+
 ## Project Overview
 
 iOS quiz app built with SwiftUI, targeting iOS 18.2, Xcode 16.2, Swift 5. The project uses `PBXFileSystemSynchronizedRootGroup` (Xcode 16 feature), so **all Swift files in subfolders are automatically included** — no need to add files to `project.pbxproj` manually.
