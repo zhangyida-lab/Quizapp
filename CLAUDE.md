@@ -42,8 +42,11 @@ Open `swiftUI Practice.xcodeproj` in Xcode. Build/run with `Cmd+R`. There are no
 | `Views/ExamContainerView.swift` | Exam session + `ExamPDFGenerator`（成绩单）+ `BlankExamPDFGenerator`（空白试卷，无装饰线） |
 | `Views/ExamHistoryView.swift` | Lists saved `ExamPaper`s, `PaperDetailView` with attempt history and re-take button |
 | `Views/LibraryView.swift` | 题库管理，含「生成试卷」「历史试卷」「拍照录题」入口 |
-| `Homeview.swift` | 答题 Tab 主页：分类网格 + 错题本入口卡片（`wrongBookBanner` → `WrongBookView`） |
-| `Views/DailyReviewView.swift` | 今日 Tab：答题每日推荐 + 词汇待复习摘要（`vocabSummaryBanner`） |
+| `Homeview.swift` | 刷题 Tab 主页：分类网格 + 错题本入口 + `HelpView`（使用帮助，设置 Tab 入口） |
+| `Views/DailyReviewView.swift` | 推荐 Tab：顶部切换「刷题 / 背词」两个面板，各显示今日推荐列表 |
+| `Views/SettingsView.swift` | 设置 Tab：算法设置、使用帮助、关于 Lexora、反馈与联系、隐私与法律 |
+| `Views/AlgorithmSettingsView.swift` | 算法参数配置表单（每日题数、每日词数、SM-2 参数、试卷默认值） |
+| `Store/AlgorithmSettings.swift` | `AlgorithmConfig` 结构体 + `AlgorithmSettingsStore: ObservableObject`；提供静态 `loadConfig()` 供 Store 层读取 |
 
 ## PDF 生成注意事项
 
@@ -94,10 +97,10 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 
 ---
 
-## Vocabulary Module（feature/vocabulary-learning 分支）
+## Vocabulary Module
 
 ### 架构概述
-词汇模块是独立功能分支，**不使用 SwiftData**，采用 `UserDefaults + JSONEncoder` + `ObservableObject`，原因是 Widget Extension 和 Siri App Intent 需要跨进程读写，SwiftData 不支持跨 target 共享。
+词汇模块**不使用 SwiftData**，采用 `UserDefaults + JSONEncoder` + `ObservableObject`，原因是 Widget Extension 和 Siri App Intent 需要跨进程读写，SwiftData 不支持跨 target 共享。
 
 **App Group ID：** `group.com.acspace.Lexora`（已更名，entitlements 已同步）
 
@@ -158,12 +161,22 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - `guard !isAnimating && !isFinished`：两个条件都要检查
 
 ### MainTabView
-共 4 个 Tab（tag 0-3）：今日 / **答题**（tag=1）/ **词汇**（tag=2）/ 题库
-- 答题 Tab：包含错题本入口（HomeView 内 `wrongBookBanner` → WrongBookView），badge 显示 `store.dueQuestions.count`
-- 词汇 Tab：包含生词本（VocabularyHomeView 内），badge 显示 `vocabStore.dueCount`
-- 题库 Tab：包含拍照录题入口（LibraryView 内 NavigationLink → PhotoCaptureView）
-- 今日 Tab：显示答题推荐 + 词汇待复习摘要
+共 4 个 Tab（tag 0-3）：**推荐**（tag=0）/ **刷题**（tag=1）/ **背词**（tag=2）/ **设置**（tag=3）
+- 推荐 Tab：顶部 Segmented 切换刷题/背词面板，各显示今日推荐列表及启动入口
+- 刷题 Tab：分类答题 + 错题本入口（`wrongBookBanner`）；右上角托盘图标 → LibraryView（题库管理、试卷生成、拍照录题）；badge 显示 `store.dueQuestions.count`
+- 背词 Tab：词库列表 + 不认识单词横幅；badge 显示 `vocabStore.dueCount`
+- 设置 Tab：算法设置（→ AlgorithmSettingsView）、使用帮助（→ HelpView）、反馈与联系（邮件/微信）、关于 Lexora、隐私政策
 - Deep Link `quizapp://vocabulary` 跳转到 tag=2
+
+### 设置 Tab — 反馈与联系
+- 邮件：`mailto:acboo2020@gmail.com`，预填主题 + 设备信息
+- 微信：显示微信号 `danshengshuo`，点击复制到剪贴板，2 秒后恢复
+
+### LibraryView — 题库分享与图片说明
+- **生成分享二维码**：点击后先弹确认 Alert（「生成分享码需要将题库数据上传至云端服务器（Cloudinary），确认继续？」），确认后才上传
+- **导出 JSON**：如题库含有通过拍照录题添加的本地图片（`.file` 类型），先弹提示（「图片将无法在其他设备显示，建议改用二维码分享」），确认后导出
+- `bankHasLocalImages(_:)` 辅助函数：`bank.questions.contains { $0.image?.type == .file }`
+- 图片类型说明：`.asset`（内置）/ `.url`（已上传 Cloudinary）/ `.file`（拍照录题本地路径，导出后图片丢失）
 
 ### Xcode 配置（已完成，已 commit，下次 pull 无需重复）
 1. **App 名称**：Lexora（`swiftUI_PracticeApp` → `LexoraApp`）
@@ -180,6 +193,8 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - `PrivacyInfo.xcprivacy`：主 App 和 VocabWidget 各一份，声明 `NSPrivacyAccessedAPICategoryUserDefaults`（Reason: `CA92.1`）
   - **注意**：`.xcprivacy` 不被 `PBXFileSystemSynchronizedRootGroup` 自动识别，需在 Xcode 中手动 Add Files 并勾选对应 target
 - 隐私政策页面：`https://zhangyida-lab.github.io/lexora-privacy/`（中英双语，托管于 GitHub Pages）
+  - 已说明 Cloudinary 仅在用户主动点击「生成分享二维码」时上传，不含个人信息
+- App 图标：`Assets.xcassets/AppIcon` 已配置 1024×1024（`LexoraIconView.swift` 可重新导出）
 
 ### 待完成（提审前必须）
 - Info.plist 补充相机和相册权限说明：
@@ -187,4 +202,3 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
   - `NSPhotoLibraryUsageDescription`（截图识词功能使用）
 - App Store Connect：截图（至少 iPhone 6.5"）、App 描述、关键词、年龄分级
 - App Store Connect 填写隐私政策 URL：`https://zhangyida-lab.github.io/lexora-privacy/`
-- App 图标：确认 `Assets.xcassets/AppIcon` 中 1024×1024 已正确配置（参考 `LexoraIconView.swift`）
