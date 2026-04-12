@@ -104,6 +104,18 @@ struct SettingsView: View {
                     }
                 }
             }
+            NavigationLink(destination: ReminderSettingsView()) {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "bell.fill", color: Color(red: 0.86, green: 0.55, blue: 0.25))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("学习提醒")
+                            .foregroundColor(.white)
+                        Text("每日定时提醒，提高学习坚持率")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
             NavigationLink(destination: HelpView()) {
                 HStack(spacing: 14) {
                     SettingsIcon(systemName: "questionmark.circle.fill", color: Color(red: 0.20, green: 0.60, blue: 0.86))

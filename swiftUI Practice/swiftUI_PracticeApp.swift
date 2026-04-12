@@ -34,6 +34,10 @@ struct LexoraApp: App {
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 vocabStore.reload()
+                NotificationManager.rescheduleIfEnabled(
+                    dueQuiz: store.dueQuestions.count,
+                    dueVocab: vocabStore.dueWords.count
+                )
             }
         }
     }

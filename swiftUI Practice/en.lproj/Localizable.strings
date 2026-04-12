@@ -376,3 +376,13 @@
 "此操作将覆盖当前所有题库、词库和学习记录，且无法撤销。" = "This will overwrite all question banks, word books, and study records. This action cannot be undone.";
 "备份" = "Backup";
 "数据已成功恢复" = "Data restored successfully";
+
+// MARK: - Settings — Reminder
+"学习提醒" = "Study Reminder";
+"每日定时提醒，提高学习坚持率" = "Daily reminder to keep your study streak";
+"每日学习提醒" = "Daily Study Reminder";
+"提醒时间" = "Reminder Time";
+"通知权限已关闭，请前往「设置 → 通知 → Lexora」开启" = "Notifications are disabled. Go to Settings → Notifications → Lexora to enable.";
+"每天 %@ 收到提醒，内容根据待复习数量动态更新" = "You'll be reminded at %@ each day. Content updates based on due items.";
+"开启后每天定时提醒你复习到期的错题和单词" = "Receive a daily reminder to review due questions and words.";
+"前往系统设置开启通知" = "Open System Settings";
