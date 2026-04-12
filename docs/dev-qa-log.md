@@ -15,6 +15,7 @@
 7. [App 图标](#七app-图标)
 8. [工具使用技巧](#八工具使用技巧)
 9. [多语言支持](#九多语言支持)
+10. [文件管理](#十文件管理)
 
 ---
 
@@ -445,6 +446,64 @@ Text(LocalizedStringKey(isEnabled ? "已开启" : "已关闭"))
 | `"key" = "value"` （缺分号）| `"key" = "value";` |
 | `key = "value";` （key 没引号）| `"key" = "value";` |
 | 插值写 `"有 \(n) 道题"` 当 key | key 必须写 `"有 %lld 道题"` |
+
+---
+
+---
+
+## 十、文件管理
+
+### Q16：重命名一个 Swift 文件，对 Build 和 Git 有什么影响？
+
+#### 对 Build 的影响
+
+**在 Xcode 里重命名（推荐）：** Project Navigator → 单击文件名 → 回车重命名
+
+Xcode 自动同步 `project.pbxproj` 里的路径记录，Build 完全不受影响。
+
+**在 Finder 里直接改名（危险）：** Xcode 找不到文件，Build 报错：
+```
+Build input file cannot be found: '.../OldName.swift'
+```
+必须在 Xcode 里手动重新 Add Files 才能修复。
+
+**结论：永远在 Xcode 里重命名，不要在 Finder 操作。**
+
+---
+
+#### 对 Git 的影响
+
+Git 默认把重命名识别为「删除旧文件 + 新增新文件」，直接查看新文件历史会只有改名后的记录：
+
+```bash
+git log NewName.swift        # 只有改名后的提交
+git log --follow NewName.swift   # 能追溯到改名前的所有提交
+```
+
+Git 在文件相似度 ≥ 50% 时会自动检测为 rename，`git status` 会显示：
+```
+renamed: OldName.swift → NewName.swift
+```
+
+此时 `git log --follow` 可以完整串联改名前后的历史。
+
+---
+
+#### 注意：文件名 ≠ 类型名
+
+Swift 不强制要求文件名与内部类型名一致（不像 Java）。改文件名**不需要**同步改文件里的 `struct` / `class` 名，也不影响其他文件对该类型的引用。
+
+但习惯上保持一致更清晰：文件叫 `BackupManager.swift`，里面主要定义 `BackupManager`。
+
+---
+
+#### 总结
+
+| 操作 | Build | Git 历史 |
+|------|-------|----------|
+| Xcode 内重命名 | ✅ 正常 | `git log --follow` 可完整追溯 |
+| Finder 直接改名 | ❌ 报错，需手动修复 | 同上 |
+| 只改文件名，不改内部类型名 | ✅ 正常 | — |
 
 ---
 
