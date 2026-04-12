@@ -123,10 +123,26 @@ struct DailyReviewView: View {
     private var dueSectionIfNeeded: some View {
         if !store.dueQuestions.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                Text("到期复习（\(min(store.dueQuestions.count, 15)) 题）")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
+                HStack {
+                    Text("到期复习（\(min(store.dueQuestions.count, 15)) 题）")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                    Spacer()
+                    NavigationLink(destination: QuizContainerView(
+                        categoryName: "错题复习",
+                        categoryColor: Color.quizRed,
+                        questions: Array(store.dueQuestions.prefix(15))
+                    )) {
+                        Text("开始复习")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(Color.quizRed)
+                            .cornerRadius(14)
+                    }
+                }
+                .padding(.horizontal, 20)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
