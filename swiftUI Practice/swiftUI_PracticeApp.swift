@@ -9,6 +9,7 @@ struct LexoraApp: App {
     @StateObject private var algoStore  = AlgorithmSettingsStore()
 
     init() {
+        NotificationManager.setup()
         let schema = Schema([
             QuestionBankEntity.self,
             WrongRecordEntity.self,
