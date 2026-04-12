@@ -172,6 +172,23 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - 邮件：`mailto:acboo2020@gmail.com`，预填主题 + 设备信息
 - 微信：显示微信号 `danshengshuo`，点击复制到剪贴板，2 秒后恢复
 
+### 设置 Tab — 分享 App
+- `UIActivityViewController`（包装为 `ShareSheet: UIViewControllerRepresentable`）
+- 分享内容：文字介绍 + App Store URL（占位链接 `apps.apple.com/app/lexora/id0000000000`，上架后替换）
+
+### 多语言支持（国际化）
+支持简体中文（默认）、繁体中文、英文，在「设置」Tab 语言区域切换，重启后生效。
+
+**实现方式：**
+- `en.lproj/Localizable.strings` 和 `zh-Hant.lproj/Localizable.strings` — 约 200 条翻译
+- SwiftUI `Text("中文字符串")` 自动将字面量作为 `LocalizedStringKey` 查找，**无需修改 View 代码**
+- 插值字符串格式（`Text("有 \(count) 道错题")`）需在 strings 文件中用格式符：Int → `%lld`，String → `%@`
+  - 示例：`"有 %lld 道错题待复习" = "%lld questions due for review";`
+- 语言切换：`UserDefaults.standard.set([langCode], forKey: "AppleLanguages")`，重启后 iOS 加载对应 .lproj
+- 语言选择区域 Header 硬编码为 "语言 / Language"（**不走 Localizable.strings**），避免用户切换到不熟悉语言后看不懂这个入口
+
+**注意：** 条件字符串（三目运算符返回 `String` 类型）**不会**自动本地化，需要显式包装为 `Text(LocalizedStringKey(str))`。
+
 ### LibraryView — 题库分享与图片说明
 - **生成分享二维码**：点击后先弹确认 Alert（「生成分享码需要将题库数据上传至云端服务器（Cloudinary），确认继续？」），确认后才上传
 - **导出 JSON**：如题库含有通过拍照录题添加的本地图片（`.file` 类型），先弹提示（「图片将无法在其他设备显示，建议改用二维码分享」），确认后导出
@@ -202,3 +219,15 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
   - `NSPhotoLibraryUsageDescription`（截图识词功能使用）
 - App Store Connect：截图（至少 iPhone 6.5"）、App 描述、关键词、年龄分级
 - App Store Connect 填写隐私政策 URL：`https://zhangyida-lab.github.io/lexora-privacy/`
+- 分享 App 链接（`SettingsView` 中的 ShareSheet）：上架后将占位 App Store URL 替换为真实链接
+
+---
+
+## Debugging
+
+### SwiftUI / 数据驱动 UI 崩溃
+- **先查数据层，再查交互层**：SwiftUI 中大多数崩溃（尤其是数组越界）根因在计算属性或状态变量的响应式重算，而非手势/点击操作本身
+- **数组越界**：首先检查所有依赖数组 index 的计算属性——在 State 发生变化时它们会重新求值，可能在 `currentIndex` 还未更新前就返回更短的数组
+  - 典型案例：`navigationDestination` 里直接用 `store.someArray.shuffled()` 作为 FlashCardView 数据源，store 更新触发 closure 重新执行，新数组比旧 `currentIndex` 短 → 越界崩溃
+  - **解法**：进入闪卡前先把数据快照存入 `@State var snapshot`，闪卡只读 snapshot，不读 live store
+- **快速点击 / 动画期间重复触发**：用 `@State private var isAnimating` + `guard !isAnimating` 双重防护，动画结束后再置 `false`
