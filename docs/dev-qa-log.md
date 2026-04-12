@@ -14,6 +14,7 @@
 6. [签名与 Provisioning](#六签名与-provisioning)
 7. [App 图标](#七app-图标)
 8. [工具使用技巧](#八工具使用技巧)
+9. [多语言支持](#九多语言支持)
 
 ---
 
@@ -323,6 +324,127 @@ git pull origin1 main                      # 合并后同步到本地
 - 合并冲突在网页上处理比命令行更直观
 
 **经验：** 个人项目也值得养成 PR 习惯。PR 记录本质上是一份"这个功能做了什么、为什么这样做"的文档，比 commit message 更完整。
+
+---
+
+---
+
+## 九、多语言支持
+
+### Q15：多语言支持的原理是什么？如何手动补充漏翻译的字符串？
+
+#### 核心机制
+
+SwiftUI 的 `Text("字符串")` 会自动把引号里的内容当作 **key**，去对应语言的 `Localizable.strings` 文件里查找翻译。找到就显示翻译，找不到就直接显示原始字符串（简体中文）。
+
+```
+Text("设置")
+  └─ 当前语言是英文 → 去 en.lproj/Localizable.strings 找 "设置" 的值
+  └─ 找到 "Settings" → 显示 "Settings"
+  └─ 找不到        → 显示 "设置"（原文兜底）
+```
+
+#### 文件位置
+
+```
+swiftUI Practice/
+  zh-Hant.lproj/
+    Localizable.strings   ← 繁体中文翻译
+  en.lproj/
+    Localizable.strings   ← 英文翻译
+```
+
+#### 文件格式
+
+```
+"简体中文原文" = "翻译";
+```
+
+注意：**必须以分号结尾**，等号两边有空格，字符串用双引号。
+
+---
+
+#### 三种常见情况
+
+**情况 1：普通字符串** — 直接加一行
+
+```swift
+// 代码
+Text("导出备份")
+```
+
+```
+// en.lproj/Localizable.strings
+"导出备份" = "Export Backup";
+
+// zh-Hant.lproj/Localizable.strings
+"导出备份" = "匯出備份";
+```
+
+---
+
+**情况 2：插值字符串**（含变量）— key 是带格式符的模板
+
+```swift
+// 代码
+Text("共 \(count) 道题")
+```
+
+```
+// en.lproj
+"共 %lld 道题" = "%lld questions";
+
+// zh-Hant.lproj
+"共 %lld 道题" = "共 %lld 道題";
+```
+
+规则：`Int` → `%lld`，`String` → `%@`
+
+---
+
+**情况 3：条件/三目运算符返回的 String** — 不会自动本地化，需要显式包装
+
+```swift
+// ❌ 这种写法不会被翻译
+Text(isEnabled ? "已开启" : "已关闭")
+
+// ✅ 显式包装为 LocalizedStringKey
+Text(LocalizedStringKey(isEnabled ? "已开启" : "已关闭"))
+```
+
+---
+
+#### 操作流程
+
+**第一步：找到漏翻译的字符串**
+
+切换到英文模式运行 App，哪里还显示中文就是遗漏的。
+
+**第二步：在两个文件末尾各加一行**
+
+打开 `en.lproj/Localizable.strings`：
+```
+"原文" = "English translation";
+```
+
+打开 `zh-Hant.lproj/Localizable.strings`：
+```
+"原文" = "繁體翻譯";
+```
+
+**第三步：重新 Build**
+
+不需要重启模拟器，`Cmd+R` 后直接生效。整个过程不需要改任何 Swift 代码。
+
+---
+
+#### 常见错误
+
+| 错误写法 | 正确写法 |
+|----------|----------|
+| `"key" = "value"` （缺分号）| `"key" = "value";` |
+| `key = "value";` （key 没引号）| `"key" = "value";` |
+| 插值写 `"有 \(n) 道题"` 当 key | key 必须写 `"有 %lld 道题"` |
 
 ---
 
