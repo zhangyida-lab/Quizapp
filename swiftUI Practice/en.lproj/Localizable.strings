@@ -1,0 +1,366 @@
+// MARK: - Tabs
+"推荐" = "Today";
+"刷题" = "Practice";
+"背词" = "Vocab";
+"设置" = "Settings";
+
+// MARK: - Common
+"取消" = "Cancel";
+"确定" = "Confirm";
+"关闭" = "Close";
+"保存" = "Save";
+"删除" = "Delete";
+"好的" = "OK";
+"完成" = "Done";
+"全选" = "Select All";
+"取消全选" = "Deselect All";
+"搜索" = "Search";
+"添加" = "Add";
+"编辑" = "Edit";
+
+// MARK: - HomeView (刷题 Tab)
+"错题本" = "Wrong Answers";
+"暂无待复习错题 🎉" = "All caught up! 🎉";
+"今日推荐" = "Today's Picks";
+"随机混合挑战" = "Mixed Quiz";
+"全部分类" = "All Categories";
+"暂无题目，请前往题库导入" = "No questions yet. Import a question bank to get started.";
+"题目总数" = "Questions";
+"分类数量" = "Categories";
+"错题数" = "Wrong";
+"题目预览" = "Preview";
+"使用帮助" = "Help";
+
+// MARK: - HomeView interpolated
+"有 %lld 道错题待复习" = "%lld questions due for review";
+"%lld 道题 · 全类型混合" = "%lld questions · Mixed";
+"开始答题（%lld 题）" = "Start (%lld questions)";
+"共 %lld 题" = "%lld questions";
+
+// MARK: - DailyReviewView
+"今日题数" = "Today";
+"待复习" = "Due";
+"已掌握" = "Mastered";
+"今日题目" = "Today's Questions";
+"今日单词" = "Today's Words";
+"暂无题目\n请先在题库中导入题目" = "No questions yet.\nImport a question bank to get started.";
+"暂无单词\n请先在词汇 Tab 中启用词库" = "No words yet.\nEnable a word book in the Vocab tab.";
+"暂无题目" = "No questions";
+
+// MARK: - DailyReviewView interpolated
+"到期复习（%lld 题）" = "Due (%lld)";
+"开始（%lld 题）" = "Start (%lld questions)";
+"开始词汇练习（%lld 词）" = "Start Vocab (%lld words)";
+"待复习单词（%lld 个）" = "Due (%lld words)";
+"错 %lld 次" = "%lld errors";
+
+// MARK: - SettingsView
+"算法设置" = "Algorithm Settings";
+"每日推荐、词汇学习、SM-2、试卷生成" = "Daily picks, vocabulary, SM-2, exams";
+"学习算法" = "Learning";
+"分享 Lexora" = "Share Lexora";
+"推荐给朋友，一起刷题背词" = "Recommend to friends";
+"推荐" = "Share";
+"发送邮件反馈" = "Email Feedback";
+"微信联系开发者" = "WeChat Developer";
+"已复制" = "Copied";
+"点击复制" = "Tap to Copy";
+"反馈与联系" = "Feedback";
+"功能介绍" = "About";
+"开发者" = "Developer";
+"当前数据" = "Your Data";
+"隐私政策" = "Privacy Policy";
+"数据存储说明" = "Data Storage";
+"所有题库、词库、学习记录均仅保存在本设备，卸载应用后数据将被清除。" = "All data is stored locally on this device and will be deleted when the app is uninstalled.";
+"隐私与法律" = "Privacy & Legal";
+"语言 / Language" = "Language / 语言";
+"重启后生效" = "Restart Required";
+"语言更改将在重启应用后生效。" = "The language change will take effect after restarting the app.";
+
+// MARK: - SettingsView interpolated
+"版本 %@ (%@)" = "Version %@ (%@)";
+"%lld 道题 · %lld 个词" = "%lld questions · %lld words";
+"%lld 题已掌握 · %lld 词已掌握" = "%lld mastered · %lld words mastered";
+
+// MARK: - AlgorithmSettingsView
+"算法设置" = "Algorithm Settings";
+"恢复默认设置？" = "Reset to Defaults?";
+"恢复默认" = "Reset";
+"所有算法参数将恢复为出厂默认值，当前设置不可撤销。" = "All settings will be reset to factory defaults. This cannot be undone.";
+"每日题数" = "Daily Questions";
+"题" = "questions";
+"错题占比上限" = "Max Wrong Ratio";
+"每日推荐中，到期错题最多占" = "Max proportion of due wrong questions in daily picks";
+"其余用新题补充" = "Rest filled with new questions";
+"薄弱点加权补充" = "Weighted Fill";
+"错误率高的题有更大概率被补充进来" = "Higher error-rate questions are more likely to be included";
+"从剩余题目中完全随机补充" = "Fill randomly from remaining questions";
+"每日题目推荐" = "Daily Questions";
+"每日单词数" = "Daily Words";
+"词" = "words";
+"新词比例" = "New Word Ratio";
+"新词" = "New";
+"词汇学习" = "Vocabulary";
+"答错重置间隔" = "Reset Interval";
+"天" = "days";
+"最低难度系数" = "Min Ease Factor";
+"难度系数越低，复习频率越高；建议保持 1.3" = "Lower value = more frequent review. Recommended: 1.3";
+"答错难度降幅" = "Ease Penalty";
+"答错后难度系数减少此值，越大惩罚越重" = "Ease factor reduction on wrong answer. Higher = stricter.";
+"SM-2 间隔参数（题目 & 单词共用）" = "SM-2 Parameters (shared for questions & words)";
+"SM-2 是一种间隔重复算法" = "SM-2 is a spaced repetition algorithm";
+"默认出题数" = "Default Count";
+"难度分布预设" = "Difficulty Preset";
+"试卷生成" = "Exam Generation";
+"恢复默认设置" = "Reset to Defaults";
+
+// MARK: - LibraryView
+"题库管理" = "Question Banks";
+"题库数量" = "Banks";
+"启用题目" = "Questions";
+"生成试卷" = "Generate Exam";
+"历史试卷" = "Exam History";
+"拍照录题" = "Photo Capture";
+"导入 JSON" = "Import JSON";
+"扫码导入" = "Scan QR";
+"导出全部" = "Export All";
+"上传中…" = "Uploading…";
+"生成分享二维码" = "Share via QR Code";
+"生成中…" = "Generating…";
+"分类管理" = "Categories";
+"已隐藏" = "Hidden";
+"我的题库" = "My Banks";
+"JSON 格式说明" = "JSON Format";
+"导入失败" = "Import Failed";
+"JSON 格式不正确，请检查文件内容" = "Invalid JSON format. Please check the file.";
+"导出失败" = "Export Failed";
+"图片上传失败，请检查网络连接" = "Image upload failed. Please check your network.";
+"上传至云端" = "Upload to Cloud";
+"确认上传" = "Upload";
+"生成分享码需要将题库数据上传至云端服务器（Cloudinary），确认继续？" = "Generating a share code requires uploading your question bank to Cloudinary. Continue?";
+"含图片题目提示" = "Images May Be Lost";
+"继续导出" = "Export Anyway";
+"此题库含有图片题目，导出为 JSON 后图片将无法在其他设备显示。如需保留图片，请改用「生成分享二维码」功能。" = "This bank contains photo questions. Images will not be visible on other devices when exported as JSON. Use QR Code sharing to preserve images.";
+"确定删除这个题库？" = "Delete this bank?";
+"重命名分类" = "Rename Category";
+"将把「%@」下 %lld 道题的分类名一并修改" = "This will rename the category for all %lld questions under \"%@\".";
+"已隐藏 %lld 个" = "%lld hidden";
+
+// MARK: - WrongBookView
+"全部" = "All";
+"还没有错题" = "No wrong answers yet";
+"没有待复习的题目" = "Nothing due for review";
+"还没有掌握的题目" = "No mastered questions yet";
+"去答题吧，答错的题目会自动收录到这里" = "Start practicing — wrong answers will be saved here automatically.";
+"太棒了！所有错题都复习到位了" = "Great! All questions are reviewed.";
+"答对三次以上的题目将标记为掌握" = "Questions answered correctly 3+ times will be marked as mastered.";
+"总错题" = "Total";
+"清空错题记录" = "Clear All Records";
+"确定清空所有错题记录？此操作不可撤销。" = "Clear all wrong answer records? This cannot be undone.";
+"清空" = "Clear";
+"错题复习" = "Review";
+"开始复习" = "Start Review";
+"错题详情" = "Details";
+"答错次数" = "Times Wrong";
+"连续答对" = "Streak";
+"复习间隔" = "Interval";
+"今日复习" = "Due Today";
+"较熟练" = "Familiar";
+"进步中" = "Improving";
+"待巩固" = "Needs Work";
+"天后复习" = "days";
+"有 %lld 道错题待复习" = "%lld questions due for review";
+"%lld 天后复习" = "Due in %lld days";
+
+// MARK: - ExamConfigView
+"选择科目" = "Select Subjects";
+"取消全选" = "Deselect All";
+"难度筛选" = "Difficulty";
+"入门" = "Beginner";
+"基础" = "Elementary";
+"中等" = "Medium";
+"进阶" = "Advanced";
+"挑战" = "Expert";
+"题目数量" = "Question Count";
+"可用题目" = "Available";
+"快捷数量" = "Quick Select";
+"分值设置" = "Scoring";
+"总分" = "Total Score";
+"分" = "pts";
+"分值分配方式" = "Score Distribution";
+"均匀分配" = "Uniform";
+"每题分值相同" = "Same score per question";
+"按难度分配" = "By Difficulty";
+"难题分值更高" = "Harder questions score more";
+"答题模式" = "Mode";
+"汇总预览卡" = "Summary";
+"题目数" = "Questions";
+"科目数" = "Subjects";
+"难度档" = "Difficulty";
+"生成并开始答题" = "Start Exam";
+"导出空白试卷（供打印）" = "Export Blank PDF (for printing)";
+"请先选择科目" = "Please select at least one subject.";
+"所选条件下无可用题目" = "No questions match the selected criteria.";
+"题目不足，实际将出 %lld 题" = "Only %lld questions available.";
+
+// MARK: - ExamHistoryView
+"历史试卷" = "Exam History";
+"暂无历史试卷" = "No exam history yet";
+"完成一次考试后，试卷和成绩\n将自动保存在这里" = "After completing an exam, the paper and results\nwill be saved here automatically.";
+"试卷数" = "Exams";
+"总作答" = "Attempts";
+"最高得分率" = "Best Score";
+"未作答" = "Not attempted";
+"时" = "h";
+"查看详情" = "Details";
+"试卷配置" = "Configuration";
+"科目" = "Subjects";
+"难度" = "Difficulty";
+"模式" = "Mode";
+"计分" = "Scoring";
+"题数" = "Count";
+"创建" = "Created";
+"作答记录" = "Attempts";
+"重新作答" = "Retake";
+"作答 %lld 次" = "%lld attempt(s)";
+
+// MARK: - ExamContainerView
+"考试" = "Exam";
+"下一题" = "Next";
+"交卷" = "Submit";
+"考试成绩单" = "Result";
+"优秀" = "Excellent";
+"良好" = "Good";
+"及格" = "Pass";
+"不及格" = "Fail";
+"逐题得分明细" = "Score Breakdown";
+"答对题数" = "Correct";
+"答错题数" = "Wrong";
+"失分" = "Lost";
+"导出成绩单 PDF" = "Export PDF";
+"生成中…" = "Generating…";
+
+// MARK: - PhotoCaptureView
+"拍照录题" = "Photo Capture";
+"通过拍照快速录入题目" = "Quickly capture questions by photo";
+"OCR 识别文字后可手动编辑，保存到题库" = "OCR text recognition — edit and save to your bank";
+"题目类型" = "Question Type";
+"无图题" = "Text Only";
+"有图题" = "With Image";
+"需要两张照片：第一张用于识别文字，第二张作为题目配图" = "Two photos required: first for OCR, second as the question image";
+"第一张 · 识别文字" = "Photo 1 · OCR";
+"用于 OCR 识别题目文字" = "Used for text recognition";
+"选择题目照片" = "Select Photo";
+"拍照" = "Camera";
+"重拍" = "Retake";
+"相册" = "Library";
+"重选" = "Reselect";
+"识别文字" = "Recognize";
+"第二张 · 题目配图" = "Photo 2 · Question Image";
+"随题目一起保存展示" = "Saved and displayed with the question";
+"尚未选择配图，保存后题目将无图片" = "No image selected — question will have no image";
+"正在识别文字…" = "Recognizing…";
+"识别结果" = "Recognition Result";
+"请先完成第二张配图拍摄，再编辑保存" = "Please capture the second photo before saving";
+"编辑并保存题目" = "Edit & Save";
+"使用提示" = "Tips";
+"拍摄题目时保持图片清晰、光线充足" = "Ensure the photo is clear and well-lit";
+"无图题：一张照片 OCR 识别后编辑保存" = "Text Only: one photo for OCR";
+"有图题：第一张识别文字，第二张作为题目配图" = "With Image: first for OCR, second as the question image";
+"OCR 识别完成后请仔细检查选项和正确答案" = "After OCR, carefully verify options and the correct answer";
+"题目已保存到题库" = "Question saved";
+"相机不可用" = "Camera Unavailable";
+"此设备不支持相机，请使用相册选择图片" = "Camera not supported on this device. Use the photo library instead.";
+"编辑题目" = "Edit Question";
+"分类" = "Category";
+"输入或选择分类" = "Enter or select a category";
+"题目内容" = "Question";
+"题目配图" = "Image";
+"选项（共 4 个）" = "Options (4 total)";
+"AI 解析（可选）" = "Explanation (optional)";
+"填写解析内容（可留空，后期由 AI 补充）" = "Add an explanation, or leave blank for AI to fill later";
+"请检查输入" = "Check your input";
+"请填写分类、题目内容，并至少填写 2 个选项后再保存" = "Please fill in category, question text, and at least 2 options.";
+
+// MARK: - VocabularyHomeView
+"单词总数" = "Total Words";
+"今日复习" = "Due Today";
+"今天有 %lld 个单词待学习" = "%lld words to study today";
+"所有单词已完成今日复习 🎉" = "All done for today! 🎉";
+"不认识单词本" = "Unknown Words";
+"有 %lld 个单词需要加强练习" = "%lld words need extra practice";
+"学习模式" = "Study Mode";
+"闪卡记忆" = "Flashcard";
+"翻卡记单词" = "Flip to learn";
+"选词练习" = "Word Choice";
+"四选一测验" = "4-option quiz";
+"内置词库" = "Built-in Books";
+"我的词库" = "My Word Books";
+"发现匹配单词" = "Matches Found";
+"同步释义" = "Sync Definitions";
+"暂不同步" = "Skip";
+"添加单词" = "Add Word";
+"手动添加" = "Manual";
+"截图识词" = "Screenshot OCR";
+"导入词库" = "Import";
+"从文件导入" = "Import File";
+"扫码导入" = "Scan QR";
+"已启用" = "Active";
+"启用" = "Enable";
+
+// MARK: - FlashCardView
+"闪卡记忆" = "Flashcard";
+"点击翻转查看释义" = "Tap to flip";
+"不认识" = "Don't Know";
+"认识" = "Got It";
+"学习完成！" = "Session Complete!";
+"共复习了 %lld 个单词" = "Reviewed %lld words";
+"正确率" = "Accuracy";
+"%lld / %lld" = "%lld / %lld";
+
+// MARK: - WordChoiceView
+"选词练习" = "Word Choice";
+"得分" = "Score";
+"这个单词的意思是？" = "What does this word mean?";
+"回答正确！" = "Correct!";
+"回答错误" = "Wrong";
+"正确答案：" = "Answer: ";
+"下一题" = "Next";
+"查看结果" = "Results";
+"练习结束！" = "Practice Complete!";
+"再练一次" = "Try Again";
+"共 %lld 题，答对 %lld 题" = "%lld questions, %lld correct";
+
+// MARK: - UnknownWordsView
+"不认识单词本" = "Unknown Words";
+"太棒了！" = "Great job!";
+"没有不认识的单词\n继续坚持练习，保持这个状态！" = "No unknown words!\nKeep it up!";
+"闪卡练习（%lld 词）" = "Flashcard (%lld words)";
+"搜索单词或释义" = "Search words or definitions";
+
+// MARK: - WordAddViews
+"输入英文单词…" = "Enter English word…";
+"在内置词库中找到，添加后自动补全释义" = "Found in built-in library — definition will be auto-filled";
+"未在已启用词库中找到，将以「待补充释义」添加" = "Not found — will be added with a placeholder definition";
+"手动添加" = "Add Word";
+"识别到 %lld 个单词" = "%lld words recognized";
+"添加 %lld 个单词" = "Add %lld words";
+"请选择要添加的单词" = "Select words to add";
+"选择含有英文单词的截图\n自动识别并批量添加到生词本" = "Select a screenshot with English words\nto recognize and batch-add to your word book";
+"截图识词" = "Screenshot OCR";
+"选择截图或照片" = "Select Screenshot";
+"重新选择" = "Reselect";
+"正在识别文字…" = "Recognizing…";
+"未识别到英文单词" = "No English words detected";
+"已补全释义" = "Definition filled";
+"待补充释义" = "Definition pending";
+"已存在" = "Already exists";
+"编辑单词" = "Edit Word";
+"单词" = "Word";
+"音标" = "Phonetics";
+"词性（如 n. v. adj.）" = "Part of speech (e.g. n. v. adj.)";
+"释义" = "Definition";
+"中文释义" = "Chinese definition";
+"例句（选填）" = "Example (optional)";
+"英文例句" = "English example";
+"中文翻译" = "Chinese translation";

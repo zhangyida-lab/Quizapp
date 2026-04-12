@@ -8,6 +8,15 @@ struct SettingsView: View {
 
     @State private var wechatCopied = false
     @State private var showShareSheet = false
+    @AppStorage("app_language") private var selectedLanguage: String = "system"
+    @State private var showRestartAlert = false
+
+    private let languages: [(code: String, display: String)] = [
+        ("system", "跟随系统 / Auto"),
+        ("zh-Hans", "简体中文"),
+        ("zh-Hant", "繁體中文"),
+        ("en", "English"),
+    ]
 
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -16,6 +25,7 @@ struct SettingsView: View {
         ZStack {
             Color.quizBg.ignoresSafeArea()
             Form {
+                languageSection
                 algorithmSection
                 shareSection
                 feedbackSection
@@ -27,6 +37,47 @@ struct SettingsView: View {
         .navigationTitle("设置")
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
+    }
+
+    // MARK: 语言设置
+    private var languageSection: some View {
+        Section {
+            ForEach(languages, id: \.code) { lang in
+                Button {
+                    guard lang.code != selectedLanguage else { return }
+                    if lang.code == "system" {
+                        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+                    } else {
+                        UserDefaults.standard.set([lang.code], forKey: "AppleLanguages")
+                    }
+                    selectedLanguage = lang.code
+                    showRestartAlert = true
+                } label: {
+                    HStack {
+                        Text(lang.display)
+                            .foregroundColor(.white)
+                        Spacer()
+                        if selectedLanguage == lang.code {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(Color.quizPurpleLight)
+                                .fontWeight(.semibold)
+                        }
+                    }
+                }
+            }
+        } header: {
+            // 固定不翻译，避免语言设置本身变成乱码
+            Text("语言 / Language")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(Color.quizPurpleLight)
+                .textCase(nil)
+        }
+        .listRowBackground(Color.quizCard)
+        .alert("重启后生效", isPresented: $showRestartAlert) {
+            Button("好的") {}
+        } message: {
+            Text("语言更改将在重启应用后生效。")
+        }
     }
 
     // MARK: 算法设置
