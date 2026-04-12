@@ -19,7 +19,11 @@ struct LibraryView: View {
     @State private var qrShareURL: String? = nil
     @State private var qrBankName: String  = ""
     @State private var showQRSheet         = false
-    @State private var showQRScanner       = false
+    @State private var showQRScanner        = false
+    @State private var showQRUploadConfirm  = false
+    @State private var pendingQRBank: QuestionBank? = nil   // nil = 全部
+    @State private var showImageExportWarning = false
+    @State private var pendingExportBank: QuestionBank? = nil // nil = 全部
     @State private var renamingCategory: CategoryInfo? = nil
     @State private var renameText: String  = ""
     @State private var showRenameAlert     = false
@@ -75,6 +79,34 @@ struct LibraryView: View {
         }
         .sheet(isPresented: $showQRScanner) {
             QRImportView()
+        }
+        // 二维码上传确认
+        .alert("上传至云端", isPresented: $showQRUploadConfirm) {
+            Button("取消", role: .cancel) { pendingQRBank = nil }
+            Button("确认上传") {
+                let bank = pendingQRBank
+                pendingQRBank = nil
+                Task {
+                    if let b = bank { await generateQR(for: b) }
+                    else { await generateQRForAll() }
+                }
+            }
+        } message: {
+            Text("生成分享码需要将题库数据上传至云端服务器（Cloudinary），确认继续？")
+        }
+        // 导出含图片提示
+        .alert("含图片题目提示", isPresented: $showImageExportWarning) {
+            Button("取消", role: .cancel) { pendingExportBank = nil }
+            Button("继续导出") {
+                let bank = pendingExportBank
+                pendingExportBank = nil
+                Task {
+                    if let b = bank { await exportBank(b) }
+                    else { await exportAll() }
+                }
+            }
+        } message: {
+            Text("此题库含有图片题目，导出为 JSON 后图片将无法在其他设备显示。如需保留图片，请改用「生成分享二维码」功能。")
         }
         .confirmationDialog("确定删除这个题库？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("删除", role: .destructive) {
@@ -197,7 +229,12 @@ struct LibraryView: View {
 
             // 导出全部（JSON 文件）
             Button {
-                Task { await exportAll() }
+                if store.questionBanks.contains(where: { bankHasLocalImages($0) }) {
+                    pendingExportBank = nil
+                    showImageExportWarning = true
+                } else {
+                    Task { await exportAll() }
+                }
             } label: {
                 HStack(spacing: 8) {
                     if isExporting {
@@ -216,7 +253,8 @@ struct LibraryView: View {
 
             // 生成全部题库二维码
             Button {
-                Task { await generateQRForAll() }
+                pendingQRBank = nil
+                showQRUploadConfirm = true
             } label: {
                 HStack(spacing: 8) {
                     if isExporting {
@@ -327,10 +365,16 @@ struct LibraryView: View {
                     BankCard(bank: bank,
                              onToggle: { store.toggleBankEnabled(bank) },
                              onExport: {
-                                 Task { await exportBank(bank) }
+                                 if bankHasLocalImages(bank) {
+                                     pendingExportBank = bank
+                                     showImageExportWarning = true
+                                 } else {
+                                     Task { await exportBank(bank) }
+                                 }
                              },
                              onQRShare: {
-                                 Task { await generateQR(for: bank) }
+                                 pendingQRBank = bank
+                                 showQRUploadConfirm = true
                              },
                              onDelete: {
                                  if !bank.isBuiltIn {
@@ -379,6 +423,11 @@ struct LibraryView: View {
         #"  ]"#,
         #"}"#,
     ]
+
+    // MARK: 是否含本地图片（导出 JSON 后图片会丢失）
+    func bankHasLocalImages(_ bank: QuestionBank) -> Bool {
+        bank.questions.contains { $0.image?.type == .file }
+    }
 
     // MARK: 导出临时文件
     func writeTempFile(_ data: Data, name: String) -> URL? {
