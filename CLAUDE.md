@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Communication Style
+
+- When the user writes in Chinese → reply in **English**
+- Annotate key technical terms with Chinese on first use, e.g. `computed property (计算属性)`
+- End each reply with a **"💬 How to say this in English:"** tip showing a natural English version of their prompt
+- Keep language practical and clear — avoid overly formal or academic phrasing
+- Encourage the user to mix English words into Chinese prompts as a stepping stone
+
 ## Project Overview
 
 iOS quiz app built with SwiftUI, targeting iOS 18.2, Xcode 16.2, Swift 5. The project uses `PBXFileSystemSynchronizedRootGroup` (Xcode 16 feature), so **all Swift files in subfolders are automatically included** — no need to add files to `project.pbxproj` manually.
