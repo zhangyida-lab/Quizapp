@@ -212,11 +212,9 @@ Categories are **dynamic** — derived at runtime from `QuizStore.allQuestions` 
 - 隐私政策页面：`https://zhangyida-lab.github.io/lexora-privacy/`（中英双语，托管于 GitHub Pages）
   - 已说明 Cloudinary 仅在用户主动点击「生成分享二维码」时上传，不含个人信息
 - App 图标：`Assets.xcassets/AppIcon` 已配置 1024×1024（`LexoraIconView.swift` 可重新导出）
+- `NSCameraUsageDescription` / `NSPhotoLibraryUsageDescription` 已在 Info.plist 中添加
 
 ### 待完成（提审前必须）
-- Info.plist 补充相机和相册权限说明：
-  - `NSCameraUsageDescription`（拍照录题功能使用）
-  - `NSPhotoLibraryUsageDescription`（截图识词功能使用）
 - App Store Connect：截图（至少 iPhone 6.5"）、App 描述、关键词、年龄分级
 - App Store Connect 填写隐私政策 URL：`https://zhangyida-lab.github.io/lexora-privacy/`
 - 分享 App 链接（`SettingsView` 中的 ShareSheet）：上架后将占位 App Store URL 替换为真实链接
