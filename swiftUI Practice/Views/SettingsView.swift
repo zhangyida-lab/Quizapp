@@ -10,6 +10,14 @@ struct SettingsView: View {
     @State private var showShareSheet = false
     @AppStorage("app_language") private var selectedLanguage: String = "system"
     @State private var showRestartAlert = false
+    // 数据备份
+    @State private var backupExportURL: URL? = nil
+    @State private var showBackupExportSheet = false
+    @State private var showImportPicker = false
+    @State private var pendingRestoreURL: URL? = nil
+    @State private var showRestoreConfirm = false
+    @State private var backupResultMessage: String? = nil
+    @State private var showBackupResult = false
 
     private let languages: [(code: String, display: String)] = [
         ("system", "跟随系统 / Auto"),
@@ -27,6 +35,7 @@ struct SettingsView: View {
             Form {
                 languageSection
                 algorithmSection
+                backupSection
                 shareSection
                 feedbackSection
                 aboutSection
@@ -104,6 +113,85 @@ struct SettingsView: View {
             }
         } header: {
             SettingsSectionHeader("学习算法")
+        }
+        .listRowBackground(Color.quizCard)
+    }
+
+    // MARK: 数据备份
+    private var backupSection: some View {
+        Section {
+            // 导出备份
+            Button {
+                do {
+                    backupExportURL = try BackupManager.export(quizStore: store, vocabStore: vocabStore, algoStore: algoStore)
+                    showBackupExportSheet = true
+                } catch {
+                    backupResultMessage = error.localizedDescription
+                    showBackupResult = true
+                }
+            } label: {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "arrow.up.doc.fill", color: Color(red: 0.20, green: 0.60, blue: 0.86))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("导出备份")
+                            .foregroundColor(.white)
+                        Text("题库、词库、学习记录导出为 JSON 文件")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .sheet(isPresented: $showBackupExportSheet) {
+                if let url = backupExportURL {
+                    ShareSheet(items: [url])
+                }
+            }
+
+            // 导入备份
+            Button {
+                showImportPicker = true
+            } label: {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "arrow.down.doc.fill", color: Color(red: 0.86, green: 0.55, blue: 0.25))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("导入备份")
+                            .foregroundColor(.white)
+                        Text("从备份文件恢复数据，将覆盖当前数据")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .fileImporter(isPresented: $showImportPicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
+                if case .success(let urls) = result, let url = urls.first {
+                    pendingRestoreURL = url
+                    showRestoreConfirm = true
+                }
+            }
+            .alert("确认恢复备份", isPresented: $showRestoreConfirm) {
+                Button("取消", role: .cancel) { pendingRestoreURL = nil }
+                Button("覆盖恢复", role: .destructive) {
+                    guard let url = pendingRestoreURL else { return }
+                    defer { pendingRestoreURL = nil }
+                    do {
+                        try BackupManager.restore(from: url, into: store, vocabStore: vocabStore, algoStore: algoStore)
+                        backupResultMessage = "数据已成功恢复"
+                    } catch {
+                        backupResultMessage = error.localizedDescription
+                    }
+                    showBackupResult = true
+                }
+            } message: {
+                Text("此操作将覆盖当前所有题库、词库和学习记录，且无法撤销。")
+            }
+            .alert("备份", isPresented: $showBackupResult) {
+                Button("好的") {}
+            } message: {
+                Text(backupResultMessage ?? "")
+            }
+
+        } header: {
+            SettingsSectionHeader("数据备份")
         }
         .listRowBackground(Color.quizCard)
     }

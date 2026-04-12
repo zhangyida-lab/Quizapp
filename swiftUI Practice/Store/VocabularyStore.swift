@@ -338,6 +338,21 @@ class VocabularyStore: ObservableObject {
         return true
     }
 
+    // MARK: 备份恢复
+
+    func restoreFromBackup(_ backup: LexoraBackup) {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        if let data = try? encoder.encode(backup.wordBooks) {
+            UserDefaults.shared.set(data, forKey: Keys.books)
+        }
+        if let data = try? encoder.encode(backup.wordRecords) {
+            UserDefaults.shared.set(data, forKey: Keys.records)
+        }
+        UserDefaults.shared.set(backup.builtInEnabledIds, forKey: Keys.builtInEnabled)
+        reload()
+    }
+
     // MARK: 持久化
     func save() {
         let encoder = JSONEncoder()

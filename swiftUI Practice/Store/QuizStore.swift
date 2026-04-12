@@ -496,6 +496,18 @@ class QuizStore: ObservableObject {
         (try? modelContext.fetch(FetchDescriptor<T>())) ?? []
     }
 
+    // MARK: 备份恢复
+
+    func restoreFromBackup(_ backup: LexoraBackup) {
+        let builtInBanks = questionBanks.filter { $0.isBuiltIn }
+        questionBanks    = builtInBanks + backup.questionBanks
+        wrongRecords     = backup.wrongRecords
+        examPapers       = backup.examPapers
+        hiddenCategories = Set(backup.hiddenCategories)
+        save()
+        generateDailyRecommendations()
+    }
+
     // MARK: UserDefaults → SwiftData 一次性迁移
 
     private func migrateFromUserDefaultsIfNeeded() {
