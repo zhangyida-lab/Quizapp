@@ -7,6 +7,7 @@ struct SettingsView: View {
     @EnvironmentObject private var vocabStore: VocabularyStore
 
     @State private var wechatCopied = false
+    @State private var showShareSheet = false
 
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -16,6 +17,7 @@ struct SettingsView: View {
             Color.quizBg.ignoresSafeArea()
             Form {
                 algorithmSection
+                shareSection
                 feedbackSection
                 aboutSection
                 legalSection
@@ -51,6 +53,42 @@ struct SettingsView: View {
             }
         } header: {
             SettingsSectionHeader("学习算法")
+        }
+        .listRowBackground(Color.quizCard)
+    }
+
+    // MARK: 分享 App
+    private var shareSection: some View {
+        Section {
+            Button {
+                showShareSheet = true
+            } label: {
+                HStack(spacing: 14) {
+                    SettingsIcon(systemName: "square.and.arrow.up.fill", color: Color(red: 0.20, green: 0.75, blue: 0.55))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("分享 Lexora")
+                            .foregroundColor(.white)
+                        Text("推荐给朋友，一起刷题背词")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .sheet(isPresented: $showShareSheet) {
+                ShareSheet(items: [
+                    """
+                    推荐一款学习 App：Lexora 📚
+
+                    • 刷题答题，错题本 + SM-2 智能复习
+                    • 背词闪卡，11 个内置词库（CET-4/6、考研、托福、SAT 等）
+                    • iOS Widget + Siri 快速添加生词
+
+                    """,
+                    URL(string: "https://apps.apple.com/app/lexora/id0000000000")!
+                ])
+            }
+        } header: {
+            SettingsSectionHeader("推荐")
         }
         .listRowBackground(Color.quizCard)
     }
