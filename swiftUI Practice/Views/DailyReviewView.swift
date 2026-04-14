@@ -7,7 +7,7 @@ struct DailyReviewView: View {
     @EnvironmentObject private var store: QuizStore
     @EnvironmentObject private var vocabStore: VocabularyStore
 
-    @State private var mode: ReviewMode = .quiz
+    @State private var mode: ReviewMode = .vocab
     @State private var flashCardWords: [Word] = []
     @State private var showFlashCard = false
 

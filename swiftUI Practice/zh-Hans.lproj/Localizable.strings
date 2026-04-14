@@ -1,0 +1,3 @@
+// Simplified Chinese is the app's base (development) language.
+// All string keys ARE the zh-Hans strings, so this file can remain empty.
+// iOS needs this file to exist so that AppleLanguages = ["zh-Hans"] resolves correctly.

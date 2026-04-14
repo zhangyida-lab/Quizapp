@@ -41,6 +41,8 @@ struct FlashCardView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .navigationBarBackButtonHidden(false)
+        .onAppear { vocabStore.speak(current.word) }
+        .onChange(of: currentIndex) { vocabStore.speak(current.word) }
     }
 
     // MARK: 进度条
@@ -224,6 +226,7 @@ struct FlashCardView: View {
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.quizRed.opacity(0.3), lineWidth: 1)
                 )
+                .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
 
@@ -246,6 +249,7 @@ struct FlashCardView: View {
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.quizGreen.opacity(0.3), lineWidth: 1)
                 )
+                .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
         }
