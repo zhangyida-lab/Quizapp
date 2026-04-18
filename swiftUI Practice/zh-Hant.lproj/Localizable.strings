@@ -50,7 +50,7 @@
 // MARK: - DailyReviewView interpolated
 "到期复习（%lld 题）" = "到期複習（%lld 題）";
 "开始（%lld 题）" = "開始（%lld 題）";
-"开始词汇练习（%lld 词）" = "開始詞彙練習（%lld 詞）";
+"开始（%lld 词）" = "開始（%lld 詞）";
 "待复习单词（%lld 个）" = "待複習單詞（%lld 個）";
 "错 %lld 次" = "錯 %lld 次";
 

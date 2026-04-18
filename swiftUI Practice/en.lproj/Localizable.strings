@@ -50,7 +50,7 @@
 // MARK: - DailyReviewView interpolated
 "到期复习（%lld 题）" = "Due (%lld)";
 "开始（%lld 题）" = "Start (%lld questions)";
-"开始词汇练习（%lld 词）" = "Start Vocab (%lld words)";
+"开始（%lld 词）" = "Start (%lld words)";
 "待复习单词（%lld 个）" = "Due (%lld words)";
 "错 %lld 次" = "%lld errors";
 

@@ -274,7 +274,7 @@ struct DailyReviewView: View {
                 } label: {
                     startButtonLabel(
                         icon: "rectangle.on.rectangle.angled",
-                        text: "开始词汇练习（\(vocabStore.dailyWords.count) 词）",
+                        text: "开始（\(vocabStore.dailyWords.count) 词）",
                         color: Color(red: 0.33, green: 0.62, blue: 0.93)
                     )
                 }

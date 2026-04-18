@@ -87,6 +87,7 @@ struct QuizContainerView: View {
     let categoryColor: Color
     @StateObject private var vm: QuizViewModel
     @EnvironmentObject private var store: QuizStore
+    @Environment(\.dismiss) private var dismiss
 
     init(categoryName: String, categoryColor: Color, questions: [Question]) {
         self.categoryName = categoryName
@@ -98,7 +99,7 @@ struct QuizContainerView: View {
         ZStack {
             Color.quizBg.ignoresSafeArea()
             if vm.isFinished {
-                ResultView(vm: vm, categoryName: categoryName, categoryColor: categoryColor)
+                ResultView(vm: vm, categoryName: categoryName, categoryColor: categoryColor, onGoHome: { dismiss() })
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .opacity))
@@ -374,6 +375,7 @@ struct ResultView: View {
     @ObservedObject var vm: QuizViewModel
     let categoryName: String
     let categoryColor: Color
+    var onGoHome: (() -> Void)? = nil
     @State private var showAnswerSheet  = false
     @State private var showPDFPreview   = false
     @State private var pdfURL: URL?     = nil
@@ -467,11 +469,19 @@ struct ResultView: View {
                 .disabled(isGeneratingPDF)
 
                 // 再来一次
-                Button { dismiss() } label: {
+                Button { vm.restart() } label: {
                     Text("再来一次")
                         .font(.system(size: 17, weight: .semibold)).foregroundColor(.white)
                         .frame(maxWidth: .infinity).padding(.vertical, 16)
                         .background(categoryColor).cornerRadius(14)
+                }
+
+                // 返回首页
+                Button { onGoHome?() ?? dismiss() } label: {
+                    Text("完成")
+                        .font(.system(size: 17, weight: .semibold)).foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity).padding(.vertical, 16)
+                        .background(Color.quizCard).cornerRadius(14)
                 }
             }
             .padding(.horizontal, 20).padding(.bottom, 32)
