@@ -1,5 +1,24 @@
 import Foundation
 
+// MARK: - FSRS 4 级评分
+enum FSRSRating: Int, Codable, CaseIterable {
+    case again = 1  // 完全忘记，需重来
+    case hard  = 2  // 很困难，勉强记住
+    case good  = 3  // 正常回忆
+    case easy  = 4  // 轻松记住
+
+    var isCorrect: Bool { self != .again }
+
+    var label: String {
+        switch self {
+        case .again: return "重来"
+        case .hard:  return "困难"
+        case .good:  return "良好"
+        case .easy:  return "简单"
+        }
+    }
+}
+
 // MARK: - FSRS-4.5 间隔重复算法引擎
 // 参考：https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
 enum FSRSEngine {
@@ -12,10 +31,11 @@ enum FSRSEngine {
         2.9898
     ]
 
-    static func initialStability(correct: Bool) -> Double { correct ? w[2] : w[0] }
+    // w[0]=Again, w[1]=Hard, w[2]=Good, w[3]=Easy
+    static func initialStability(rating: FSRSRating) -> Double { w[rating.rawValue - 1] }
 
-    static func initialDifficulty(correct: Bool) -> Double {
-        let r = correct ? 3.0 : 1.0
+    static func initialDifficulty(rating: FSRSRating) -> Double {
+        let r = Double(rating.rawValue)
         return clamp(w[4] - exp(w[5] * (r - 1)) + 1, lo: 1, hi: 10)
     }
 
@@ -29,8 +49,12 @@ enum FSRSEngine {
         return max(1, Int(days.rounded()))
     }
 
-    static func nextStabilityRecall(d: Double, s: Double, r: Double) -> Double {
+    // Hard 评级时稳定性不增长（w[15]=0）；Easy 有额外加成（w[16]≈3）
+    static func nextStabilityRecall(d: Double, s: Double, r: Double, rating: FSRSRating) -> Double {
+        let hardPenalty = rating == .hard ? w[15] : 1.0
+        let easyBonus   = rating == .easy ? w[16] : 1.0
         let gain = exp(w[8]) * (11 - d) * pow(s, -w[9]) * (exp(w[10] * (1 - r)) - 1)
+                   * hardPenalty * easyBonus
         return max(0.1, s * gain + 1)
     }
 
@@ -39,11 +63,11 @@ enum FSRSEngine {
         return max(0.1, sf)
     }
 
-    static func nextDifficulty(d: Double, correct: Bool) -> Double {
-        let rating = correct ? 3.0 : 1.0
-        let delta  = -w[6] * (rating - 3.0)
-        let d0_4   = clamp(w[4] - exp(w[5] * 3) + 1, lo: 1, hi: 10)
-        let d2     = w[7] * d0_4 + (1 - w[7]) * (d + delta)
+    static func nextDifficulty(d: Double, rating: FSRSRating) -> Double {
+        let rVal  = Double(rating.rawValue)
+        let delta = -w[6] * (rVal - 3.0)       // Again→+2w[6], Hard→+w[6], Good→0, Easy→-w[6]
+        let d0_4  = clamp(w[4] - exp(w[5] * 3) + 1, lo: 1, hi: 10)
+        let d2    = w[7] * d0_4 + (1 - w[7]) * (d + delta)
         return clamp(d2, lo: 1, hi: 10)
     }
 
@@ -114,36 +138,34 @@ struct WrongRecord: Identifiable, Codable {
         nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
     }
 
-    // MARK: - FSRS 算法更新
-    mutating func updateFSRS(isCorrect: Bool, targetRetention: Double) {
+    // MARK: - FSRS 算法更新（4 级评分）
+    mutating func updateFSRS(rating: FSRSRating, targetRetention: Double) {
         let now = Date()
         let elapsed = max(0, now.timeIntervalSince(lastAttemptDate) / 86400)
 
-        if isCorrect {
-            correctStreak += 1
-        } else {
-            wrongCount += 1
-            correctStreak = 0
-        }
+        if rating.isCorrect { correctStreak += 1 } else { wrongCount += 1; correctStreak = 0 }
 
         if fsrsStability == nil || fstrsDifficulty == nil {
-            // 首次 FSRS 复习：根据答题结果初始化稳定性和难度
-            fsrsStability   = FSRSEngine.initialStability(correct: isCorrect)
-            fstrsDifficulty = FSRSEngine.initialDifficulty(correct: isCorrect)
+            fsrsStability   = FSRSEngine.initialStability(rating: rating)
+            fstrsDifficulty = FSRSEngine.initialDifficulty(rating: rating)
         } else {
-            let s = fsrsStability!
-            let d = fstrsDifficulty!
+            let s = fsrsStability!, d = fstrsDifficulty!
             let r = FSRSEngine.retrievability(elapsed: elapsed, stability: s)
-            fsrsStability   = isCorrect
-                ? FSRSEngine.nextStabilityRecall(d: d, s: s, r: r)
+            fsrsStability   = rating.isCorrect
+                ? FSRSEngine.nextStabilityRecall(d: d, s: s, r: r, rating: rating)
                 : FSRSEngine.nextStabilityForget(d: d, s: s, r: r)
-            fstrsDifficulty = FSRSEngine.nextDifficulty(d: d, correct: isCorrect)
+            fstrsDifficulty = FSRSEngine.nextDifficulty(d: d, rating: rating)
         }
 
         lastAttemptDate = now
         let days = FSRSEngine.nextInterval(stability: fsrsStability!, targetRetention: targetRetention)
         intervalDays   = days
         nextReviewDate = Calendar.current.date(byAdding: .day, value: days, to: now) ?? now
+    }
+
+    /// 便捷包装：二元答对/答错 → 映射为 Good / Again
+    mutating func updateFSRS(isCorrect: Bool, targetRetention: Double) {
+        updateFSRS(rating: isCorrect ? .good : .again, targetRetention: targetRetention)
     }
 
     // MARK: - 工具属性

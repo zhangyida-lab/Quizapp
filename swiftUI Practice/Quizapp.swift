@@ -27,8 +27,10 @@ class QuizViewModel: ObservableObject {
 
     private(set) var userAnswers: [Int: Int] = [:]
 
-    /// 每题答完后的回调，用于向 QuizStore 上报结果
+    /// 每题答完后的回调（SM-2 模式：立即记录；FSRS 模式：不调用，等待评分）
     var onAnswer: ((UUID, Bool) -> Void)?
+    /// FSRS 模式：用户选完评分后的回调
+    var onRating: ((UUID, FSRSRating) -> Void)?
 
     init(questions: [Question]) {
         self.questions = questions
@@ -104,15 +106,19 @@ struct QuizContainerView: View {
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .opacity))
             } else {
-                QuizView(vm: vm)
+                QuizView(vm: vm, onRating: vm.onRating)
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.35), value: vm.isFinished)
         .navigationBarBackButtonHidden(vm.isFinished)
         .onAppear {
+            let useFSRS = AlgorithmSettingsStore.loadConfig().schedulerType == .fsrs
             vm.onAnswer = { id, correct in
-                store.recordAnswer(questionId: id, isCorrect: correct)
+                if !useFSRS { store.recordAnswer(questionId: id, isCorrect: correct) }
+            }
+            vm.onRating = { id, rating in
+                store.recordAnswer(questionId: id, rating: rating)
             }
         }
     }
@@ -122,6 +128,7 @@ struct QuizContainerView: View {
 
 struct QuizView: View {
     @ObservedObject var vm: QuizViewModel
+    var onRating: ((UUID, FSRSRating) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -163,20 +170,60 @@ struct QuizView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.3)) { vm.next() }
-            } label: {
-                Text(vm.isLastQuestion ? "查看结果" : "下一题")
-                    .font(.system(size: 17, weight: .semibold)).foregroundColor(.white)
-                    .frame(maxWidth: .infinity).padding(.vertical, 16)
-                    .background(vm.isAnswered ? Color.quizPurple : Color.quizCard)
-                    .cornerRadius(14)
-                    .animation(.easeInOut(duration: 0.2), value: vm.isAnswered)
+            if let onRating, vm.isAnswered {
+                // FSRS 模式：答题后显示 4 级评分栏
+                fsrsRatingBar(onRating: onRating)
+            } else {
+                // SM-2 模式 或 尚未作答
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) { vm.next() }
+                } label: {
+                    Text(vm.isLastQuestion ? "查看结果" : "下一题")
+                        .font(.system(size: 17, weight: .semibold)).foregroundColor(.white)
+                        .frame(maxWidth: .infinity).padding(.vertical, 16)
+                        .background(vm.isAnswered ? Color.quizPurple : Color.quizCard)
+                        .cornerRadius(14)
+                        .animation(.easeInOut(duration: 0.2), value: vm.isAnswered)
+                }
+                .disabled(!vm.isAnswered)
+                .padding(.horizontal, 20).padding(.vertical, 12)
+                .background(Color.quizBg.opacity(0.95))
             }
-            .disabled(!vm.isAnswered)
-            .padding(.horizontal, 20).padding(.vertical, 12)
-            .background(Color.quizBg.opacity(0.95))
         }
+    }
+
+    @ViewBuilder
+    private func fsrsRatingBar(onRating: @escaping (UUID, FSRSRating) -> Void) -> some View {
+        VStack(spacing: 6) {
+            Text("回忆难度如何？")
+                .font(.system(size: 12)).foregroundColor(.secondary)
+            HStack(spacing: 8) {
+                ForEach(FSRSRating.allCases, id: \.rawValue) { rating in
+                    let (color, bg): (Color, Color) = switch rating {
+                    case .again: (.quizRed,   .quizRed.opacity(0.12))
+                    case .hard:  (.orange,    .orange.opacity(0.12))
+                    case .good:  (.quizGreen, .quizGreen.opacity(0.12))
+                    case .easy:  (Color(red: 0.33, green: 0.62, blue: 0.93),
+                                  Color(red: 0.33, green: 0.62, blue: 0.93).opacity(0.12))
+                    }
+                    Button {
+                        onRating(vm.current.id, rating)
+                        withAnimation(.easeInOut(duration: 0.3)) { vm.next() }
+                    } label: {
+                        Text(rating.label)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(color)
+                            .frame(maxWidth: .infinity).padding(.vertical, 14)
+                            .background(bg)
+                            .cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(color.opacity(0.35), lineWidth: 1))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+        .padding(.horizontal, 20).padding(.vertical, 10)
+        .background(Color.quizBg.opacity(0.95))
     }
 }
 

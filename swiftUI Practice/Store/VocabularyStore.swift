@@ -159,6 +159,19 @@ class VocabularyStore: ObservableObject {
         save()
     }
 
+    /// FSRS 4 级评分学习记录（从评分 UI 调用）
+    func recordStudy(wordId: UUID, rating: FSRSRating) {
+        let cfg = AlgorithmSettingsStore.loadConfig()
+        if let idx = wordRecords.firstIndex(where: { $0.wordId == wordId }) {
+            wordRecords[idx].updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+        } else {
+            var record = WordRecord(wordId: wordId)
+            record.updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+            wordRecords.append(record)
+        }
+        save()
+    }
+
     func wordRecord(for wordId: UUID) -> WordRecord? {
         wordRecords.first { $0.wordId == wordId }
     }

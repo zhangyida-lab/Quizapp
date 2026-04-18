@@ -151,6 +151,19 @@ class QuizStore: ObservableObject {
         save()
     }
 
+    /// FSRS 4 级评分答题记录（从评分 UI 调用）
+    func recordAnswer(questionId: UUID, rating: FSRSRating) {
+        let cfg = AlgorithmSettingsStore.loadConfig()
+        if let idx = wrongRecords.firstIndex(where: { $0.questionId == questionId }) {
+            wrongRecords[idx].updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+        } else {
+            var record = WrongRecord(questionId: questionId)
+            record.updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+            wrongRecords.append(record)
+        }
+        save()
+    }
+
     func wrongRecord(for questionId: UUID) -> WrongRecord? {
         wrongRecords.first { $0.questionId == questionId }
     }

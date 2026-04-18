@@ -17,6 +17,10 @@ struct FlashCardView: View {
     @State private var dragOpacity: Double = 1.0
     @State private var isAnimating = false   // 防止快速点击导致 index 越界
 
+    private var useFSRS: Bool {
+        AlgorithmSettingsStore.loadConfig().schedulerType == .fsrs
+    }
+
     private var current: Word { words[currentIndex] }
     private var progress: Double { Double(currentIndex) / Double(words.count) }
 
@@ -206,54 +210,72 @@ struct FlashCardView: View {
 
     // MARK: 操作按钮
     private var actionButtons: some View {
-        HStack(spacing: 20) {
-            // 不认识
-            Button {
-                submitAnswer(known: false)
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .bold))
-                    Text("不认识")
-                        .font(.system(size: 15, weight: .semibold))
-                }
-                .foregroundColor(.quizRed)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.quizRed.opacity(0.12))
-                .cornerRadius(14)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.quizRed.opacity(0.3), lineWidth: 1)
-                )
-                .contentShape(Rectangle())
+        Group {
+            if useFSRS {
+                fsrsRatingButtons
+            } else {
+                binaryButtons
             }
-            .buttonStyle(PlainButtonStyle())
-
-            // 认识
-            Button {
-                submitAnswer(known: true)
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 16, weight: .bold))
-                    Text("认识")
-                        .font(.system(size: 15, weight: .semibold))
-                }
-                .foregroundColor(.quizGreen)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.quizGreen.opacity(0.12))
-                .cornerRadius(14)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.quizGreen.opacity(0.3), lineWidth: 1)
-                )
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
         }
         .padding(.horizontal, 24)
+    }
+
+    // SM-2：认识 / 不认识
+    private var binaryButtons: some View {
+        HStack(spacing: 20) {
+            flashCardButton(label: "不认识", icon: "xmark", color: .quizRed) {
+                submitAnswer(known: false)
+            }
+            flashCardButton(label: "认识", icon: "checkmark", color: .quizGreen) {
+                submitAnswer(known: true)
+            }
+        }
+    }
+
+    // FSRS：重来 / 困难 / 良好 / 简单
+    private var fsrsRatingButtons: some View {
+        VStack(spacing: 6) {
+            Text("回忆难度如何？")
+                .font(.system(size: 12)).foregroundColor(.secondary)
+            HStack(spacing: 8) {
+                ForEach(FSRSRating.allCases, id: \.rawValue) { rating in
+                    let (color, bg): (Color, Color) = switch rating {
+                    case .again: (.quizRed,   .quizRed.opacity(0.12))
+                    case .hard:  (.orange,    .orange.opacity(0.12))
+                    case .good:  (.quizGreen, .quizGreen.opacity(0.12))
+                    case .easy:  (Color(red: 0.33, green: 0.62, blue: 0.93),
+                                  Color(red: 0.33, green: 0.62, blue: 0.93).opacity(0.12))
+                    }
+                    Button {
+                        submitRating(rating)
+                    } label: {
+                        Text(rating.label)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(color)
+                            .frame(maxWidth: .infinity).padding(.vertical, 16)
+                            .background(bg).cornerRadius(14)
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(color.opacity(0.35), lineWidth: 1))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+    }
+
+    private func flashCardButton(label: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon).font(.system(size: 16, weight: .bold))
+                Text(label).font(.system(size: 15, weight: .semibold))
+            }
+            .foregroundColor(color)
+            .frame(maxWidth: .infinity).padding(.vertical, 16)
+            .background(color.opacity(0.12)).cornerRadius(14)
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(color.opacity(0.3), lineWidth: 1))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 
     // MARK: 结果页
@@ -298,26 +320,32 @@ struct FlashCardView: View {
     }
 
     // MARK: 逻辑
+    private func submitRating(_ rating: FSRSRating) {
+        guard !isAnimating && !isFinished else { return }
+        isAnimating = true
+        vocabStore.recordStudy(wordId: current.id, rating: rating)
+        if rating.isCorrect { knownCount += 1 } else { unknownCount += 1 }
+        advance(slideRight: rating.isCorrect)
+    }
+
     private func submitAnswer(known: Bool) {
         guard !isAnimating && !isFinished else { return }
         isAnimating = true
-
         vocabStore.recordStudy(wordId: current.id, isCorrect: known)
         if known { knownCount += 1 } else { unknownCount += 1 }
+        advance(slideRight: known)
+    }
 
+    private func advance(slideRight: Bool = true) {
         withAnimation(.easeOut(duration: 0.2)) {
-            offset = known ? 300 : -300
+            offset = slideRight ? 300 : -300
             dragOpacity = 0
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             isFlipped = false
             offset = 0
             dragOpacity = 1
-            if currentIndex < words.count - 1 {
-                currentIndex += 1
-            } else {
-                isFinished = true
-            }
+            if currentIndex < words.count - 1 { currentIndex += 1 } else { isFinished = true }
             isAnimating = false
         }
     }
