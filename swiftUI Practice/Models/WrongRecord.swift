@@ -1,5 +1,57 @@
 import Foundation
 
+// MARK: - FSRS-4.5 间隔重复算法引擎
+// 参考：https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
+enum FSRSEngine {
+    // FSRS-4.5 默认权重 w[0]...w[16]，基于真实闪卡数据训练
+    private static let w: [Double] = [
+        0.4072, 1.1829, 3.1262, 15.4722,
+        7.2102, 0.5316, 1.0651, 0.0589,
+        1.5330, 0.1544, 1.0071, 1.9395,
+        0.1100, 0.2900, 2.2700, 0.0000,
+        2.9898
+    ]
+
+    static func initialStability(correct: Bool) -> Double { correct ? w[2] : w[0] }
+
+    static func initialDifficulty(correct: Bool) -> Double {
+        let r = correct ? 3.0 : 1.0
+        return clamp(w[4] - exp(w[5] * (r - 1)) + 1, lo: 1, hi: 10)
+    }
+
+    static func retrievability(elapsed: Double, stability: Double) -> Double {
+        let t = max(0.001, elapsed)
+        return pow(1.0 + t / (9.0 * stability), -1.0)
+    }
+
+    static func nextInterval(stability: Double, targetRetention: Double) -> Int {
+        let days = 9.0 * stability * (1.0 / targetRetention - 1.0)
+        return max(1, Int(days.rounded()))
+    }
+
+    static func nextStabilityRecall(d: Double, s: Double, r: Double) -> Double {
+        let gain = exp(w[8]) * (11 - d) * pow(s, -w[9]) * (exp(w[10] * (1 - r)) - 1)
+        return max(0.1, s * gain + 1)
+    }
+
+    static func nextStabilityForget(d: Double, s: Double, r: Double) -> Double {
+        let sf = w[11] * pow(d, -w[12]) * (pow(s + 1, w[13]) - 1) * exp((1 - r) * w[14])
+        return max(0.1, sf)
+    }
+
+    static func nextDifficulty(d: Double, correct: Bool) -> Double {
+        let rating = correct ? 3.0 : 1.0
+        let delta  = -w[6] * (rating - 3.0)
+        let d0_4   = clamp(w[4] - exp(w[5] * 3) + 1, lo: 1, hi: 10)
+        let d2     = w[7] * d0_4 + (1 - w[7]) * (d + delta)
+        return clamp(d2, lo: 1, hi: 10)
+    }
+
+    private static func clamp(_ v: Double, lo: Double, hi: Double) -> Double {
+        min(hi, max(lo, v))
+    }
+}
+
 // MARK: - 错题记录（SM-2 间隔重复算法）
 struct WrongRecord: Identifiable, Codable {
     var id: UUID
