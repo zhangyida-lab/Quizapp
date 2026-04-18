@@ -128,33 +128,43 @@ struct WordRecord: Identifiable, Codable {
         nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
     }
 
-    // MARK: FSRS 算法更新
+    // MARK: FSRS 算法更新（内联实现，不依赖 FSRSEngine）
     mutating func updateFSRS(isCorrect: Bool, targetRetention: Double) {
+        // FSRS-4.5 默认权重
+        let w: [Double] = [
+            0.4072, 1.1829, 3.1262, 15.4722,
+            7.2102, 0.5316, 1.0651, 0.0589,
+            1.5330, 0.1544, 1.0071, 1.9395,
+            0.1100, 0.2900, 2.2700, 0.0000, 2.9898
+        ]
         let now = Date()
-        let elapsed = max(0, now.timeIntervalSince(lastStudyDate) / 86400)
+        let elapsed = max(0.001, now.timeIntervalSince(lastStudyDate) / 86400)
 
         lastStudyDate = now
         studyCount += 1
-        if isCorrect {
-            correctStreak += 1
-        } else {
-            correctStreak = 0
-        }
+        if isCorrect { correctStreak += 1 } else { correctStreak = 0 }
 
         if fsrsStability == nil || fstrsDifficulty == nil {
-            fsrsStability   = FSRSEngine.initialStability(correct: isCorrect)
-            fstrsDifficulty = FSRSEngine.initialDifficulty(correct: isCorrect)
+            let r = isCorrect ? 3.0 : 1.0
+            fsrsStability   = isCorrect ? w[2] : w[0]
+            fstrsDifficulty = min(10, max(1, w[4] - exp(w[5] * (r - 1)) + 1))
         } else {
-            let s = fsrsStability!
-            let d = fstrsDifficulty!
-            let r = FSRSEngine.retrievability(elapsed: elapsed, stability: s)
-            fsrsStability   = isCorrect
-                ? FSRSEngine.nextStabilityRecall(d: d, s: s, r: r)
-                : FSRSEngine.nextStabilityForget(d: d, s: s, r: r)
-            fstrsDifficulty = FSRSEngine.nextDifficulty(d: d, correct: isCorrect)
+            let s = fsrsStability!, d = fstrsDifficulty!
+            let retriev = pow(1.0 + elapsed / (9.0 * s), -1.0)
+            if isCorrect {
+                let gain = exp(w[8]) * (11 - d) * pow(s, -w[9]) * (exp(w[10] * (1 - retriev)) - 1)
+                fsrsStability = max(0.1, s * gain + 1)
+            } else {
+                let sf = w[11] * pow(d, -w[12]) * (pow(s + 1, w[13]) - 1) * exp((1 - retriev) * w[14])
+                fsrsStability = max(0.1, sf)
+            }
+            let rating = isCorrect ? 3.0 : 1.0
+            let d0_4   = min(10, max(1, w[4] - exp(w[5] * 3) + 1))
+            let d2     = w[7] * d0_4 + (1 - w[7]) * (d - w[6] * (rating - 3.0))
+            fstrsDifficulty = min(10, max(1, d2))
         }
 
-        let days = FSRSEngine.nextInterval(stability: fsrsStability!, targetRetention: targetRetention)
+        let days = max(1, Int((9.0 * fsrsStability! * (1.0 / targetRetention - 1.0)).rounded()))
         intervalDays   = days
         nextReviewDate = Calendar.current.date(byAdding: .day, value: days, to: now) ?? now
     }
