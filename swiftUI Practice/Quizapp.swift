@@ -326,6 +326,7 @@ struct OptionButton: View {
             .padding(.horizontal, 16).padding(.vertical, 14)
             .background(bgColor).cornerRadius(14)
             .overlay(RoundedRectangle(cornerRadius: 14).stroke(borderColor, lineWidth: state == .normal ? 0.5 : 1.5))
+            .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle()).disabled(isAnswered)
         .scaleEffect(state == .correct || state == .wrong ? 1.02 : 1.0)

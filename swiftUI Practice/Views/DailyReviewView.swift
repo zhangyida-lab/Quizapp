@@ -83,6 +83,7 @@ struct DailyReviewView: View {
                             : Color.clear
                     )
                     .cornerRadius(10)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(PlainButtonStyle())
             }

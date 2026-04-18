@@ -215,13 +215,17 @@ struct WordChoiceView: View {
                 .background(Color.quizPurple)
                 .cornerRadius(14)
 
-                Button("完成") { dismiss() }
-                    .font(.system(size: 15))
-                    .foregroundColor(Color.quizPurpleLight)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Color.quizCard)
-                    .cornerRadius(14)
+                Button { dismiss() } label: {
+                    Text("完成")
+                        .font(.system(size: 15))
+                        .foregroundColor(Color.quizPurpleLight)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.quizCard)
+                        .cornerRadius(14)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 40)

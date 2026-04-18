@@ -282,14 +282,18 @@ struct FlashCardView: View {
             .padding(.horizontal, 24)
 
             Spacer()
-            Button("完成") { dismiss() }
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.quizPurple)
-                .cornerRadius(14)
-                .padding(.horizontal, 24)
+            Button { dismiss() } label: {
+                Text("完成")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.quizPurple)
+                    .cornerRadius(14)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.horizontal, 24)
         }
     }
 

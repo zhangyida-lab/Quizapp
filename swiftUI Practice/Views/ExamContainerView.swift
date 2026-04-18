@@ -383,6 +383,7 @@ struct ExamResultView: View {
                     .font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
                     .frame(maxWidth: .infinity).padding(.vertical, 15)
                     .background(Color.quizPurple).cornerRadius(14)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
         }
