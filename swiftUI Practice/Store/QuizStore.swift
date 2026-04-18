@@ -93,7 +93,8 @@ class QuizStore: ObservableObject {
     }
 
     var wrongQuestions: [Question] {
-        let ids = Set(wrongRecords.filter { !$0.isMastered }.map { $0.questionId })
+        // 只显示真正答错过的题（FSRS 模式下也会有 wrongCount=0 的追踪记录，需排除）
+        let ids = Set(wrongRecords.filter { !$0.isMastered && $0.wrongCount > 0 }.map { $0.questionId })
         return allQuestions.filter { ids.contains($0.id) }
     }
 
@@ -108,8 +109,8 @@ class QuizStore: ObservableObject {
             }
     }
 
-    var masteredCount: Int { wrongRecords.filter { $0.isMastered }.count }
-    var wrongTotalCount: Int { wrongRecords.filter { !$0.isMastered }.count }
+    var masteredCount: Int { wrongRecords.filter { $0.isMastered && $0.wrongCount > 0 }.count }
+    var wrongTotalCount: Int { wrongRecords.filter { !$0.isMastered && $0.wrongCount > 0 }.count }
 
     // MARK: 初始化
     init(modelContext: ModelContext) {
@@ -133,10 +134,12 @@ class QuizStore: ObservableObject {
                                          minEaseFactor: cfg.sm2MinEaseFactor,
                                          easePenalty: cfg.sm2EasePenalty)
             }
-        } else if !isCorrect {
+        } else if !isCorrect || cfg.schedulerType == .fsrs {
+            // SM-2：只有答错才建立记录
+            // FSRS：答对也建立记录，追踪复习时间（wrongCount 保持 0，不影响错题本）
             var record = WrongRecord(questionId: questionId)
             if cfg.schedulerType == .fsrs {
-                record.updateFSRS(isCorrect: false, targetRetention: cfg.fsrsTargetRetention)
+                record.updateFSRS(isCorrect: isCorrect, targetRetention: cfg.fsrsTargetRetention)
             } else {
                 record.update(isCorrect: false,
                               wrongResetDays: cfg.sm2WrongResetDays,
