@@ -163,10 +163,10 @@ class VocabularyStore: ObservableObject {
     func recordStudy(wordId: UUID, rating: FSRSRating) {
         let cfg = AlgorithmSettingsStore.loadConfig()
         if let idx = wordRecords.firstIndex(where: { $0.wordId == wordId }) {
-            wordRecords[idx].updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+            wordRecords[idx].updateFSRS(ratingValue: rating.rawValue, targetRetention: cfg.fsrsTargetRetention)
         } else {
             var record = WordRecord(wordId: wordId)
-            record.updateFSRS(rating: rating, targetRetention: cfg.fsrsTargetRetention)
+            record.updateFSRS(ratingValue: rating.rawValue, targetRetention: cfg.fsrsTargetRetention)
             wordRecords.append(record)
         }
         save()

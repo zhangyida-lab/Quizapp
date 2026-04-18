@@ -128,30 +128,32 @@ struct WordRecord: Identifiable, Codable {
         nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
     }
 
-    // MARK: FSRS 算法更新（内联，不依赖 FSRSEngine；支持 4 级评分）
-    mutating func updateFSRS(rating: FSRSRating, targetRetention: Double) {
+    // MARK: FSRS 算法更新（内联，不依赖外部类型；ratingValue: 1=Again 2=Hard 3=Good 4=Easy）
+    mutating func updateFSRS(ratingValue: Int, targetRetention: Double) {
         let w: [Double] = [
             0.4072, 1.1829, 3.1262, 15.4722,
             7.2102, 0.5316, 1.0651, 0.0589,
             1.5330, 0.1544, 1.0071, 1.9395,
             0.1100, 0.2900, 2.2700, 0.0000, 2.9898
         ]
+        let rv = max(1, min(4, ratingValue))
+        let isCorrect = rv > 1
         let now = Date()
         let elapsed = max(0.001, now.timeIntervalSince(lastStudyDate) / 86400)
         lastStudyDate = now
         studyCount += 1
-        if rating.isCorrect { correctStreak += 1 } else { correctStreak = 0 }
+        if isCorrect { correctStreak += 1 } else { correctStreak = 0 }
 
         if fsrsStability == nil || fstrsDifficulty == nil {
-            let r = Double(rating.rawValue)
-            fsrsStability   = w[rating.rawValue - 1]
+            let r = Double(rv)
+            fsrsStability   = w[rv - 1]
             fstrsDifficulty = min(10, max(1, w[4] - exp(w[5] * (r - 1)) + 1))
         } else {
             let s = fsrsStability!, d = fstrsDifficulty!
             let retriev = pow(1.0 + elapsed / (9.0 * s), -1.0)
-            if rating.isCorrect {
-                let hardPenalty = rating == .hard ? w[15] : 1.0
-                let easyBonus   = rating == .easy ? w[16] : 1.0
+            if isCorrect {
+                let hardPenalty = rv == 2 ? w[15] : 1.0
+                let easyBonus   = rv == 4 ? w[16] : 1.0
                 let gain = exp(w[8]) * (11 - d) * pow(s, -w[9])
                            * (exp(w[10] * (1 - retriev)) - 1) * hardPenalty * easyBonus
                 fsrsStability = max(0.1, s * gain + 1)
@@ -159,9 +161,8 @@ struct WordRecord: Identifiable, Codable {
                 let sf = w[11] * pow(d, -w[12]) * (pow(s + 1, w[13]) - 1) * exp((1 - retriev) * w[14])
                 fsrsStability = max(0.1, sf)
             }
-            let rVal  = Double(rating.rawValue)
-            let d0_4  = min(10.0, max(1.0, w[4] - exp(w[5] * 3) + 1))
-            let d2    = w[7] * d0_4 + (1 - w[7]) * (d - w[6] * (rVal - 3.0))
+            let d0_4 = min(10.0, max(1.0, w[4] - exp(w[5] * 3) + 1))
+            let d2   = w[7] * d0_4 + (1 - w[7]) * (d - w[6] * (Double(rv) - 3.0))
             fstrsDifficulty = min(10, max(1, d2))
         }
 
@@ -170,9 +171,8 @@ struct WordRecord: Identifiable, Codable {
         nextReviewDate = Calendar.current.date(byAdding: .day, value: days, to: now) ?? now
     }
 
-    /// 便捷包装：二元答对/答错 → 映射为 Good / Again
     mutating func updateFSRS(isCorrect: Bool, targetRetention: Double) {
-        updateFSRS(rating: isCorrect ? .good : .again, targetRetention: targetRetention)
+        updateFSRS(ratingValue: isCorrect ? 3 : 1, targetRetention: targetRetention)
     }
 
     var isDue: Bool { !isMastered && Date() >= nextReviewDate }
