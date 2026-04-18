@@ -117,9 +117,9 @@ struct QuizContainerView: View {
             vm.onAnswer = { id, correct in
                 if !useFSRS { store.recordAnswer(questionId: id, isCorrect: correct) }
             }
-            vm.onRating = { id, rating in
+            vm.onRating = useFSRS ? { id, rating in
                 store.recordAnswer(questionId: id, rating: rating)
-            }
+            } : nil
         }
     }
 }
