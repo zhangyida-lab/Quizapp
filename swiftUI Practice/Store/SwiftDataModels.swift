@@ -71,44 +71,52 @@ final class WrongRecordEntity {
     var nextReviewDate: Date
     var easeFactor: Double
     var intervalDays: Int
+    var fsrsStability: Double?
+    var fstrsDifficulty: Double?
     var isMastered: Bool
 
     init(record: WrongRecord) {
-        self.id              = record.id
-        self.questionId      = record.questionId
-        self.wrongCount      = record.wrongCount
-        self.correctStreak   = record.correctStreak
-        self.firstWrongDate  = record.firstWrongDate
-        self.lastAttemptDate = record.lastAttemptDate
-        self.nextReviewDate  = record.nextReviewDate
-        self.easeFactor      = record.easeFactor
-        self.intervalDays    = record.intervalDays
-        self.isMastered      = record.isMastered
+        self.id               = record.id
+        self.questionId       = record.questionId
+        self.wrongCount       = record.wrongCount
+        self.correctStreak    = record.correctStreak
+        self.firstWrongDate   = record.firstWrongDate
+        self.lastAttemptDate  = record.lastAttemptDate
+        self.nextReviewDate   = record.nextReviewDate
+        self.easeFactor       = record.easeFactor
+        self.intervalDays     = record.intervalDays
+        self.fsrsStability    = record.fsrsStability
+        self.fstrsDifficulty  = record.fstrsDifficulty
+        self.isMastered       = record.isMastered
     }
 
     func toStruct() -> WrongRecord {
-        var r              = WrongRecord(questionId: questionId)
-        r.id               = id
-        r.wrongCount       = wrongCount
-        r.correctStreak    = correctStreak
-        r.firstWrongDate   = firstWrongDate
-        r.lastAttemptDate  = lastAttemptDate
-        r.nextReviewDate   = nextReviewDate
-        r.easeFactor       = easeFactor
-        r.intervalDays     = intervalDays
-        r.isMastered       = isMastered
+        var r               = WrongRecord(questionId: questionId)
+        r.id                = id
+        r.wrongCount        = wrongCount
+        r.correctStreak     = correctStreak
+        r.firstWrongDate    = firstWrongDate
+        r.lastAttemptDate   = lastAttemptDate
+        r.nextReviewDate    = nextReviewDate
+        r.easeFactor        = easeFactor
+        r.intervalDays      = intervalDays
+        r.fsrsStability     = fsrsStability
+        r.fstrsDifficulty   = fstrsDifficulty
+        r.isMastered        = isMastered
         return r
     }
 
     func syncFrom(_ record: WrongRecord) {
-        wrongCount       = record.wrongCount
-        correctStreak    = record.correctStreak
-        firstWrongDate   = record.firstWrongDate
-        lastAttemptDate  = record.lastAttemptDate
-        nextReviewDate   = record.nextReviewDate
-        easeFactor       = record.easeFactor
-        intervalDays     = record.intervalDays
-        isMastered       = record.isMastered
+        wrongCount        = record.wrongCount
+        correctStreak     = record.correctStreak
+        firstWrongDate    = record.firstWrongDate
+        lastAttemptDate   = record.lastAttemptDate
+        nextReviewDate    = record.nextReviewDate
+        easeFactor        = record.easeFactor
+        intervalDays      = record.intervalDays
+        fsrsStability     = record.fsrsStability
+        fstrsDifficulty   = record.fstrsDifficulty
+        isMastered        = record.isMastered
     }
 }
 

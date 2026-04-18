@@ -15,9 +15,14 @@ struct AlgorithmSettingsView: View {
         ZStack {
             Color.quizBg.ignoresSafeArea()
             Form {
+                schedulerSection
                 dailyQuizSection
                 dailyWordSection
-                sm2Section
+                if algoStore.config.schedulerType == .sm2 {
+                    sm2Section
+                } else {
+                    fsrsSection
+                }
                 examSection
                 resetSection
             }
@@ -36,6 +41,57 @@ struct AlgorithmSettingsView: View {
         } message: {
             Text("所有算法参数将恢复为出厂默认值，当前设置不可撤销。")
         }
+    }
+
+    // MARK: 算法选择
+    private var schedulerSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("间隔重复算法", systemImage: "brain")
+                    .foregroundColor(.white)
+                Picker("算法", selection: cfg.schedulerType) {
+                    ForEach(AlgorithmConfig.SchedulerType.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                Text(algoStore.config.schedulerType == .fsrs
+                     ? "FSRS：基于遗忘曲线的现代算法，比 SM-2 更精准，推荐使用"
+                     : "SM-2：经典间隔重复算法，简单可靠")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        } header: {
+            SectionHeader(icon: "brain", title: "算法选择")
+        }
+        .listRowBackground(Color.quizCard)
+    }
+
+    // MARK: FSRS 参数
+    private var fsrsSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Label("目标记忆保留率", systemImage: "percent")
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text("\(Int(algoStore.config.fsrsTargetRetention * 100))%")
+                        .foregroundColor(Color.quizPurpleLight)
+                        .monospacedDigit()
+                }
+                Slider(value: cfg.fsrsTargetRetention, in: 0.70...0.97, step: 0.01)
+                    .tint(Color.quizPurple)
+                Text("复习时预期能记住 \(Int(algoStore.config.fsrsTargetRetention * 100))% 的内容。越高则复习越频繁，建议保持 90%")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        } header: {
+            SectionHeader(icon: "clock.arrow.2.circlepath", title: "FSRS 参数")
+        } footer: {
+            Text("FSRS 会追踪每道题 / 每个单词的「记忆稳定性」，根据遗忘曲线自动计算最佳复习时间。切换算法后，已有学习记录将在下次复习时开始使用新算法。")
+                .foregroundColor(.secondary)
+        }
+        .listRowBackground(Color.quizCard)
     }
 
     // MARK: 每日题目推荐
@@ -181,9 +237,9 @@ struct AlgorithmSettingsView: View {
             }
 
         } header: {
-            SectionHeader(icon: "clock.arrow.2.circlepath", title: "SM-2 间隔参数（题目 & 单词共用）")
+            SectionHeader(icon: "clock.arrow.2.circlepath", title: "SM-2 参数（题目 & 单词共用）")
         } footer: {
-            Text("SM-2 是一种间隔重复算法：答对次数越多，下次复习时间间隔越长；答错则缩短间隔并增加复习频率。")
+            Text("SM-2：答对次数越多，下次复习间隔越长；答错则重置间隔并降低难度系数。")
                 .foregroundColor(.secondary)
         }
         .listRowBackground(Color.quizCard)

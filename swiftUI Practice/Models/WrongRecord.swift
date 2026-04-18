@@ -16,6 +16,10 @@ struct WrongRecord: Identifiable, Codable {
     var easeFactor: Double    // 难度系数，初始 2.5，最低 1.3
     var intervalDays: Int     // 当前复习间隔（天）
 
+    // FSRS 参数（可选；nil = 尚未用 FSRS 复习过）
+    var fsrsStability: Double?    // 记忆稳定性（天）
+    var fstrsDifficulty: Double?  // FSRS 难度（1~10）
+
     var isMastered: Bool      // 用户标记已掌握
 
     // MARK: - 初始化
@@ -56,6 +60,38 @@ struct WrongRecord: Identifiable, Codable {
         }
 
         nextReviewDate = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
+    }
+
+    // MARK: - FSRS 算法更新
+    mutating func updateFSRS(isCorrect: Bool, targetRetention: Double) {
+        let now = Date()
+        let elapsed = max(0, now.timeIntervalSince(lastAttemptDate) / 86400)
+
+        if isCorrect {
+            correctStreak += 1
+        } else {
+            wrongCount += 1
+            correctStreak = 0
+        }
+
+        if fsrsStability == nil || fstrsDifficulty == nil {
+            // 首次 FSRS 复习：根据答题结果初始化稳定性和难度
+            fsrsStability   = FSRSEngine.initialStability(correct: isCorrect)
+            fstrsDifficulty = FSRSEngine.initialDifficulty(correct: isCorrect)
+        } else {
+            let s = fsrsStability!
+            let d = fstrsDifficulty!
+            let r = FSRSEngine.retrievability(elapsed: elapsed, stability: s)
+            fsrsStability   = isCorrect
+                ? FSRSEngine.nextStabilityRecall(d: d, s: s, r: r)
+                : FSRSEngine.nextStabilityForget(d: d, s: s, r: r)
+            fstrsDifficulty = FSRSEngine.nextDifficulty(d: d, correct: isCorrect)
+        }
+
+        lastAttemptDate = now
+        let days = FSRSEngine.nextInterval(stability: fsrsStability!, targetRetention: targetRetention)
+        intervalDays   = days
+        nextReviewDate = Calendar.current.date(byAdding: .day, value: days, to: now) ?? now
     }
 
     // MARK: - 工具属性

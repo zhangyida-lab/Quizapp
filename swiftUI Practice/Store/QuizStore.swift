@@ -124,20 +124,25 @@ class QuizStore: ObservableObject {
     func recordAnswer(questionId: UUID, isCorrect: Bool) {
         let cfg = AlgorithmSettingsStore.loadConfig()
         if let idx = wrongRecords.firstIndex(where: { $0.questionId == questionId }) {
-            wrongRecords[idx].update(
-                isCorrect: isCorrect,
-                wrongResetDays: cfg.sm2WrongResetDays,
-                minEaseFactor: cfg.sm2MinEaseFactor,
-                easePenalty: cfg.sm2EasePenalty
-            )
+            if cfg.schedulerType == .fsrs {
+                wrongRecords[idx].updateFSRS(isCorrect: isCorrect,
+                                             targetRetention: cfg.fsrsTargetRetention)
+            } else {
+                wrongRecords[idx].update(isCorrect: isCorrect,
+                                         wrongResetDays: cfg.sm2WrongResetDays,
+                                         minEaseFactor: cfg.sm2MinEaseFactor,
+                                         easePenalty: cfg.sm2EasePenalty)
+            }
         } else if !isCorrect {
             var record = WrongRecord(questionId: questionId)
-            record.update(
-                isCorrect: false,
-                wrongResetDays: cfg.sm2WrongResetDays,
-                minEaseFactor: cfg.sm2MinEaseFactor,
-                easePenalty: cfg.sm2EasePenalty
-            )
+            if cfg.schedulerType == .fsrs {
+                record.updateFSRS(isCorrect: false, targetRetention: cfg.fsrsTargetRetention)
+            } else {
+                record.update(isCorrect: false,
+                              wrongResetDays: cfg.sm2WrongResetDays,
+                              minEaseFactor: cfg.sm2MinEaseFactor,
+                              easePenalty: cfg.sm2EasePenalty)
+            }
             wrongRecords.append(record)
         }
         save()

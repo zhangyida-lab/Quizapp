@@ -135,20 +135,25 @@ class VocabularyStore: ObservableObject {
     func recordStudy(wordId: UUID, isCorrect: Bool) {
         let cfg = AlgorithmSettingsStore.loadConfig()
         if let idx = wordRecords.firstIndex(where: { $0.wordId == wordId }) {
-            wordRecords[idx].update(
-                isCorrect: isCorrect,
-                wrongResetDays: cfg.sm2WrongResetDays,
-                minEaseFactor: cfg.sm2MinEaseFactor,
-                easePenalty: cfg.sm2EasePenalty
-            )
+            if cfg.schedulerType == .fsrs {
+                wordRecords[idx].updateFSRS(isCorrect: isCorrect,
+                                            targetRetention: cfg.fsrsTargetRetention)
+            } else {
+                wordRecords[idx].update(isCorrect: isCorrect,
+                                        wrongResetDays: cfg.sm2WrongResetDays,
+                                        minEaseFactor: cfg.sm2MinEaseFactor,
+                                        easePenalty: cfg.sm2EasePenalty)
+            }
         } else {
             var record = WordRecord(wordId: wordId)
-            record.update(
-                isCorrect: isCorrect,
-                wrongResetDays: cfg.sm2WrongResetDays,
-                minEaseFactor: cfg.sm2MinEaseFactor,
-                easePenalty: cfg.sm2EasePenalty
-            )
+            if cfg.schedulerType == .fsrs {
+                record.updateFSRS(isCorrect: isCorrect, targetRetention: cfg.fsrsTargetRetention)
+            } else {
+                record.update(isCorrect: isCorrect,
+                              wrongResetDays: cfg.sm2WrongResetDays,
+                              minEaseFactor: cfg.sm2MinEaseFactor,
+                              easePenalty: cfg.sm2EasePenalty)
+            }
             wordRecords.append(record)
         }
         save()

@@ -5,6 +5,14 @@ import SwiftUI
 
 struct AlgorithmConfig: Codable {
 
+    // MARK: 算法选择
+    enum SchedulerType: String, Codable, CaseIterable, Identifiable {
+        case sm2  = "SM-2"
+        case fsrs = "FSRS"
+        var id: String { rawValue }
+    }
+    var schedulerType: SchedulerType = .sm2
+
     // MARK: 每日题目推荐
     var dailyQuestionCount: Int = 20          // 每日推荐题数（10-40）
     var dueQuestionMaxRatio: Double = 0.75    // 错题占比上限（0-1）
@@ -18,6 +26,9 @@ struct AlgorithmConfig: Codable {
     var sm2WrongResetDays: Int = 1            // 答错后复习间隔重置（1-3天）
     var sm2MinEaseFactor: Double = 1.3        // 最低难度系数（1.3-2.0）
     var sm2EasePenalty: Double = 0.2          // 答错后难度系数降幅（0.1-0.4）
+
+    // MARK: FSRS 参数
+    var fsrsTargetRetention: Double = 0.90    // 目标记忆保留率（0.70-0.97）
 
     // MARK: 试卷生成
     var examDefaultCount: Int = 20            // 默认出题数（5-50）
